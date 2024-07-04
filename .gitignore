@@ -1,0 +1,136 @@
+# use custom ignores with this command:
+# GIT_WORK_TREE=$HOME GIT_DIR=$HOME/.dotfiles.git git config --local
+# core.excludesfile .gitignore.dotfiles
+
+# Ignore everything by default.
+
+*
+
+# Add back items as needed.
+
+# config
+!.config/
+!.config/*
+
+# bin
+!bin/
+!bin/**
+
+# bash
+!.bash_profile
+!.bashrc
+!.config/bash/
+!.config/bash/**
+
+# browser
+!.config/browser/
+!.config/browser/**
+
+# docs
+!docs/
+!docs/**
+
+# editorconfig
+!~/.editorconfig
+
+# fish
+#!.config/fish/
+#!.config/fish/*
+#!.config/fish/**
+#.config/fish/fish_variables
+
+# gh
+!.config/gh/
+!.config/gh/**
+
+# git
+!.gitignore
+!.config/git/
+!.config/git/**
+
+# helix
+#!.config/helix/
+#!.config/helix/**
+
+# homebrew
+!.config/homebrew/
+!.config/homebrew/**
+
+# iterm2
+!.config/iterm2/
+!.config/iterm2/*.json
+!.config/iterm2/*.plist
+!.config/iterm2/*.tmTheme
+!.config/iterm2/*.terminal
+
+# loop
+#!.config/loop/
+#!.config/loop/**
+
+# macos
+#!.config/macos/
+#!.config/macos/**
+
+# npm
+!.config/npm/
+!.config/npm/**
+
+# nvm
+!.config/nvm/
+!.config/nvm/**
+
+# readline
+!.config/readline/
+!.config/readline/**
+
+# readline
+!.config/rectangle/
+!.config/rectangle/**
+
+# spotifyd
+!.config/spotifyd/
+!.config/spotifyd/**
+
+# starship
+!.config/starship/
+!.config/starship/**
+
+# stow
+!.stow-*
+
+# tldr
+!.config/tldr/
+!.config/tldr/**
+
+# tmux
+!.config/tmux/
+!.config/tmux/**
+
+# topgrade.d
+!.config/topgrade.d/
+!.config/topgrade.d/**
+
+# vscode
+!.config/.vscode/
+!.config/.vscode/**
+
+# zsh
+!.zshenv
+!.zprofile
+!.zshrc
+!.zlogin
+!.zlogout
+!.config/zsh/
+!.config/zsh/**
+.config/zsh/.*/
+.config/zsh/.zcompdump*
+
+# re-ignore local files
+*.local
+local.*
+*.local/
+*.local.*
+
+# final
+*_history*
+.DS_Store

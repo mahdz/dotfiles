@@ -1,0 +1,279 @@
+tap "alienator88/cask"
+tap "buo/cask-upgrade"
+tap "doron-cohen/tap"
+tap "eth-p/software"
+tap "homebrew/bundle"
+tap "homebrew/command-not-found"
+tap "homebrew/services"
+tap "isacikgoz/taps"
+tap "martido/graph"
+tap "mrkai77/cask"
+tap "rcmdnk/file"
+# Plugin manager for zsh, inspired by antigen and antibody
+brew "antidote"
+# JPEG image codec that aids compression and decompression
+brew "jpeg-turbo"
+# General-purpose data compression with high compression ratio
+brew "xz"
+# Automatic configure script builder
+brew "autoconf"
+# Tool for generating GNU Standards-compliant Makefiles
+brew "automake"
+# Mozilla CA certificate store
+brew "ca-certificates"
+# Cryptography and SSL/TLS Toolkit
+brew "openssl@3"
+# C library of Git core methods that is re-entrant and linkable
+brew "libgit2"
+# Clone of cat(1) with syntax highlighting and Git integration
+brew "bat"
+# Parser generator
+brew "bison"
+# Get/set bluetooth power and discoverable state
+brew "blueutil"
+# Change macOS display brightness from the command-line
+brew "brightness"
+# XML-based font configuration API for X Windows
+brew "fontconfig"
+# Library for command-line editing
+brew "readline"
+# Interpreted, interactive, object-oriented programming language
+brew "python@3.12"
+# Core application library for C
+brew "glib"
+# Vector graphics library with cross-device output support
+brew "cairo"
+# Mozilla CA bundle for Python
+brew "certifi"
+# Cross-platform make
+brew "cmake"
+# GNU File, Shell, and Text utilities
+brew "coreutils"
+# Perl lib for reading and writing EXIF metadata
+brew "exiftool"
+# Modern, maintained replacement for ls
+brew "eza"
+# Implementation of the Unicode BiDi algorithm
+brew "fribidi"
+# HTTP/2 C Library
+brew "libnghttp2"
+# Smart font renderer for non-Roman scripts
+brew "graphite2"
+# C/C++ and Java libraries for Unicode and globalization
+brew "icu4c"
+# OpenType text shaping engine
+brew "harfbuzz"
+# MP3 player for Linux and UNIX
+brew "mpg123"
+# Framework for layout and rendering of i18n text
+brew "pango"
+# OCR (Optical Character Recognition) engine
+brew "tesseract"
+# Play, record, convert, and stream audio and video
+brew "ffmpeg"
+# Command-line fuzzy finder written in Go
+brew "fzf"
+# Library for encoding and decoding .avif files
+brew "libavif"
+# Graphics library to dynamically manipulate images
+brew "gd"
+# GNU database manager
+brew "gdbm"
+# Toolkit for image loading and pixel buffer manipulation
+brew "gdk-pixbuf"
+# GitHub command-line tool
+brew "gh"
+# Interpreter for PostScript and PDF
+brew "ghostscript"
+# GIF image/animation creator/editor
+brew "gifsicle"
+# Distributed revision control system
+brew "git"
+# Generate introspection data for GObject libraries
+brew "gobject-introspection"
+# Library for manipulating JPEG-2000 images
+brew "jasper"
+# Image manipulation
+brew "netpbm"
+# Generic library support script
+brew "libtool"
+# Graph visualization software from AT&T and Bell Labs
+brew "graphviz"
+# Tools and libraries to manipulate images in many formats
+brew "imagemagick"
+# Portable Foreign Function Interface library
+brew "libffi"
+# Multi-platform support library with a focus on asynchronous I/O
+brew "libuv"
+# YAML Parser
+brew "libyaml"
+# Keep your Mac's application settings in sync
+brew "mackup"
+# Mac App Store command-line interface
+brew "mas"
+# Modern and intuitive terminal-based text editor
+brew "micro"
+# Cross-platform library for audio I/O
+brew "portaudio"
+# Protocol buffers (Google's data interchange format)
+brew "protobuf"
+# Reattach process (e.g., tmux) to background
+brew "reattach-to-user-namespace"
+# Utility that provides fast incremental file transfer
+brew "rsync"
+# Library for using TrueType fonts in SDL applications
+brew "sdl2_ttf"
+# Python 2 and 3 compatibility utilities
+brew "six"
+# Spotify daemon
+brew "spotifyd", restart_service: true
+# Organize software neatly under a single directory tree (e.g. /usr/local)
+brew "stow"
+# Tool Command Language
+brew "tcl-tk"
+# Very fast implementation of tldr in Rust
+brew "tealdeer"
+# Upgrade all the things
+brew "topgrade"
+# Check your $HOME for unwanted files and directories
+brew "xdg-ninja"
+# Feature-rich command-line audio/video downloader
+brew "yt-dlp"
+# General-purpose lossless data-compression library
+brew "zlib"
+# Shell extension to navigate your filesystem faster
+brew "zoxide"
+# UNIX shell (command interpreter)
+brew "zsh"
+# ZSH plugin that reminds you to use existing aliases for commands you just typed
+brew "zsh-you-should-use"
+# Cleans up your $HOME from those pesky dotfiles
+brew "doron-cohen/tap/antidot"
+# Brewfile manager for Homebrew.
+brew "rcmdnk/file/brew-file"
+# Stand alone ad blocker
+cask "adguard@nightly"
+# Application uninstaller
+cask "appcleaner"
+# User-friendly GUI app for Homebrew
+cask "applite"
+# Audio utility
+cask "background-music"
+# Display management tool
+cask "betterdisplay"
+# Use your phone as a high-quality webcam with image tuning controls
+cask "camo-studio"
+# Tool to list all active shortcuts of the current application
+cask "cheatsheet"
+# Inspector for iCloud Drive folders
+cask "cirrus"
+# Customise menu item keyboard shortcuts
+cask "customshortcuts"
+# Voice and text chat software
+cask "discord"
+# Utility to finds and fix problems on computer systems
+cask "etrecheckpro"
+# Finds empty folders
+cask "find-empty-folders"
+# Network scanner
+cask "fing"
+# Web browser
+cask "firefox", args: { appdir: "~/Applications" }
+cask "font-barlow"
+cask "font-barlow-condensed"
+cask "font-barlow-semi-condensed"
+cask "font-fira-code-nerd-font"
+cask "font-fira-sans"
+cask "font-fira-sans-extra-condensed"
+cask "font-new-york"
+cask "font-sf-compact"
+cask "font-sf-mono"
+cask "font-sf-pro"
+# Desktop client for GitHub repositories
+cask "github"
+# Grammarly for desktop
+cask "grammarly-desktop"
+# Free and open-source media player
+cask "iina"
+# Terminal emulator as alternative to Apple's Terminal app
+cask "iterm2"
+# Menu bar manager
+cask "jordanbaird-ice"
+# Remote desktop app
+cask "jump-desktop-connect"
+# Keyboard customiser
+cask "karabiner-elements"
+# Window manager
+cask "loop"
+# File system integration
+cask "macfuse"
+# UI replacement for volume, brightness and now playing controls
+cask "mediamate"
+# Syncs files between computers and MEGA Cloud drives
+cask "megasync"
+# Allows video downloads from the Web
+cask "netdownloadhelpercoapp"
+# Verify system files structure, run miscellaneous maintenance and more
+cask "onyx"
+# Utility to uninstall apps and clean-up leftover files
+cask "pearcleaner"
+# Thumbnails, static previews, cover art and metadata for video files
+cask "qlvideo", args: { appdir: "/Applications/Utilities" }
+# Control your tools with a few keystrokes
+cask "raycast"
+# Move and resize windows using keyboard shortcuts or snap areas
+cask "rectangle"
+# Tool that provides consistent, highly configurable symbols for apps
+cask "sf-symbols"
+# Instant messaging application focusing on security
+cask "signal"
+# Checks EFI firmware and security data file updates
+cask "silnite"
+# Music streaming service
+cask "spotify"
+# Application for inspecting installer packages
+cask "suspicious-package"
+# Service that allows users to make symbolic links in the Finder
+cask "symboliclinker"
+# Web client for Telegram messenger
+cask "telegram-a", args: { appdir: "~/Applications" }
+# Desktop client for Telegram messenger
+cask "telegram-desktop", args: { appdir: "~/Applications" }
+# Disk encryption software focusing on security based on TrueCrypt
+cask "veracrypt"
+# Open-source code editor
+cask "visual-studio-code"
+# Multimedia player
+cask "vlc"
+# Quick Look plugin for webp files
+cask "webpquicklook"
+# Video communication and virtual meeting platform
+cask "zoom"
+mas "Actions", id: 1586435171
+mas "Apple Configurator", id: 1037126344
+mas "Cardhop", id: 1290358394
+mas "CardPointers", id: 1472875808
+mas "Clean Email", id: 1441250616
+mas "Copilot", id: 1447330651
+mas "CotEditor", id: 1024640650
+mas "Darkroom", id: 953286746
+mas "Detail Studio", id: 6443923358
+mas "Fantastical", id: 975937182
+mas "Folder Peek", id: 1615988943
+mas "FreeScaler", id: 6443796196
+mas "Friendly Streaming", id: 553245401
+mas "Hover for Safari", id: 1540705431
+mas "Hyperduck", id: 6444667067
+mas "Keepa - Price Tracker", id: 1533805339
+mas "LocalSend", id: 1661733229
+mas "MusicHarbor", id: 1440405750
+mas "NordVPN", id: 905953485
+mas "PayPal Honey", id: 1472777122
+mas "PiPifier", id: 1160374471
+mas "Playlisty for Apple Music", id: 1459275972
+mas "Refined GitHub", id: 1519867270
+mas "Scrobbles for Last.fm", id: 1344679160
+mas "Shareful", id: 1522267256
+mas "Shortery", id: 1594183810
+mas "Velja", id: 1607635845
+mas "WordService", id: 899972312

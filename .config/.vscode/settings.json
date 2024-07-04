@@ -1,0 +1,4 @@
+{
+    "files.autoSave": "afterDelay",
+    "diffEditor.experimental.showMoves": true
+}

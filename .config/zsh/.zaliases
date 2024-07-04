@@ -1,0 +1,136 @@
+#
+# aliases - Zsh and bash aliases
+#
+
+# References
+# - https://medium.com/@webprolific/getting-started-with-dotfiles-43c3602fd789#.vh7hhm6th
+# - https://github.com/webpro/dotfiles/blob/master/system/.alias
+# - https://github.com/mathiasbynens/dotfiles/blob/master/.aliases
+# - https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/common-aliases/common-aliases.plugin.zsh
+#
+
+# single character shortcuts - be sparing!
+alias _=sudo
+alias l=ls
+alias g=git
+
+# mask built-ins with better defaults
+alias ping='ping -c 5'
+alias vi=vim
+alias nv=nvim
+alias grep="command grep --exclude-dir={.git,.vscode}"
+
+# directories
+#alias secrets="cd ${XDG_DATA_HOME:-~/.local/share}/secrets"
+
+# more ways to ls
+alias ll='ls -lh'
+alias la='ls -lAh'
+alias lsa="ls -aG"
+alias ldot='ls -ld .*'
+
+# fix typos
+alias get=git
+alias quit='exit'
+alias cd..='cd ..'
+alias zz='exit'
+
+# tar
+alias tarls="tar -tvf"
+alias untar="tar -xf"
+
+# date/time
+alias timestamp="date '+%Y-%m-%d %H:%M:%S'"
+alias datestamp="date '+%Y-%m-%d'"
+alias isodate="date +%Y-%m-%dT%H:%M:%S%z"
+alias utc="date -u +%Y-%m-%dT%H:%M:%SZ"
+alias unixepoch="date +%s"
+
+# find
+alias fd='find . -type d -name'
+alias ff='find . -type f -name'
+
+# homebrew
+alias brewup="brew update && brew upgrade && brew cu --no-update --interactive --cleanup && brew doctor"
+alias brewinfo="brew leaves | xargs brew desc --eval-all"
+alias brewg="brew graph --installed --highlight-leaves | fdp -T png -o graph.png && open graph.png"
+alias bbd='brew bundle dump --force --no-upgrade --all --file=${XDG_CONFIG_HOME:-$HOME/.config}/homebrew/init.brewfile'
+alias bfc="brew file casklist && o Caskfile"
+alias brewc='brew cleanup -s --prune=all'
+alias brewd='brew doctor --verbose'
+alias brewi='brew info'
+alias brewI='newbrew install'
+alias brewl='brew list'
+alias brewL='brew leaves'
+alias brewo='brew outdated --formula'
+alias brewr='brew reinstall --formula'
+alias brews='brew search --formula'
+alias brewS='brew services'
+alias brewu='brew update'
+alias brewU='brew upgrade --formula'
+alias brewx='newbrew uninstall --formula'
+alias brewX='newbrew uninstall --formula --force'
+
+# disk usage
+#alias biggest='du -s ./* | sort -nr | awk '\''{print $2}'\'' | xargs du -sh'
+alias dux='du -x --max-depth=1 | sort -n'
+alias dud='du -d 1 -h'
+alias duf='du -sh *'
+
+# url encode/decode
+alias urldecode='python3 -c "import sys, urllib.parse as ul; \
+    print(ul.unquote_plus(sys.argv[1]))"'
+alias urlencode='python3 -c "import sys, urllib.parse as ul; \
+    print (ul.quote_plus(sys.argv[1]))"'
+
+# misc
+alias please=sudo
+alias zshrc='${EDITOR:-code} "${ZDOTDIR:-$HOME}"/.zshrc'
+alias update='sudo softwareupdate -i -a'
+alias updateall='sudo softwareupdate -i -a; brewup'
+alias restart='sudo fdesetup authrestart'
+
+alias dnsflush='sudo killall -HUP mDNSResponder'
+alias ip='curl ifconfig.co && curl ifconfig.co/country && curl ifconfig.co/country-iso && curl ifconfig.co/city && curl ifconfig.co/asn'
+alias ..='cd ../'
+alias ...='cd ../../'
+
+alias mv='mv -i'
+#alias rm='trash'
+alias rm='/Users/manny/bin/shell-safe-rm'
+alias del='trash'
+alias rmdir='trash'
+alias emptytrash='sudo rm -rfv /Volumes/*/.Trashes; sudo rm -rfv ~/.Trash; sudo rm -rfv /private/var/log/asl/*.asl; sqlite3 ~/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV* '"'"'delete from LSQuarantineEvent'"'"''
+
+alias reload='reset && exec $SHELL -l'
+alias c='clear;echo "Currently logged in on $(tty), as $(whoami) in directory $(pwd)."'
+alias r='reset'
+alias oa='open -a'
+
+# print things
+alias print-fpath='for fp in $fpath; do echo $fp; done; unset fp'
+alias print-path='echo $PATH | tr ":" "\n"'
+alias print-functions='print -l ${(k)functions[(I)[^_]*]} | sort'
+
+# auto-orient images based on exif tags
+alias autorotate="jhead -autorot"
+
+# dotfiles
+: ${DOTFILES:=~/.config/dotfiles}
+alias dotf='cd "$HOME"'
+alias dote='cd "$DOTFILES" && ${VISUAL:-${EDITOR:-code}} .'
+#alias dotl="cd \$DOTFILES/local"
+#alias fdot='cd ${XDG_CONFIG_HOME:-~/.config}/fish'
+#alias fconf=fdot
+alias zdot='cd $ZDOTDIR'
+alias dotty='GIT_WORK_TREE=~ GIT_DIR=$DOTFILES'
+alias dot='/usr/bin/git --git-dir=$DOTFILES --work-tree=$HOME'
+
+# java
+#alias setjavahome="export JAVA_HOME=\`/usr/libexec/java_home\`"
+
+# todo-txt
+#alias t="todo.sh"
+#alias todos="$VISUAL $HOME/Desktop/todo.txt"
+
+# vim: ft=zsh sw=2 ts=2 et

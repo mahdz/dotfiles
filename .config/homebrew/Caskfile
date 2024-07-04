@@ -1,0 +1,104 @@
+# Cask applications
+# Please copy these lines to your Brewfile and use with `brew-file install`.
+
+# Main tap repository for homebrew/cask
+tap homebrew/cask
+
+# Apps installed by Cask in homebrew/cask
+cask adguard # /Applications/Adguard.app
+cask appcleaner # ~/Applications/AppCleaner.app
+cask betterdiscord-installer # ~/Applications/BetterDiscord.app
+cask betterdisplay # ~/Applications/BetterDisplay.app
+cask cheatsheet # ~/Applications/CheatSheet.app
+cask cirrus # ~/Applications/Cirrus.app
+cask customshortcuts # ~/Applications/CustomShortcuts.app
+cask discord # ~/Applications/Discord.app
+cask fig # /Applications/Fig.app
+cask figma # /Applications/Figma.app
+cask find-empty-folders # ~/Applications/Find Empty Folders.app
+cask firefox # ~/Applications/Firefox.app
+cask github # /Applications/GitHub Desktop.app
+cask grammarly-desktop # ~/Applications/Grammarly Desktop.app
+cask hyper # ~/Applications/Hyper.app
+cask iina # ~/Applications/IINA.app
+cask iterm2 # ~/Applications/iTerm.app
+cask lastfm # ~/Applications/Last.fm.app
+cask mimestream # ~/Applications/Mimestream.app
+cask no-ip-duc # ~/Applications/No-IP DUC.app
+cask raycast # ~/Applications/Raycast.app
+cask secretive # /Applications/Secretive.app
+cask setapp # /Applications/Setapp
+#cask setapp # ~/Applications/Setapp
+#cask setapp # ~/Applications/Setapp.app
+cask signal # /Applications/Signal.app
+cask spotify # ~/Applications/Spotify.app
+cask suspicious-package # ~/Applications/Suspicious Package.app
+cask telegram # ~/Applications/Telegram.app
+cask veracrypt # /Applications/VeraCrypt.app
+cask yt-music # ~/Applications/YT Music.app
+
+# Cask is found, but no applications are found (could be fonts, system settins, or installed in other directory.)
+cask macfuse
+cask quicklook-csv
+cask quicklook-json
+cask webpquicklook
+cask zoom
+
+# Apps installed directly instead of by Cask in homebrew/cask
+#cask cardhop # /Applications/Cardhop.app
+#cask silicon-info # /Applications/Silicon Info.app
+#cask zoomus # /Applications/zoom.us.app
+
+# Casks in homebrew/cask-fonts
+tap homebrew/cask-fonts
+
+# Cask is found, but no applications are found.
+# (fonts, system settins, or installed in other directory.)
+cask font-barlow
+cask font-barlow-condensed
+cask font-barlow-semi-condensed
+cask font-fira-code-nerd-font
+cask font-fira-sans
+cask font-fira-sans-extra-condensed
+cask font-new-york
+
+# Casks in homebrew/cask-versions
+tap homebrew/cask-versions
+
+# Apps installed from AppStore
+appstore 953286746 Darkroom (6.0.6) # /Applications/Darkroom.app
+appstore 975937182 Fantastical (3.6.6) # /Applications/Fantastical.app
+appstore 553245401 Friendly Streaming (5.9.21) # /Applications/Friendly Streaming.app
+appstore 899247664 TestFlight (3.2.1) # /Applications/TestFlight.app
+appstore 899972312 WordService (2.8.3) # /Applications/WordService.app
+
+# Apps installed but no casks are available
+# (System applications or directory installed.)
+# /Applications/PocketTube.app
+# /Applications/Widgy.app
+# /Applications/Stellar.app
+# /Applications/Shopping Assistant for Amazon.app
+# /Applications/CardPointers.app
+# /Applications/App in the Air.app
+# /Applications/PiPifier.app
+# /Applications/Velja.app
+# /Applications/Craft.app
+# /Applications/MusicHarbor.app
+# /Applications/Actions.app
+# /Applications/Grammarly for Safari.app
+# /Applications/Scenecuts.app
+# /Applications/Safari.app
+# /Applications/Shortery.app
+# /Applications/Shareful.app
+# /Applications/Refined GitHub.app
+# /Applications/Keepa - Price Tracker.app
+# /Applications/Folder Peek.app
+# /Applications/Pixelmator Pro.app
+# /Applications/AppStorify.app
+# /Applications/Rerouter.app
+# /Applications/Southwest.app
+# /Applications/Playlisty.app
+# /Applications/Twitter.app
+# /Applications/PayPal Honey.app
+# /Users/manny/Applications/textsoapAgent.app
+# /Applications/Utilities/Feedback Assistant.app

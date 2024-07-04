@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+shopt -s expand_aliases
+
+DOTFILES="$HOME/.config/dotfiles"
+DOTBAK="$HOME/.config/dotfiles.bak"
+
+if [ ! -d "$DOTFILES" ]; then
+  echo "Cloning dotfiles"
+  # EDIT THE FOLLOWING LINE BY REPLACING GITREPO WITH YOUR DOTFILES REPO
+  git clone --bare -q git@github.com:mahdz/dotfiles.git "$DOTFILES"
+fi
+
+alias dot="git --git-dir=\$DOTFILES --work-tree=\$HOME"
+#dot config --local status.showUntrackedFiles "no"
+
+dot remote add origin git@github.com:mahdz/dotfiles.git
+dot config --local branch.main.remote origin
+dot config --local branch.master.merge refs/heads/master
+
+# create a directory to backup existing dotfiles to
+
+dot checkout
+if [ $? = 0 ]; then
+  echo "Checked out dotfiles";
+  else
+    echo "Moving existing dotfiles to $DOTBAK";
+    mkdir -p "$DOTBAK"
+    dot checkout 2>&1 | egrep "\s+\." | awk {'print $1'} | xargs -I{} mv {} "$DOTBAK"/{}
+fi
+dot checkout
+
+dotNew () {
+  git clone --bare $1 "$DOTFILES"
+  dot config --local status.showUntrackedFiles no
+
+  echo "Please add and commit additional files"
+  echo "using 'dots add' and 'dots commit', then run"
+  echo "dots push -u origin dotBranch"
+}
+
+dotRestore () {
+  git clone -b --bare $1 "$DOTFILES"
+  dot config --local status.showUntrackedFiles no
+  dot checkout || echo -e 'Deal with conflicting files, then run (possibly with -f flag if you are OK with overwriting)\ndotfiles checkout'
+}

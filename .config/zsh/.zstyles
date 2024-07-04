@@ -1,0 +1,45 @@
+#!/bin/zsh
+#
+# .zstyles - zstyle settings for features/plugins that need them.
+#
+
+#
+# Antidote
+#
+
+# Keep all 3 for different test scenarios.
+: ${ANTIDOTE_HOME:=${XDG_CACHE_HOME:-~/.cache}/repos}
+#antidote_repo=$ANTIDOTE_HOME/mattmc3/antidote
+# antidote_repo=~/Projects/mattmc3/antidote
+ antidote_repo=${HOMEBREW_PREFIX:-/opt/homebrew}/opt/antidote/share/antidote
+
+zstyle ':antidote:home' path $ANTIDOTE_HOME
+zstyle ':antidote:repo' path $antidote_repo
+zstyle ':antidote:bundle' use-friendly-names 'yes'
+zstyle ':antidote:plugin:*' defer-options '-p'
+
+#
+# Kickstart
+#
+
+zstyle ':kickstart.zsh:feature:*' 'use-cache' yes
+
+# From compinit docs:
+# To avoid these tests and make all files found be used without asking, use the
+# option -u, and to make compinit silently ignore all insecure files and directories
+# use the option -i. This security check is skipped entirely when the -C option is
+# given, provided the dumpfile exists.
+zstyle ':kickstart.zsh:feature:completion' 'disable-compfix' yes
+
+#
+# Custom
+#
+
+noexpand=(
+  ls
+  grep
+  gpg
+  vi
+  z
+)
+zstyle ':myzsh:feature:abbreviations' noexpand $noexpand

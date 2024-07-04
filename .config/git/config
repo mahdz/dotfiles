@@ -1,0 +1,209 @@
+# Watch out for configs that land in ~/.gitconfig still
+
+[user]
+	# Moved values to $DOTFILES/local
+	# https://stackoverflow.com/questions/42553685/setting-git-username-and-email-without-using-gitconfig
+[core]
+	excludesfile = ~/.config/git/gitignore
+	editor = code
+	fileMode = false
+[interactive]
+	diffFilter = delta --color-only
+[add.interactive]
+	useBuiltin = false # required for git 2.37.0
+[delta]
+	navigate = true  # use n and N to move between diff sections
+	light = false    # set to true if you're in a terminal w/ a light background color (e.g. the default macOS terminal)
+	side-by-side = true
+[merge]
+	tool = opendiff
+	conflictstyle = diff3
+[diff]
+	colorMoved = zebra
+[push]
+	default = simple
+[credential]
+	helper = osxkeychain
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	required = true
+	process = git-lfs filter-process
+
+[alias]
+	# tests {{
+	foo = "!f() { echo \"foobar: $@\"; }; f"
+	fishcmd = "!fish -c 'gitex_foo $argv'"
+	gitex = !gitex help
+
+	#/bin/sh, which on macOS is still bash, not dash
+	shellname = "!ps h -p $$ -o args='' | cut -f1 -d' '"
+	# }}
+
+	# Show all my git aliases
+	alias = ! git config --get-regexp ^alias\\. | sort | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
+
+	# config/users
+	whoami = !gitex whoami
+
+	# branch {{
+	branch-cleanup = !gitex branch-cleanup
+	branch-main = !gitex branch-main
+	branch-name = !gitex branch-name
+	branch-cleanup = !gitex branch-cleanup
+	# }}
+
+	# clean {{
+	cleanup = clean -fd
+	pristine = !git reset --hard && git clean -dfx
+	# }}
+
+	# cloning {{
+	clone-branches = !gitex clone-branches
+
+	# Better cloning, with short repo names (ie: user/repo form)
+	# Note: moved to git-cloner script
+	# ex: git cloner --depth 1 mattmc3/dotfiles
+	# cloner = !gitex cloner
+	# }}
+
+	# checkout {{
+	# quick switch to common branches
+	co-master = !git checkout master && git pull origin
+	co-main = !git checkout main && git pull origin
+	co-develop = !git checkout develop && git pull origin
+	cob = checkout -b
+	# }}
+
+	# commit {{
+	wip = !git add -A && git commit -m "WIP"
+	checkpoint = !git add -A && git commit -m "Checkpoint $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+	# }}
+
+	# log {{
+	log-pretty = !gitex log-pretty
+	lg = !gitex lg
+	# }}
+
+	# push {{
+	# push a new branch to the remote
+	pushup = !gitex pushup
+	# }}
+
+	# status {{
+	stat = status -sb
+	# }}
+
+	# misc {{
+	revert = !git stash && git reset --hard
+	# git stage is aleardy a synonym for git add
+	unstage = reset --
+
+	# remove local branches that have already been merged into the current branch
+	dmerged = "!git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d"
+
+	# open repo in browser, usage: git browse [upstream]
+	browse = !gitex browse
+
+	# https://haacked.com/archive/2014/07/28/github-flow-aliases/
+	up = !git pull --rebase --prune $@ && git submodule update --init --recursive
+	undo = reset --soft HEAD~1
+
+	# wipe = !git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard
+	#bclean = "!f() { git branch --merged ${1:-main} | grep -v " ${1:-main}$" | xargs git branch -d; }; f"
+	#bdone = "!f() { git checkout ${1:-main} && git up && git bclean ${1:-main}; }; f"
+	supdate = submodule update --remote --merge
+
+	# Check if git is clean
+	is-clean = !gitex is-clean
+	is-dirty = !gitex is-dirty
+	sha = !gitex sha
+
+	# Default repodir
+	repodir = !gitex repodir
+	# }}
+
+[status]
+	submoduleSummary = true
+[magithub]
+	online = false
+[magithub "status"]
+	includeStatusHeader = false
+	includePullRequestsSection = false
+	includeIssuesSection = false
+[pull]
+	ff = only
+[submodule]
+	recurse = true
+[color]
+	ui = auto
+[color "status"]
+	branch = 14 normal
+	added = 10 normal
+	updated = 10 normal
+	localbranch = 14 normal
+	changed = 11 normal
+	header = normal
+	remotebranch = 13 normal
+	nobranch = 1 normal italic
+	unmerged = 9 normal
+	untracked = normal dim
+[color "branch"]
+	plain = 14 normal dim
+	remote = 13 normal dim
+	current = 14 normal
+	local = 14 normal dim
+	upstream = 13 normal
+[color "remote"]
+	hint = normal dim
+	success = 2 normal
+	error = 1 normal
+	warning = 3 normal
+[color "interactive"]
+	header = 8 normal bold
+	prompt = 15 4
+	help = 8 normal
+	error = 1 normal italic
+[color "diff"]
+	commit = 3 normal
+	newMoved = 14 normal
+	oldMovedAlternativeDimmed = 4 normal dim
+	frag = 8 normal ul
+	oldMovedAlternative = 12 normal dim
+	contextBold = normal bold
+	newBold = 10 normal bold
+	context = normal
+	oldMoved = 14 normal dim
+	oldBold = 9 normal dim bold
+	newMovedDimmed = 6 normal
+	func = 8 normal ul
+	meta = 8 normal
+	newDimmed = 2 normal
+	newMovedAlternative = 12 normal
+	new = 10 normal
+	newMovedAlternativeDimmed = 4 normal
+	whitespace = normal 9
+	oldMovedDimmed = 6 normal dim
+	oldDimmed = 1 normal dim
+	old = 9 normal dim
+[color "decorate"]
+	branch = 14 normal
+	tag = 3 normal
+	remotebranch = 13 normal
+	stash = 8 normal
+	grafted = 1 normal italic
+	HEAD = 14 normal dim
+[init]
+	defaultBranch = main
+
+# include local customizations last
+[include]
+	path = ~/.local/config/git/config.local
+
+[gitex]
+	repoPath = ~/Projects
+	gitDomain = github.com
+	gitProtocol = git
+	gitUser = mahdz
+	cloneAddFlags = --recurse-submodules
+	debug = True
