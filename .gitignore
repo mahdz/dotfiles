@@ -31,7 +31,7 @@
 !docs/**
 
 # editorconfig
-!~/.editorconfig
+!.editorconfig
 
 # fish
 #!.config/fish/

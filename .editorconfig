@@ -1,0 +1,45 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = tab
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[bin/*]
+indent_style = space
+indent_size = 2
+
+[*.json]
+indent_style = space
+indent_size = 2
+
+[.{zshrc,zprofile,zshenv,zlogin,zlogout}]
+indent_style = space
+indent_size = 2
+
+[**/zsh/functions/*]
+indent_style = space
+indent_size = 2
+
+[.{bashrc,bash_profile}]
+indent_style = space
+indent_size = 2
+
+[*.{bash,zsh,sh}]
+indent_style = space
+indent_size = 2
+
+[*.{md,markdown}]
+trim_trailing_whitespace = false
+
+[*.fish]
+indent_style = space
+
+[*.{py,xsh}]
+indent_style = space
+
+[*.vim]
+indent_style = space

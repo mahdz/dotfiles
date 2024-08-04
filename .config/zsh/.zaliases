@@ -51,7 +51,7 @@ alias fd='find . -type d -name'
 alias ff='find . -type f -name'
 
 # homebrew
-alias brewup="brew update && brew upgrade && brew cu --no-update --interactive --cleanup && brew doctor"
+alias brewup="brew update && brew upgrade && brew cu --no-brew-update --all --interactive --cleanup && brew doctor"
 alias brewinfo="brew leaves | xargs brew desc --eval-all"
 alias brewg="brew graph --installed --highlight-leaves | fdp -T png -o graph.png && open graph.png"
 alias bbd='brew bundle dump --force --no-upgrade --all --file=${XDG_CONFIG_HOME:-$HOME/.config}/homebrew/init.brewfile'
@@ -88,7 +88,6 @@ alias please=sudo
 alias zshrc='${EDITOR:-code} "${ZDOTDIR:-$HOME}"/.zshrc'
 alias update='sudo softwareupdate -i -a'
 alias updateall='sudo softwareupdate -i -a; brewup'
-alias restart='sudo fdesetup authrestart'
 
 alias dnsflush='sudo killall -HUP mDNSResponder'
 alias ip='curl ifconfig.co && curl ifconfig.co/country && curl ifconfig.co/country-iso && curl ifconfig.co/city && curl ifconfig.co/asn'
@@ -123,7 +122,7 @@ alias dote='cd "$DOTFILES" && ${VISUAL:-${EDITOR:-code}} .'
 #alias fdot='cd ${XDG_CONFIG_HOME:-~/.config}/fish'
 #alias fconf=fdot
 alias zdot='cd $ZDOTDIR'
-alias dotty='GIT_WORK_TREE=~ GIT_DIR=$DOTFILES'
+alias dotty='GIT_WORK_TREE=~ GIT_DIR=~/.config/dotfiles'
 alias dot='/usr/bin/git --git-dir=$DOTFILES --work-tree=$HOME'
 
 # java
@@ -134,3 +133,13 @@ alias dot='/usr/bin/git --git-dir=$DOTFILES --work-tree=$HOME'
 #alias todos="$VISUAL $HOME/Desktop/todo.txt"
 
 # vim: ft=zsh sw=2 ts=2 et
+
+function reboot {
+  if [[ "$(fdesetup isactive)" = "true" ]]; then
+    # FileVault authenticated restart
+    sudo fdesetup authrestart -verbose
+  else
+    # Normal restart
+    sudo shutdown -r now "Rebooting now"
+  fi
+}
