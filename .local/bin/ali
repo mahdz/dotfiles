@@ -1,0 +1,233 @@
+#!/bin/bash
+##############################################################################
+## ali - List aliases and their origin
+## Prerequisites: ~/local/bin is including in your $PATH
+##
+## List all aliases and their source files in a nicely formatted table.
+##############################################################################
+
+# Define colors for improved readability
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'  # No color
+
+# Maximum length for commands before truncation
+MAX_CMD_LENGTH=50
+
+# Column width configuration
+COL1_WIDTH=20  # Alias column width
+COL2_WIDTH=60  # Command column width
+COL3_WIDTH=50  # Location column width
+
+# Flag to track if any command was truncated
+TRUNCATED_FLAG=0
+
+# Debug mode flag
+DEBUG_MODE=0
+
+# Debug function
+debug() {
+    if [ $DEBUG_MODE -eq 1 ]; then
+        echo -e "${YELLOW}DEBUG: $1${NC}" >&2
+    fi
+}
+
+# Function to safely expand variables in a string
+safe_expand() {
+    eval echo "$1" 2>/dev/null || echo "$1"
+}
+
+# Function to recursively find sourced files
+find_sourced_files() {
+    local file=$1
+    local depth=$2
+    local max_depth=10  # Prevent infinite recursion
+    
+    if [[ $depth -gt $max_depth ]]; then
+        return
+    fi
+
+    if [[ -f $file ]]; then
+        echo "$file"
+        debug "Checking file for source commands: $file"
+        while IFS= read -r line; do
+            # Look for source, . or .. commands
+            if [[ $line =~ ^[[:space:]]*(source|\.|\.\.)[[:space:]]+([^ ]+) ]]; then
+                local sourced_file="${BASH_REMATCH[2]}"
+                sourced_file=$(safe_expand "$sourced_file")
+                debug "Found sourced file: $sourced_file"
+                # Handle relative paths
+                if [[ ! "$sourced_file" = /* ]]; then
+                    sourced_file="$(dirname "$file")/$sourced_file"
+                fi
+                # Check if the file exists, even without extension
+                if [[ -f "$sourced_file" ]]; then
+                    find_sourced_files "$sourced_file" $((depth + 1))
+                else
+                    # Try adding common extensions if the file doesn't exist
+                    for ext in "" ".sh" ".bash" ".zsh"; do
+                        if [[ -f "${sourced_file}${ext}" ]]; then
+                            find_sourced_files "${sourced_file}${ext}" $((depth + 1))
+                            break
+                        fi
+                    done
+                fi
+            # Look for common patterns of file inclusion in for loops
+            elif [[ $line =~ for[[:space:]]+[[:alnum:]_]+[[:space:]]+in[[:space:]]+(.*) ]]; then
+                local file_list="${BASH_REMATCH[1]}"
+                debug "Found potential file list in loop: $file_list"
+                for word in $file_list; do
+                    local potential_file=$(safe_expand "$word")
+                    if [[ -f "$potential_file" ]]; then
+                        debug "Found potential file in loop: $potential_file"
+                        find_sourced_files "$potential_file" $((depth + 1))
+                    fi
+                done
+            fi
+        done < "$file"
+    fi
+}
+
+# Function to find all possible shell configuration files
+find_shell_config_files() {
+    local shell_name=$(basename "$SHELL")
+    local initial_files=(
+        "$HOME/.config/${shell_name}/.${shell_name}rc"
+        "$HOME/.config/${shell_name}/.profile"
+        "$HOME/.config/${shell_name}/.bashrc"
+        "$HOME/.config/${shell_name}/.zshrc"
+        "$HOME/.config/${shell_name}/.bash_profile"
+        "$HOME/.config/${shell_name}/.zprofile"
+        "$HOME/.config/${shell_name}/.bash_aliases"
+        "$HOME/.config/${shell_name}/.zsh_aliases"
+        "$HOME/.config/${shell_name}/.zaliases"
+        "$HOME/.config/${shell_name}/.aliases"  # Common name for alias files without extension
+        "$HOME/.config/${shell_name}/.functions"  # Common name for function files without extension
+        "/etc/${shell_name}rc"
+        "/etc/profile"
+    )
+    
+    local all_files=()
+    for file in "${initial_files[@]}"; do
+        if [[ -f "$file" ]]; then
+            all_files+=("$file")
+            all_files+=($(find_sourced_files "$file" 0))
+        fi
+    done
+
+    printf '%s\n' "${all_files[@]}" | sort -u
+}
+
+# Function to replace home directory with ~
+replace_home_with_tilde() {
+    local home_path=$(eval echo ~)
+    echo "${1//$home_path/\~}"
+}
+
+# Function to find the source of an alias
+find_alias_source() {
+    local alias_name=$1
+    local config_files=($(find_shell_config_files))
+
+    debug "Searching for alias: $alias_name"
+    debug "Current shell: $(basename "$SHELL")"
+
+    for file in "${config_files[@]}"; do
+        debug "Checking file: $file"
+        if grep -qP "^\s*(alias\s+${alias_name}=|${alias_name}\(\)\s*\{)" "$file" 2>/dev/null; then
+            debug "Found alias in file: $file"
+            echo "$file"
+            return
+        fi
+    done
+
+    debug "Alias not found in any config file"
+    echo "Runtime defined or unknown source"
+}
+
+# Function to extract aliases and their location from active aliases
+extract_active_aliases() {
+    local shell_name=$(basename "$SHELL")
+    
+    debug "Extracting aliases for shell: $shell_name"
+
+    # Source all possible config files
+    local config_files=($(find_shell_config_files))
+    for file in "${config_files[@]}"; do
+        debug "Sourcing file: $file"
+        source "$file" 2>/dev/null
+    done
+
+    # Use a temporary file to store alias output
+    temp_file=$(mktemp)
+    alias > "$temp_file"
+
+    debug "Aliases stored in temporary file: $temp_file"
+
+    while IFS= read -r line; do
+        if [[ "$shell_name" == "zsh" ]]; then
+            alias_name=$(echo "$line" | awk -F'=' '{print $1}' | awk '{print $2}')
+            alias_command=$(echo "$line" | awk -F'=' '{$1=""; print substr($0,2)}' | sed "s/^'\(.*\)'$/\1/")
+        else
+            alias_name=$(echo "$line" | cut -d '=' -f 1 | awk '{print $2}')
+            alias_command=$(echo "$line" | cut -d '=' -f 2- | sed "s/^'\(.*\)'$/\1/")
+        fi
+        
+        debug "Processing alias: $alias_name"
+
+        # Check if the command needs to be truncated
+        if [ ${#alias_command} -gt $MAX_CMD_LENGTH ]; then
+            alias_command="${alias_command:0:$MAX_CMD_LENGTH}...*"
+            TRUNCATED_FLAG=1  # Set the flag indicating truncation occurred
+        fi
+
+        # Try to determine the source of the alias
+        alias_location=$(find_alias_source "$alias_name")
+        
+        # Replace home directory with ~ in alias_command and alias_location
+        alias_command=$(replace_home_with_tilde "$alias_command")
+        alias_location=$(replace_home_with_tilde "$alias_location")
+
+        # Print with aligned columns and colors
+        printf "${GREEN}%-${COL1_WIDTH}s${NC} ${YELLOW}%-${COL2_WIDTH}s${NC} ${RED}%-${COL3_WIDTH}s${NC}\n" \
+            "$alias_name" "$alias_command" "$alias_location"
+    done < "$temp_file"
+
+    # Clean up the temporary file
+    rm "$temp_file"
+}
+
+# Main function to process and print active aliases with locations
+process_aliases() {
+    # Print header with aligned columns
+    printf "${GREEN}%-${COL1_WIDTH}s${NC} ${YELLOW}%-${COL2_WIDTH}s${NC} ${RED}%-${COL3_WIDTH}s${NC}\n" \
+        "Alias" "Command" "Location"
+    printf "%-${COL1_WIDTH}s %-${COL2_WIDTH}s %-${COL3_WIDTH}s\n" \
+        "-----" "-------" "--------"
+
+    # Extract active aliases
+    extract_active_aliases
+
+    # If any command was truncated, print a message explaining the "*"
+    if [ $TRUNCATED_FLAG -eq 1 ]; then
+        echo -e "\n${YELLOW}* indicates that the command has been truncated. Please refer to the source file for the full command.${NC}"
+    fi
+}
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -d|--debug)
+            DEBUG_MODE=1
+            shift
+            ;;
+        *)
+            echo "Unknown option: $1"
+            exit 1
+            ;;
+    esac
+done
+
+# Call the main function
+process_aliases

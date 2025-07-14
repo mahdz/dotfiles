@@ -1,0 +1,275 @@
+w#############################################################
+# ~/.Brewfile - Software Installs for MacOS                 #
+#                                                           #
+# List of packages to be installed / updated via Homebrew "  #
+# Apps are sorted by category, and arranged alphabetically  #
+# Be sure to delete / comment out anything you do not need  #
+# Usage, run: $ brew "bundle --global --file $HOME/.Brewfile #
+# Source GH repository: https://github.com/lissy93/Brewfile #
+# See brew "docs for more info: https://docs.brew.sh/Manpage #
+#                                                           #
+# License: MIT © Alicia Sykes 2022 <https://aliciasykes.com>#
+#############################################################
+
+# Options
+cask_args appdir: "~/Applications", require_sha: true
+
+# Taps
+tap "homebrew/bundle"
+tap "homebrew/services"
+tap "buo/cask-upgrade"
+tap "martido/graph"
+tap "rcmdnk/file"
+
+tap "alienator88/cask"
+tap "doron-cohen/tap"
+tap "eth-p/software"
+
+tap "homebrew/command-not-found"
+tap "isacikgoz/taps"
+tap "localsend/localsend"
+tap "mrkai77/cask"
+tap "th-ch/youtube-music"
+
+brew "antidot"
+#brew "antidote"
+brew "blueutil"
+brew "brightness"
+brew "coreutils"
+#brew "dovi_tool"
+brew "fd"
+brew "ffmpeg"
+brew "fontconfig"
+brew "gallery-dl"
+brew "gh"
+brew "mas"
+brew "spotifyd"
+brew "tesseract"
+brew "topgrade"
+brew "xdg-ninja"
+brew "zsh-autosuggestions"
+brew "zsh-completions"
+brew "zsh-syntax-highlighting"
+brew "zsh-you-should-use"
+#brew "zsh"
+
+#############################################################
+# Command Line                                              #
+#############################################################
+
+# CLI Essentials
+brew "git"          # Version controll
+brew "tmux"         # Term multiplexer
+
+# CLI Basics
+brew "aria2"        # Resuming download util (better wget)
+brew "bat"          # Output highlighting (better cat)
+brew "broot"        # Interactive directory navigation
+brew "brew-file"
+brew "diff-so-fancy"# Readable file compares (better diff)
+brew "duf"          # Get info on mounted disks (better df)
+brew "entr"         # Run command whenever file changes
+brew "eza"          # Listing files with info (better ls)
+brew "exiftool"     # Read, write and modify exif data
+brew "fzf"          # Fuzzy file finder and filtering
+brew "jdupes"       # Duplicate file finder
+brew "most"         # Multi-window scroll pager (better less)
+brew "procs"        # Advanced process viewer (better ps)
+brew "ripgrep"      # Searching within files (better grep)
+#brew "rsync"        # Fast incremental file transfer
+brew "sd"           # RegEx find and replace (better sed)
+brew "thefuck"      # Auto-correct miss-typed commands
+brew "tealdeer"     # Community-maintained docs (better man)
+brew "tree"         # Directory listings as tree structure
+brew "trash-cli"    # Record and restore removed files
+brew "watch"        # Run commands periorically
+brew "xsel"         # Copy paste access to the X clipboard
+brew "zoxide"       # Auto-learning navigation (better cd)
+
+# CLI Productivity Apps
+#brew "aspell"       # Spell check
+#brew "pass"         # Password store
+#brew "rclone"       # Manage cloud storage
+
+
+#############################################################
+# Software Development                                      #
+#############################################################
+
+# Development Apps
+cask "iterm2", args: { appdir: "/Applications" }         # Better terminal emulator
+#cask "visual-studio-code" # Code editor
+cask "github"         #
+
+# Development Langs, Compilers, Package Managers and SDKs
+brew "python"         # Python interpreter
+
+# Development Utils
+brew "git-extras"     # Extra git commands for common tasks
+
+# Network and Security Testing
+#brew "bettercap"      # Network, scanning and monitoring
+#brew "nmap"           # Port scanning
+#cask "wireshark"      # Network analyzer + packet capture
+
+# Security Utilities and Data Encryption
+# brew "bcrypt"         # Encryption utility, using blowfish
+# brew "borgbackup"     # Encrypted, deduplicated backups
+# brew "dnscrypt-proxy" # Proxy for using encrypted DNS
+# brew "git-crypt"      # Transparent encryption for git repos
+# brew "lynis"          # Scan system for common security issues
+# brew "openssl"        # Cryptography and SSL/TLS Toolkit
+# brew "rkhunter"       # Search / detect potential root kits
+#cask "silnite", args: { appdir: "/Applications" }
+cask "suspicious-package", args: { appdir: "/Applications" }
+
+
+
+#############################################################
+# Desktop Applications                                      #
+#############################################################
+
+# Creativity
+cask "figma@beta"
+
+
+# Media
+cask "spotify", args: { require_sha: false } # Propietary music streaming
+cask "vlc"          # Media player
+brew "yt-dlp"  		 # YouTube video downloader
+
+cask "pearcleaner", args: { appdir: "/Applications" }
+
+
+#############################################################
+# MacOS-Specific Stuff                                      #
+#############################################################
+
+# # Fonts
+cask "font-fira-code"
+cask "font-fira-code-nerd-font"
+cask "font-hack"
+cask "font-inconsolata"
+cask "font-meslo-lg-nerd-font"
+
+# # Mac OS Quick-Look Plugins
+cask "qlcolorcode"    # QL for code with highlighting
+cask "qlimagesize"    # QL for size info for images
+cask "qlmarkdown"     # QL for markdown files
+cask "qlprettypatch"  # QL for patch / diff files
+cask "qlstephen"      # QL for dev text files
+cask "qlvideo"        # QL for video formats
+cask "quicklook-csv"  # QL for tables in CSV format
+cask "quicklook-json" # QL for JSON, with trees
+cask "quicklookapk",   args: { require_sha: false } # QL for Android APKs
+cask "webpquicklook",  args: { require_sha: false } # QL for WebP image files
+
+
+# # Mac OS Mods and Imrovments
+#cask "alt-tab"        # Much better alt-tab window switcher
+#cask "anybar"         # Custom programmatic menubar icons
+#brew "iproute2mac"    # MacOS port of netstat and ifconfig
+brew "lporg"          # Backup and restore launchpad layout
+#brew "m-cli"          # All in one MacOS management CLI app
+cask "openinterminal" # Finder button, opens directory in terminal
+cask "raycast" # Spotlight alternative
+
+# Mac OS Utility Apps
+cask "applite", args: { appdir: "/Applications" }
+#cask "coteditor"      # Just a simple plain-text editor
+cask "little-snitch"  # Firewall app viewing / blocking traffic
+cask "keka"           # File archiver and extractor
+cask "kekaexternalhelper"
+#cask "find-empty-folders"
+
+
+
+
+#cask "firefox"
+#cask "karabiner-elements"
+#cask "loop"
+#cask "mediamate"
+#cask "mkvtoolnix"
+#cask "appcleaner",  args: { appdir: "/Applications" }
+cask "betterdisplay", args: { appdir: "/Applications" }
+cask "cirrus"
+#cask "discord"
+cask "adguard",  args: { appdir: "/Applications" }
+cask "etrecheckpro", args: { appdir: "/Applications" }
+#cask "find-empty-folders"
+#cask "iina"
+#cask "jordanbaird-ice"
+cask "jump-desktop-connect", args: { appdir: "/Applications" }
+cask "localsend"
+cask "logitune"
+#cask "megasync"
+#cask "netdownloadhelpercoapp"
+cask "onyx", args: { appdir: "/Applications" }
+cask "rectangle"
+cask "setapp"
+#cask "signal"
+cask "spotify"
+cask "symboliclinker"
+cask "syntax-highlight"
+cask "telegram-desktop@beta"
+cask "telegram"
+cask "vlc"
+cask "youtube-music",   args: { require_sha: false }
+cask "yt-music"
+cask "zoom"
+
+
+mas "Actions", id: 1586435171
+mas "Camera Preview", id: 1632827132
+mas "CardPointers", id: 1472875808
+mas "Command X", id: 6448461551
+mas "Copilot", id: 1447330651
+#mas "CotEditor", id: 1024640650
+mas "Dropover", id: 1355679052
+#mas "Folder Peek", id: 1615988943
+#mas "FreeScaler", id: 6443796196
+#mas "Friendly Streaming", id: 553245401
+#mas "Hyperduck", id: 6444667067
+mas "Keepa - Price Tracker", id: 1533805339
+mas "MusicHarbor", id: 1440405750
+mas "NordVPN", id: 905953485
+mas "PayPal Honey", id: 1472777122
+mas "Playlisty for Apple Music", id: 1459275972
+#mas "Refined GitHub", id: 1519867270
+#mas "Scratchpad", id: 6504040051
+mas "Shareful", id: 1522267256
+#mas "Shazam", id: 897118787
+mas "Shortery", id: 1594183810
+#mas "Velja", id: 1607635845
+mas "WordService", id: 899972312
+
+# Apps installed but no casks are available
+# (System applications or directory installed.)
+#PocketTube.app
+#Widgy.app
+#Stellar.app
+#Shopping Assistant for Amazon.app
+#CardPointers.app
+#App in the Air.app
+#PiPifier.app
+#Velja.app
+#Craft.app
+#MusicHarbor.app
+#Actions.app
+#Grammarly for Safari.app
+#Scenecuts.app
+#Safari.app
+#Shortery.app
+#Shareful.app
+#Refined GitHub.app
+#Keepa - Price Tracker.app
+#Folder Peek.app
+#Pixelmator Pro.app
+#AppStorify.app
+#Rerouter.app
+#Southwest.app
+#Playlisty.app
+#Twitter.app
+#PayPal Honey.app
+# /Users/manny/Applications/textsoapAgent.app
+#Utilities/Feedback Assistant.app

@@ -1,0 +1,37 @@
+#!/usr/bin/env zsh
+
+# Function: rfv
+#
+# Description:
+#    A fuzzy finder using fzf and ripgrep (rg).
+#
+
+# Check for required commands
+for cmd in rg fzf nvim bat; do
+  if ! command_exists "$cmd"; then
+    echo "Error: $cmd is not installed." >&2
+    exit 1
+  fi
+done
+
+rfv() (
+  RELOAD='reload:rg --column --color=always --smart-case {q} || :'
+  OPENER='if [[ $FZF_SELECT_COUNT -eq 0 ]]; then
+            nvim {1} +{2}     # No selection. Open the current line in Vim.
+          else
+            nvim +cw -q {+f}  # Build quickfix list for the selected items.
+          fi'
+  fzf < /dev/null \
+      --disabled --ansi --multi \
+      --bind "start:$RELOAD" --bind "change:$RELOAD" \
+      --bind "enter:become:$OPENER" \
+      --bind "ctrl-o:execute:$OPENER" \
+      --bind 'alt-a:select-all,alt-d:deselect-all,ctrl-/:toggle-preview' \
+      --delimiter : \
+      --preview 'bat --style=full --color=always --highlight-line {2} {1}' \
+      --preview-window '~4,+{2}+4/3,<80(up)' \
+      --query "$*"
+)
+
+# Call the rfv function with passed arguments
+rfv "$@"

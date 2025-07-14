@@ -1,0 +1,191 @@
+#------------------------------------------------------------------------------
+# Git Configuration and Core Settings
+#------------------------------------------------------------------------------
+
+# Ignore everything by default
+
+*
+
+# Add back items as needed.
+
+#------------------------------------------------------------------------------
+# Core Configuration Files
+#------------------------------------------------------------------------------
+
+!.config/
+!.config/*
+
+!.editorconfig
+
+!.gitignore
+!.github/
+!.github/**
+!.config/git/
+!.config/git/*
+
+#------------------------------------------------------------------------------
+# CLI Tools and Utilities
+#------------------------------------------------------------------------------
+# Core Tools
+
+!.config/vscode/
+!.config/vscode/**
+# Exclude VSCode profiles
+.config/vscode/profiles/**
+
+#!.roo/
+#!.roo/**
+#!.roomodes
+#!.clinerules
+
+!.config/readline/
+!.config/readline/**
+
+!.config/shell/
+!.config/shell/**
+
+!.config/shellcheck/
+!.config/shellcheck/**
+
+!.config/tmux/
+!.config/tmux/**
+
+!.config/homebrew/
+!.config/homebrew/**
+
+!.config/npm/
+!.config/npm/**
+
+!.config/bat/
+!.config/bat/**
+
+!.config/eza/
+!.config/eza/**
+
+!.config/glow/
+!.config/glow/**
+
+!.config/gomi/
+!.config/gomi/**
+
+!.config/karabiner/
+!.config/karabiner/*.json
+
+!.config/keyboardcowboy/
+!.config/keyboardcowboy/*.json
+
+!.config/mise/
+!.config/mise/**
+
+!.config/superfile/
+!.config/superfile/*.toml
+
+!.config/topgrade/
+!.config/topgrade/**
+
+!.config/wget/
+!.config/wget/**
+
+!.config/yt-dlp/
+!.config/yt-dlp/**
+
+# Exclude specstory entirely
+.specstory/**
+
+#------------------------------------------------------------------------------
+# Shell and Environment
+#------------------------------------------------------------------------------
+# Bash
+!.bash_profile
+!.bashrc
+!.config/bash/
+!.config/bash/**
+.config/bash/*.log
+
+# ZSH
+!.config/zsh/
+!.config/zsh/**
+.config/zsh/.*
+.config/zsh/.*/
+!.zaliases
+!.zlogin
+!.zlogout
+!.zprofile
+!.zshenv
+!.zshrc
+!.zshrc.*
+!.zstyles
+!.zsh_plugins.txt
+.config/zsh/.zcompdump*
+.config/zsh/ohmyzsh/
+.config/zsh/.oh-my-zsh/
+
+#------------------------------------------------------------------------------
+# Project Directories
+#------------------------------------------------------------------------------
+!Developer/
+#!Developer/dotfiles/
+#!Developer/dotfiles/**
+#/Developer/dotfiles/.*/
+
+#------------------------------------------------------------------------------
+# Re-ignore Local Files
+#------------------------------------------------------------------------------
+*.local
+local.*
+*.local/
+*.local.*
+
+#------------------------------------------------------------------------------
+# Scripts and Local Binaries
+#------------------------------------------------------------------------------
+!.local/
+!.local/bin/
+!.local/bin/**
+.local/bin/wip
+
+# Exclude UV-managed tool symlinks
+# UV creates symlinks pointing to ~/.local/share/uv/tools/
+.local/bin/*
+!.local/bin/*.sh
+!.local/bin/*.py
+!.local/bin/ai-*
+!.local/bin/auto_*
+!.local/bin/backup
+!.local/bin/brew-*
+!.local/bin/capsmap
+!.local/bin/cht.sh
+!.local/bin/clean*
+!.local/bin/clop
+!.local/bin/compress*
+!.local/bin/confirm
+!.local/bin/disk-*
+!.local/bin/dotfiles
+!.local/bin/e
+!.local/bin/entity_*
+!.local/bin/fix-*
+!.local/bin/git-*
+!.local/bin/interactive_*
+!.local/bin/list-*
+!.local/bin/memory_*
+!.local/bin/moveApps*
+!.local/bin/new_*
+!.local/bin/organize*
+!.local/bin/pip*
+!.local/bin/pkgmgr
+!.local/bin/repo-*
+!.local/bin/reset-*
+!.local/bin/shell-*
+!.local/bin/upup
+!.local/bin/whichos
+
+# Exclude local scripts
+.local/scripts/**
+
+!makefile
+!LICENSE
+!README.me
+
+# final
+*_history*
+.DS_Store

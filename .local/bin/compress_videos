@@ -1,0 +1,347 @@
+#!/usr/bin/env bash
+
+# Enable strict mode
+set -e
+set -o pipefail
+IFS=$'\n\t'
+
+# Script name for usage display
+_SELF=$(basename "$0")
+
+# Default values
+DEFAULT_CRF=22
+DEFAULT_PRESET="veryfast"
+DEFAULT_EXT="mov"
+
+# Show help/usage
+usage() {
+  cat << EOF
+Usage: $_SELF [options]
+
+Options:
+  -c VALUE    CRF value for compression quality (default: $DEFAULT_CRF)
+  -p PRESET   ffmpeg preset (default: $DEFAULT_PRESET)
+  -e EXT      Output file extension (default: $DEFAULT_EXT)
+  -i DIR      Input directory containing videos to compress
+  -l FILE     Log file location (optional)
+  -h          Display this help message
+
+Example:
+  $_SELF -c 28 -p medium -e mp4 -i ~/Videos/raw
+EOF
+}
+
+# Main function to parse arguments and call compression
+main() {
+  # Set defaults
+  crf_value=$DEFAULT_CRF
+  preset=$DEFAULT_PRESET
+  output_ext=$DEFAULT_EXT
+  input_dir=""
+  log_file=""
+
+  # Parse command-line options
+  while getopts ":c:p:e:i:l:h-:" opt; do
+    case $opt in
+      c) crf_value=$OPTARG ;;
+      p) preset=$OPTARG ;;
+      e) output_ext=$OPTARG ;;
+      i) input_dir=$OPTARG ;;
+      l) log_file=$OPTARG ;;
+      h) usage; exit 0 ;;
+      \?) echo "Invalid option: -$OPTARG" >&2; usage; exit 1 ;;
+      :) echo "Option -$OPTARG requires an argument." >&2; usage; exit 1 ;;
+    esac
+  done
+
+  # Verify required parameters
+  if [ -z "$input_dir" ]; then
+    echo "Error: Input directory (-i) is required." >&2
+    usage
+    exit 1
+  fi
+
+  # Start compression
+  compress_videos "$input_dir" "$output_ext" "$crf_value" "$preset" "$log_file"
+}
+
+# Function to compress videos in a directory
+compress_videos() {
+  input_dir="$1"
+  output_ext="$2"
+  crf_value="$3"
+  preset="$4"
+  log_file="$5"
+  
+  # Setup output directory
+  output_dir="${input_dir}/optimized"
+  
+  # Create log file if not specified
+  if [ -z "$log_file" ]; then
+    log_file="${output_dir}/compression.log"
+  fi
+  
+  # Create output directory if it doesn't exist
+  if [ ! -d "$output_dir" ]; then
+    mkdir -p "$output_dir"
+    echo "Created output directory: $output_dir"
+  fi
+  
+  # Process each MOV file in the input directory
+  count=0
+  total=$(find "$input_dir" -maxdepth 1 -name "*.MOV" | wc -l)
+  
+  for input_file in "$input_dir"/*.MOV; do
+    # Skip if not a regular file (handles case when no matches found)
+    [[ -f "$input_file" ]] || continue
+    
+    # Get filename details
+    filename=$(basename "$input_file")
+    filename_no_ext="${filename%.*}"
+    output_file="${output_dir}/${filename_no_ext}.${output_ext}"
+    
+    # Get original file size
+    orig_size=$(du -h "$input_file" | awk '{print $1}')
+    
+    # Increment counter
+    ((count++))
+    
+    echo " "
+    echo "-------------------"
+    echo "[$count/$total] Compressing $input_file to $output_file..."
+    echo "Original size: $orig_size"
+    echo "-------------------"
+    echo " "
+    
+    # Run ffmpeg with error handling
+    if ffmpeg -hide_banner -loglevel warning -stats \
+          -i "$input_file" \
+          -map_metadata 0 \
+          -movflags use_metadata_tags \
+          -movflags +faststart \
+          -c:v libx265 \
+          -tag:v hvc1 \
+          -c:a copy \
+          -crf "$crf_value" \
+          -preset "$preset" \
+          "$output_file"; then
+          
+      # Get compressed file size
+      new_size=$(du -h "$output_file" | awk '{print $1}')
+      
+      # Calculate percentage saved
+      orig_bytes=$(du -k "$input_file" | awk '{print $1}')
+      new_bytes=$(du -k "$output_file" | awk '{print $1}')
+      pct_saved=$((100 - (new_bytes * 100 / orig_bytes)))
+      
+      echo " "
+      echo "Compressed: $new_size (saved approximately ${pct_saved}%)"
+      
+      # Log successful compression
+      echo "$(date): Compressed $filename, original: $orig_size, new: $new_size, saved: ${pct_saved}%" >> "$log_file"
+    else
+      echo "FFmpeg encountered an error with $input_file"
+      echo "$(date): ERROR compressing $filename" >> "$log_file"
+    fi
+  done
+  
+  echo "Compression completed. Results saved in $output_dir"
+  echo "Log file: $log_file"
+}
+
+# Run main function with all args
+main "$@"
+
+#!/bin/bash
+
+set -x
+# exit immediately on err; useful for CI/CD.
+set -e
+# exit if referencing undefined var.
+# set -u
+# return exit code of failed command in pipe, not last.
+set -o pipefail
+# filenames might have spaces
+IFS=$'\n\t'
+
+# This script's basename.
+_SELF="$(basename "${0}")"
+
+# Script to compress video files using FFmpeg
+# This script takes all video files from the input directory and compresses them into the output directory.
+# It preserves HDR, copies metadata, and ensures compatibility with Apple devices, including QuickTime.
+
+# Function to display help message
+show_help() {
+  echo "Usage: $0 [-h|--help] [-c crf] [-p preset] [-e ext]"
+  echo
+  echo "Options:"
+  echo "  -h, --help          Display this help message"
+  echo "  -c crf              Set the Constant Rate Factor (CRF) for FFmpeg (default: 23)"
+  echo "  -p preset           Set the FFmpeg preset (default: veryfast)"
+  echo "  -e ext              Set the output file extension (default: mp4)"
+  echo "  -i input_dir        Specify the input directory (default: $HOME/Movies/convert/ffmpeg)"
+  echo "  -l gps              Set the GPS location tag"
+}
+
+# Function to compress videos using FFmpeg
+compress_videos() {
+  # Set variables
+  input_dir="${1:-$HOME/Movies/convert/ffmpeg}"
+  output_dir="$input_dir/optimized"
+  output_ext="$2"                        # Output file extension (passed as a parameter)
+  crf_value="$3"                         # FFmpeg CRF value (passed as a parameter)
+  preset="$4"                            # FFmpeg preset value (passed as a parameter)
+  tag_location="$5"                      # GPS coordinates (passed as a parameter)
+  log_file="$output_dir/compression.log" # Log file for the operation
+
+  # Create the output directory if it doesn't exist
+  [ ! -d "$output_dir" ] && mkdir -p "$output_dir"
+
+  # Loop through all video files in the input directory
+  for input_file in "$input_dir"/*.MOV; do
+    # Check if the file is a regular file (to avoid directories)
+    if [[ -f "$input_file" ]]; then
+      # Extract the filename without extension
+      filename=$(basename "$input_file")
+      filename_no_ext="${filename%.*}"
+
+      # Construct the output file path
+      output_file="$output_dir/${filename_no_ext}.${output_ext}"
+      orig_size="$(du -h "$input_file" | awk '{print $1}')"
+      echo " "
+      echo "-------------------"
+      echo "Compressing $input_file to $output_file..."
+      echo "-------------------"
+      echo " "
+      # Compress the video using FFmpeg
+    set +e
+    ffmpeg -i "$input_file" \\
+        -hide_banner \
+        -loglevel warning \
+        -stats \
+        -map_metadata 0 \
+        -movflags use_metadata_tags \
+        -movflags +faststart \
+        -c:v libx265 \
+        -tag:v hvc1 \
+        -c:a copy \
+        -crf "$crf_value" \
+        -preset "$preset" \
+        "$output_file"
+      #ffmpeg -hide_banner -loglevel warning -stats -i "$input_file" -map_metadata 0 -movflags use_metadata_tags -movflags +faststart -metadata location=+34.0985-118.3245 -metadata location-eng=+34.0985-118.3245 -r 24 -vf scale=3840:-1 -c:v hevc -realtime:v 1 -tag:v hvc1 -b:v 12M -constant_bit_rate:v 1 -ac 2 -c:a aac -b:a 192k -y "$output_file"
+
+      # Check if the compression was successful
+    if [[ $? -ne 0 ]]; then
+    echo "FFmpeg encountered an error with $input_file" >>"$log_file"
+    continue
+    fi
+
+    if [[ $? -eq 0 ]]; then
+        echo " "
+        echo "-------------------"
+        echo "Compression successful for $input_file"
+        echo "-------------------"
+        echo " "
+        echo " "
+        echo "-------------------"
+        echo "Copying metaddata..."
+        echo "-------------------"
+        echo " "
+        # Copy over all tags using exiftool
+        exiftool -tagsFromFile "$input_file" -all:all -overwrite_original "$output_file"
+
+        if [ -z ${tag_location} ]; then
+          echo " "
+          echo "-------------------"
+          echo "No GPS cooordinates provided. Skipping adding -metadata location"
+          echo "-------------------"
+          echo " "
+        else
+          echo " "
+          echo "-------------------"
+          echo "Adding -metadata location=$tag_location"
+          echo "-------------------"
+          echo " "
+          # Construct the output file path
+          tagged_file="$output_dir/${filename_no_ext}-tag.${output_ext}"
+          # Copy over all tags using exiftool
+          ffmpeg -i "$output_file" -map_metadata 0 -metadata location="$tag_location" -metadata location-eng="$tag_location" -c copy "$tagged_file"
+        fi
+
+        # Calculate file size reduction
+        x265_size="$(du -h "$output_file" | awk '{print $1}')"
+        echo " "
+        echo "-------------------"
+        echo "   - √ $input_file ($orig_size)     ->     $output_file ($x265_size)"
+        echo "-------------------"
+        echo " "
+
+        # Log the success
+        echo "$(date): Compressed $input_file -> $output_file" >>"$log_file"
+      else
+        echo "Compression failed for $input_file"
+        echo "$(date): Compression failed for $input_file" >>"$log_file"
+      fi
+    fi
+    set +x
+  done
+
+  echo "Compression completed."
+}
+
+# Main function to handle command-line options and execute script logic
+main() {
+  # Default values for FFmpeg parameters and output extension
+  crf_value="22"
+  preset="veryfast"
+  output_ext="mov"
+  input_dir=""
+
+  # Parse command-line options
+  while getopts ":c:p:e:i:l:h-:" opt; do
+    case $opt in
+    c)
+      crf_value="$OPTARG"
+      ;;
+    p)
+      preset="$OPTARG"
+      ;;
+    e)
+      output_ext="$OPTARG"
+      ;;
+    i) input_dir="$OPTARG" ;;
+    l)
+      tag_location="$OPTARG"
+      ;;
+    h)
+      show_help
+      exit 0
+      ;;
+    -)
+      case "${OPTARG}" in
+      help)
+        show_help
+        exit 0
+        ;;
+      *)
+        echo "Invalid option: --${OPTARG}"
+        show_help
+        exit 1
+        ;;
+      esac
+      ;;
+    *)
+      echo "Invalid option: -${OPTARG}"
+      show_help
+      exit 1
+      ;;
+    esac
+  done
+
+  # Execute the compression function
+  compress_videos "${input_dir:-$HOME/Movies/convert/optimized}" "$output_ext" "$crf_value" "$preset" "$tag_location"
+}
+
+# Execute the main function
+main "$@"

@@ -1,0 +1,76 @@
+{
+ :global {:show-in-menu-bar false}
+
+ :profiles
+ {:Default
+  {:default true
+   :selected true
+   :virtual-hid-keyboard {:keyboard-type :ansi}
+   :sim 30 :delay 200 :held 250
+
+   :fn-function-keys
+   [^{:from :f6
+     :to [^{:software_function {:iokit_power_management_sleep_system {}}}]}]
+
+   :complex-modifications
+   {:rules [
+
+     ;; Hyper Right Option
+     ^{:des "Hyper Key: Right Option → ⌃⇧⌥⌘"
+       :rules
+       [[:##right_option [:!Ca "hyper_right_option" 1] [:lctrl :lshift :lopt :lcmd] {:afterup [:!Ca "hyper_right_option" 0]}]]}
+
+     ;; Hyper Caps Lock
+     ^{:des "Hyper Key: Caps Lock → ⌃⇧⌘"
+       :rules
+       [[:##caps_lock [:!Ca "hyper_caps_lock" 1] [:lctrl :lshift :rcmd] {:afterup [:!Ca "hyper_caps_lock" 0]}]]}
+
+     ;; Hyper Tab
+     ^{:des "Hyper Key: Tab (held) → ⌃⌘"
+       :rules
+       [[:tab {:held [:!Ca "hyper_tab_held_down" 1] [:lctrl :lcmd] :alone :tab :afterup [:!Ca "hyper_tab_held_down" 0]}]]}
+
+     ;; Double-tap Right Shift → Toggle Caps Lock
+     ^{:des "Double-tap right shift → Toggle caps lock"
+       :rules
+       [[:##right_shift [:!Ca "right_shift_tap" 1] nil {:afterup [:!Ca "right_shift_tap" 0]}]
+        [:right_shift [:!Ca "right_shift_tap" 1] :right_shift {:delayed {:invoked [:!Ca "right_shift_tap" 0] :canceled [:!Ca "right_shift_tap" 0]}}]]}
+
+     ;; Double-tap Cmd+Q to Quit Protection
+     ^{:des "Double-tap Cmd+Q to quit"
+       :rules
+       [[:##q [:!Ca "cmd_q_tap" 1] [:shell_command "osascript -e 'tell application \"System Events\" to keystroke \"q\" using command down'"] {:afterup [:!Ca "cmd_q_tap" 0]}]
+        [:!Cq [:!Ca "cmd_q_tap" 1] nil {:delayed {:invoked [:!Ca "cmd_q_tap" 0] :canceled [:!Ca "cmd_q_tap" 0]}}]]}
+
+     ;; Two-stage script via Hyper Tab + Delete
+     ^{:des "Hyper Tab + Delete: script trigger"
+       :rules
+       [[:##d [:!Otab [:!Oregex_script_trigger_state nil] [:!-shell "raycast://extensions/mikeozornin/typographer/index"] {:delay 500 :canceled [:!Ca "regex_script_trigger_state" 0] :invoked []}]]
+        [:!td [[:!Otab [:!Oregex_script_trigger_state 1] [:shell "shortcuts://run-shortcut?name=Remove%20Redundant%20Space%20+%20Line%20Breaks"]]]]]]}
+
+     ;; Fn → Emoji on alone
+     ^{:des "Fn → Emoji Picker"
+       :rules
+       [[:##fn {:alone [:shell "open raycast://extensions/raycast/emoji-symbols/search-emoji-symbols"] :held [:fn] :timeout 250}]]}
+
+     ;; One-shot launchers
+     ^{:des "One-shot launching"
+       :rules
+       [[:!CShOcmd [:spacebar [:shell "open -a 'Raycast'"]]]
+        [:!CShOcmd [:delete [:shell "open -a 'Shortery'"]]]
+        [:!CShOcmd [:enter [:shell "open -a 'Warp'"]]]
+        [:!CShOcmd [:tab [:shell "open -a 'Raycast'"]]]]}]
+
+     ;; Telegram Desktop - right option + close_bracket → down_arrow with modifiers
+     ^{:des "Telegram desktop ropt close_bracket"
+       :rules
+       [[:!Ocb {:down_arrow [:lcmd :lshift]} {:app "^com\\.tdesktop\\.Telegram$"}]]}
+
+     ;; Telegram Desktop - right option + open_bracket → up_arrow with modifiers
+     ^{:des "Telegram desktop ropt open_bracket"
+       :rules
+       [[:!Oob {:up_arrow [:lcmd :lshift]} {:app "^com\\.tdesktop\\.Telegram$"}]]}
+
+     ;; Add further Chrome and other app-specific rules from the JSON here if enabled
+
+    ]}

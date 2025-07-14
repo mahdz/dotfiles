@@ -1,0 +1,138 @@
+#!/bin/bash
+# Required parameters:
+# @raycast.schemaVersion 1
+# @raycast.title Mount ThiccBoi
+# @raycast.mode compact
+
+# Optional parameters:
+# @raycast.icon 
+# @raycast.packageName System
+
+# Documentation: This script unlocks an encrypted APFS volume using a password retrieved from the macOS Keychain. It aims to follow best practices for security and maintainability, including secure handling of temporary files.
+# @raycast.author somannythings
+# @raycast.authorURL https://raycast.com/somannythings
+
+set -o errexit  # Exit on command error
+set -o nounset  # Treat unset variables as errors
+set -o pipefail # Ensure pipe failures are handled
+
+# Global variables
+keychain_service="ThiccBoi" # Keychain service name where the password is stored
+keychain_account="mh"  # Keychain account name
+volume_name="ThiccBoi"    # The name of the APFS volume to unlock
+volume_uuid="DA4A825C-06AD-4A5A-92B6-8628685CDBB0"
+
+# To find the UUID of a specific APFS volume, run the command: diskutil apfs list
+# Replace the value of 'volume_uuid' with the UUID of the desired volume.
+
+# Function to log errors to stderr
+log_error() {
+  printf "ERROR: %s\n" "$1" >&2
+  printf "Debug info:\n"
+  security list-keychains
+
+  # Only show disk info if we have a volume identifier
+  if [[ -n "${volume_uuid:-}" ]]; then
+    diskutil info "$volume_uuid" || true
+  fi
+}
+
+# Function to retrieve password from the macOS Keychain
+get_password_from_keychain() {
+  local service="$1"
+  local account="$2"
+  local password
+
+  # Retrieve password securely from Keychain
+  if ! password=$(security find-generic-password -s "$service" -a "$account" -w 2>/dev/null); then
+    log_error "Failed to retrieve password from Keychain for service '$service' and account '$account'."
+    return 1
+  fi
+
+  # Sanitize password to avoid issues
+  if [[ -z "$password" ]]; then
+    log_error "Retrieved password is empty. Ensure the Keychain entry is correct."
+    return 1
+  fi
+
+  printf "%s" "$password"
+
+}
+
+# Function to unlock the APFS volume
+unlock_volume() {
+  local volume_uuid="$1"
+  local password="$2"
+
+  # Check if the volume UUID is provided
+  if [[ -z "$volume_uuid" ]]; then
+    log_error "Volume UUID is required to unlock the APFS volume."
+    return 1
+  fi
+
+  # Create a temporary file with proper template (at least 3 X's required by macOS)
+  # Create a secure temporary file for error logging
+  local temp_error_file
+  temp_error_file=$(mktemp -t diskutil_error.XXXXXX)
+
+  # Ensure cleanup of temp file even on unexpected exit
+  trap 'rm -f "$temp_error_file" 2>/dev/null || true' EXIT
+
+  # Attempt to unlock the volume
+  if ! diskutil apfs unlockVolume "$volume_uuid" -passphrase "$password" 2> "$temp_error_file"; then
+    # Read error message if the file exists
+    if [[ -f "$temp_error_file" ]]; then
+      error_msg=$(<"$temp_error_file")
+      log_error "Failed to unlock APFS volume: $error_msg"
+    else
+      log_error "Failed to unlock APFS volume"
+    fi
+    return 1
+  fi
+
+  # Remove trap since we're handling cleanup manually
+  trap - EXIT
+  rm -f "$temp_error_file"
+  printf "APFS volume '%s' unlocked successfully.\n" "$volume_uuid"
+  return 0
+}
+
+# Main function
+main() {
+  # Use provided UUID or default
+  local volume_uuid="${1:-$volume_uuid}"
+  if [[ -z "$volume_uuid"  ]]; then
+    log_error "No APFS volume UUID provided. Pass it as an argument or set it in the script."
+    exit 1
+  fi
+
+  if ! diskutil apfs list | grep -q "$volume_uuid"; then
+    log_error "Volume UUID '$volume_uuid' not found in system."
+    return 1
+  fi
+
+  # Stop if the volume is already mounted
+  if diskutil info "$volume_uuid" | grep Mounted | grep -q Yes; then
+    echo "Volume '$volume_uuid' is already mounted."
+    exit 0
+  fi
+
+  # Retrieve the password from the Keychain
+  local password
+  if ! password=$(get_password_from_keychain "$keychain_service" "$keychain_account"); then
+    log_error "Could not retrieve password. Exiting."
+    exit 1
+  fi
+
+  # Unlock volume
+  if ! unlock_volume "$volume_uuid" "$password"; then
+    log_error "Failed to unlock the APFS volume. Exiting."
+    exit 1
+  fi
+
+  # Securely clear password
+  password=""
+}
+
+# Execute the main function
+main "$@"

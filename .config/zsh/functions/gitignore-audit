@@ -1,0 +1,73 @@
+#!/bin/zsh
+# =============================================================================
+# gitignore-audit
+# =============================================================================
+# Scan for ineffective .gitignore negations and suggest missing intermediate rules
+#
+# Usage:
+#   gitignore-audit
+#
+# Returns:
+#   0 on success, non-zero on failure
+
+# shellcheck disable=SC2168
+
+emulate -L zsh              # Ensure consistent behavior
+setopt LOCAL_OPTIONS        # Limit option changes to this function
+setopt PIPE_FAIL           # Exit on pipe failures
+setopt ERR_EXIT           # Exit on error
+
+local gitroot="$HOME"
+local gitignore="$gitroot/.gitignore"
+
+git_ignore_sources=(
+  "$gitroot/.gitignore"
+  "$gitroot/.config/git/ignore"
+  "$gitroot/.dotfiles/info/exclude"
+)
+
+echo "🔍 Scanning for ineffective .gitignore negation rules..."
+
+# Search for negation rules across all ignore sources
+for ignorefile in "${git_ignore_sources[@]}"; do
+  [[ -f "$ignorefile" ]] || continue
+  command grep '^!' "$ignorefile" | while read -r line; do
+    # Clean up the negation path
+    local path="${line#!}"            # Strip leading !
+    path="${path%%/}"           # Remove trailing slash if any
+    local fullpath="$gitroot/$path"
+
+    # Resolve glob matches, if any
+    for match in ${(f)"$(eval /bin/ls -d $fullpath 2>/dev/null)"}; do
+      if command git check-ignore -q "$match"; then
+        echo "⚠️  Still ignored: $match"
+        echo "    ⤷ Negation rule ineffective: '!$path'"
+
+        # Suggest all intermediate directories as `!` rules
+        local -a intermediates=()
+        local dirpath="${path:A}"     # Resolve full absolute path
+        local relpath="${match#$gitroot/}"
+        local -a segments=("${(@s:/:)relpath}")
+
+        local current=""
+        local -a seen=()
+        for segment in "${segments[@]:0:-1}"; do
+          current+="$segment/"
+          local suggestion="!${current}"
+
+          # Skip duplicates and already declared paths
+          if [[ ! " ${seen[*]} " == *" $suggestion "* ]] && ! command grep -qF "$suggestion" "$gitignore"; then
+            intermediates+=("$suggestion")
+            seen+=("$suggestion")
+          fi
+        done
+
+        echo "    💡 Suggest adding:"
+        for fix in "${intermediates[@]}"; do
+          echo "       $fix"
+        done
+        echo ""
+      fi
+    done
+  done
+done

@@ -1,0 +1,152 @@
+#!/bin/zsh
+#
+# .zstyles - zstyle settings for features/plugins that need them.
+#
+
+#
+# Antidote
+#
+
+: ${ANTIDOTE_HOME:=${XDG_CACHE_HOME:-$HOME/.cache}/repos}
+
+
+# Keep all 3 for different test scenarios.
+# antidote_repo=$ANTIDOTE_HOME/mattmc3/antidote
+# antidote_repo=~/Developer/repos/mattmc3/antidote
+antidote_repo=${HOMEBREW_PREFIX:-/opt/homebrew}/opt/antidote/share/antidote
+
+zstyle ':antidote:home' path $ANTIDOTE_HOME
+zstyle ':antidote:repo' path $antidote_repo
+zstyle ':antidote:bundle' use-friendly-names 'yes'
+
+#
+# Zephyr features
+#
+
+# XDG
+zstyle ':zephyr:plugin:*' use-xdg-basedirs 'yes'
+
+# Always show color
+zstyle ':zephyr:plugin:*' color 'yes'
+
+# Skip all aliases
+zstyle ':zephyr:plugin:*:alias' 'skip' 'yes'
+
+#
+# Editor
+#
+
+# Set the key mapping style to 'emacs' or 'vi'.
+zstyle ':zephyr:plugin:editor' key-bindings 'vi'
+
+# Auto convert .... to ../..
+zstyle ':zephyr:plugin:editor' dot-expansion 'yes'
+
+# Use ^z to return background processes to foreground.
+zstyle ':zephyr:plugin:editor' symmetric-ctrl-z 'yes'
+
+# Expand aliases to their actual command like Fish abbreviations.
+zstyle ':zephyr:plugin:editor' glob-alias 'yes'
+noexpand=(
+  ls
+  grep
+  gpg
+  uv
+  vi
+  z
+  0 1 2 3 4 5 6 7 8 9
+)
+zstyle ':zephyr:plugin:editor:glob-alias' noexpand $noexpand
+
+# Set the default (magic) command when hitting enter on an empty prompt.
+zstyle ':zephyr:plugin:editor' magic-enter 'yes'
+# zstyle ':zephyr:plugin:editor:magic-enter' command 'ls -lh .'
+# zstyle ':zephyr:plugin:editor:magic-enter' git-command 'git status -u .'
+
+# Editor style
+zstyle -s ':zephyr:plugin:editor' key-bindings 'vi'
+
+# From compinit docs:
+# To avoid these tests and make all files found be used without asking, use the
+# option -u, and to make compinit silently ignore all insecure files and directories
+# use the option -i. This security check is skipped entirely when the -C option is
+# given, provided the dumpfile exists.
+zstyle ':zephyr:plugin:completion' 'disable-compfix' yes
+zstyle ':zephyr:plugin:completion' compstyle 'zephyr'
+
+#
+# Prompt
+#
+
+# Set prompt
+zstyle ':zephyr:plugin:prompt' theme starship
+
+# Prevent use-omz from trying to load themes since we use starship directly
+#zstyle ':omz:lib:theme-and-appearance' 'skip' 'yes'
+
+#
+# Dotfiles
+#
+
+zstyle ':zsh_custom:plugin:dotfiles' bare
+
+#
+# Homebrew
+#
+
+#zstyle ':zephyr:plugin:homebrew' 'use-cache' yes
+
+_kegonly=(curl ruby sqlite)
+zstyle ':zephyr:plugin:homebrew' 'keg-only-brews' $_kegonly
+
+#
+# History
+#
+
+# Set the file to save the history in when an interactive shell exits.
+zstyle ':zephyr:plugin:history' histfile ${XDG_DATA_HOME:-$HOME/.local/share}/zsh/history
+
+# Set the maximum number of events stored in the internal history list.
+zstyle ':zephyr:plugin:history' histsize 100000
+
+# Set the maximum number of history events to save in the history file.
+zstyle ':zephyr:plugin:history' savehist 100000
+
+#
+# GNU
+#
+
+zstyle ':omz:lib:theme-and-appearance' gnu-ls no
+
+# eza
+zstyle ':omz:plugins:eza' 'dirs-first' yes
+zstyle ':omz:plugins:eza' 'header' yes
+zstyle ':omz:plugins:eza' 'icons' yes
+zstyle ':omz:plugins:eza' 'size-prefix' binary
+zstyle ':omz:plugins:eza' 'hyperlink' yes
+
+# ssh-agent
+zstyle :omz:plugins:ssh-agent agent-forwarding yes
+zstyle :omz:plugins:ssh-agent quiet yes
+zstyle :omz:plugins:ssh-agent lazy yes
+zstyle :omz:plugins:ssh-agent ssh-add-args --apple-load-keychain
+
+# # Pre-set completion performance options that don't require compinit
+#zstyle ':completion:*' accept-exact '*(N)'
+#zstyle ':completion:*' use-perl on
+#zstyle ':completion:*' menu select
+
+# # Completion system performance tweaks
+#zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # Case insensitive matching
+#zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+#zstyle ':completion:*' rehash true
+#zstyle ':completion:*' special-dirs true
+#zstyle ':completion:*' squeeze-slashes true
+#zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec)|prompt_*)'
+
+# # Group matches and describe
+#zstyle ':completion:*' group-name ''
+#zstyle ':completion:*:descriptions' format '%F{yellow}completing %B%d%b%f'
+
+# # Speed up path completion by avoiding glob patterns
+#zstyle ':completion:*:paths' accept-exact-dirs true

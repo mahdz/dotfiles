@@ -1,0 +1,31 @@
+# .rooignore
+
+# This file prevents Roo from accessing or modifying specified paths
+
+# Ignore common macOS system and user directories to prevent accidental changes
+
+/System/
+/Library/
+/Applications/
+~/Library/
+~/Documents/
+~/Downloads/
+~/Desktop/
+~/Music/
+~/Movies/
+~/Pictures/
+
+# Ignore common development folders
+
+node_modules/
+vendor/
+
+# Ignore cloned repos
+
+e
+
+~/Developer/repos/
+
+
+!.local/share/
+!.local/share/*

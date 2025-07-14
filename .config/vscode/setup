@@ -1,0 +1,118 @@
+#!/bin/bash
+
+set -e  # Exit immediately if a command exits with a non-zero status
+
+# Configuration variables
+VSCODE_DOWNLOAD_URL="https://code.visualstudio.com/sha/download?build=stable&os=darwin-arm64"
+APPLICATIONS_DIR="/Applications"
+VSCODE_APP_NAME="Visual Studio Code.app"
+PORTABLE_DATA_DIR="code-portable-data"
+settings_path=~/Library/Application\ Support/Code/User/settings.json
+EXTENSIONS_FILE="${XDG_CONFIG_HOME:-${HOME}/.config}/vscode/extensions"
+
+echo "Setting up Visual Studio Code in Portable Mode on macOS..."
+
+# Check if VS Code is already installed
+if [ -d "${APPLICATIONS_DIR}/${VSCODE_APP_NAME}" ]; then
+    echo "Visual Studio Code is already installed. Checking if it needs to be updated..."
+
+    # We could implement version checking here if needed
+    # For now, we'll ask the user if they want to reinstall
+    read -p "Would you like to reinstall VS Code? (y/n): " REINSTALL
+    if [[ "$REINSTALL" != "y" ]]; then
+        echo "Skipping VS Code installation."
+    else
+        echo "Removing existing VS Code installation..."
+        rm -rf "${APPLICATIONS_DIR}/${VSCODE_APP_NAME}"
+        INSTALL_VSCODE=true
+    fi
+else
+    INSTALL_VSCODE=true
+fi
+
+# Download and install VS Code if needed
+if [[ "$INSTALL_VSCODE" == true ]]; then
+    echo "🚀 Downloading Visual Studio Code..."
+    TEMP_ZIP=$(mktemp -d)/vscode.zip
+    curl -L "$VSCODE_DOWNLOAD_URL" -o "$TEMP_ZIP"
+
+    echo "📦 Extracting VS Code to ${APPLICATIONS_DIR}..."
+    unzip -q "$TEMP_ZIP" -d "$APPLICATIONS_DIR"
+    rm -f "$TEMP_ZIP"
+
+    echo "Visual Studio Code has been installed."
+fi
+
+# Set up portable mode directory
+VSCODE_PATH="${APPLICATIONS_DIR}/${VSCODE_APP_NAME}"
+PORTABLE_PATH="${XDG_DATA_HOME:-$HOME/.local/share}/${PORTABLE_DATA_DIR}"
+
+if [ ! -d "$PORTABLE_PATH" ]; then
+    echo "📂 Creating portable data directory at ${PORTABLE_PATH}..."
+    mkdir -p "$PORTABLE_PATH"
+    mkdir -p "$PORTABLE_PATH/user-data"
+    mkdir -p "$PORTABLE_PATH/extensions"
+
+    echo "Portable mode has been configured."
+else
+    echo "Portable data directory already exists at ${PORTABLE_PATH}."
+fi
+
+echo "🔗 Ensuring correct permissions..."
+chmod -R 755 "${VSCODE_PATH}"
+chmod -R 755 "${PORTABLE_PATH}"
+
+# Replace the default settings.json with a symlink to the portable settings
+/bin/rm -f "${HOME}/Library/Application Support/Code/User/settings.json" || true
+ln -s $(pwd)/settings.json "${PORTABLE_PATH}/user-data/User/settings.json"
+
+# Setup extension installation from the VSCodeExtensionsFile
+echo "Setting up extension installation..."
+
+# Check if the extension file exists
+if [ ! -f "$EXTENSIONS_FILE" ]; then
+    echo "⚠️ Extension list file not found at ${EXTENSIONS_FILE}"
+    echo "Creating directory structure..."
+    mkdir -p "$(dirname "$EXTENSIONS_FILE")"
+    echo "Please add your desired extensions to ${EXTENSIONS_FILE} and run this script again."
+    touch "$EXTENSIONS_FILE"
+else
+    echo "🔄 Installing extensions from ${EXTENSIONS_FILE}..."
+
+    # Set environment variables to point to our portable installation
+    export VSCODE_PORTABLE="$PORTABLE_PATH"
+
+    # Path to VS Code binary
+    CODE_BIN="${VSCODE_PATH}/Contents/Resources/app/bin/code"
+
+    # Install extensions
+    while read extension; do
+        # Skip empty lines and comments
+        [[ -z "$extension" || "$extension" == \#* ]] && continue
+        echo "📥 Installing extension: $extension"
+        "$CODE_BIN" --install-extension "$extension" --force
+    done < "$EXTENSIONS_FILE"
+
+    echo "Extensions have been installed."
+fi
+
+echo "✅ VS Code Portable Mode setup complete!"
+echo "Your VS Code configuration is stored in: ${PORTABLE_PATH}"
+echo "You can launch VS Code from the Applications folder as usual."
+
+# Provide instructions for moving the portable installation
+echo ""
+echo "To make this truly portable (e.g., to a USB drive):"
+echo "1. Copy both '${VSCODE_APP_NAME}' and '${PORTABLE_DATA_DIR}' to your external drive"
+echo "2. Ensure they remain siblings in the same directory"
+echo "3. Run VS Code directly from the external location"
+
+#echo "🔄 Installing extensions from $EXTENSIONS_FILE..."
+#if [ -f "$EXTENSIONS_FILE" ]; then
+#    while read -r extension; do
+#        echo "📥 Installing extension: $extension"
+#        "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" --install-extension "$extension"
+#    done < "$EXTENSIONS_FILE"
+#else
+#    echo "⚠️ Extension file not found at $EXTENSIONS_FILE, skipping extension installation."
+#fi

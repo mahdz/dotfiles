@@ -1,0 +1,404 @@
+{
+  "title": "Custom Layers: Hyper, App Launcher, Window, Markdown",
+  "rules": [
+    {
+      "description": "Caps Lock as Hyper (\u2303\u2325\u21e7\u2318)",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "caps_lock",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "left_shift",
+              "modifiers": [
+                "left_control",
+                "left_option",
+                "left_command"
+              ]
+            }
+          ],
+          "to_if_alone": [
+            {
+              "key_code": "escape"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "App Launcher: Rcmd+o then key",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "o",
+            "modifiers": {
+              "mandatory": [
+                "right_command"
+              ]
+            }
+          },
+          "to": [
+            {
+              "set_variable": {
+                "name": "app_launcher_mode",
+                "value": 1
+              }
+            },
+            {
+              "key_code": "vk_none"
+            }
+          ],
+          "to_delayed_action": {
+            "to_if_invoked": [],
+            "to_if_canceled": [
+              {
+                "set_variable": {
+                  "name": "app_launcher_mode",
+                  "value": 0
+                }
+              }
+            ]
+          },
+          "to_if_alone": [
+            {
+              "key_code": "o"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "app_launcher_mode",
+              "value": 1
+            }
+          ],
+          "from": {
+            "key_code": "s",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "to": [
+            {
+              "shell_command": "open -a Safari"
+            },
+            {
+              "set_variable": {
+                "name": "app_launcher_mode",
+                "value": 0
+              }
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "app_launcher_mode",
+              "value": 1
+            }
+          ],
+          "from": {
+            "key_code": "f",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "to": [
+            {
+              "shell_command": "open -a Finder"
+            },
+            {
+              "set_variable": {
+                "name": "app_launcher_mode",
+                "value": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Window Management: Hyper+w then H/J/K/L",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "w",
+            "modifiers": {
+              "mandatory": [
+                "left_control",
+                "left_option",
+                "left_command",
+                "left_shift"
+              ]
+            }
+          },
+          "to": [
+            {
+              "set_variable": {
+                "name": "window_mode",
+                "value": 1
+              }
+            },
+            {
+              "key_code": "vk_none"
+            }
+          ],
+          "to_delayed_action": {
+            "to_if_invoked": [],
+            "to_if_canceled": [
+              {
+                "set_variable": {
+                  "name": "window_mode",
+                  "value": 0
+                }
+              }
+            ]
+          },
+          "to_if_alone": [
+            {
+              "key_code": "w"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "window_mode",
+              "value": 1
+            }
+          ],
+          "from": {
+            "key_code": "h",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "to": [
+            {
+              "shell_command": "yabai -m window --move rel:-50:0"
+            },
+            {
+              "set_variable": {
+                "name": "window_mode",
+                "value": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Markdown Layer: Hyper+m then key",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "m",
+            "modifiers": {
+              "mandatory": [
+                "left_control",
+                "left_option",
+                "left_command",
+                "left_shift"
+              ]
+            }
+          },
+          "to": [
+            {
+              "set_variable": {
+                "name": "markdown_mode",
+                "value": 1
+              }
+            },
+            {
+              "key_code": "vk_none"
+            }
+          ],
+          "to_delayed_action": {
+            "to_if_invoked": [],
+            "to_if_canceled": [
+              {
+                "set_variable": {
+                  "name": "markdown_mode",
+                  "value": 0
+                }
+              }
+            ]
+          },
+          "to_if_alone": [
+            {
+              "key_code": "m"
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "markdown_mode",
+              "value": 1
+            }
+          ],
+          "from": {
+            "key_code": "c",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "grave_accent_and_tilde",
+              "modifiers": [
+                "left_shift"
+              ]
+            },
+            {
+              "key_code": "grave_accent_and_tilde",
+              "modifiers": [
+                "left_shift"
+              ]
+            },
+            {
+              "key_code": "grave_accent_and_tilde",
+              "modifiers": [
+                "left_shift"
+              ]
+            },
+            {
+              "key_code": "return_or_enter"
+            },
+            {
+              "set_variable": {
+                "name": "markdown_mode",
+                "value": 0
+              }
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "markdown_mode",
+              "value": 1
+            }
+          ],
+          "from": {
+            "key_code": "u",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "hyphen"
+            },
+            {
+              "key_code": "spacebar"
+            },
+            {
+              "set_variable": {
+                "name": "markdown_mode",
+                "value": 0
+              }
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "markdown_mode",
+              "value": 1
+            }
+          ],
+          "from": {
+            "key_code": "o",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "1"
+            },
+            {
+              "key_code": "period"
+            },
+            {
+              "key_code": "spacebar"
+            },
+            {
+              "set_variable": {
+                "name": "markdown_mode",
+                "value": 0
+              }
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "markdown_mode",
+              "value": 1
+            }
+          ],
+          "from": {
+            "key_code": "q",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "quote"
+            },
+            {
+              "key_code": "spacebar"
+            },
+            {
+              "set_variable": {
+                "name": "markdown_mode",
+                "value": 0
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

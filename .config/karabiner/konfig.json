@@ -1,0 +1,46 @@
+{
+  "ctrl shift rcmd": {
+    "_self": "ctrl shift rcmd",
+    "a": "$ open raycast://extensions/VladCuciureanu/toothpick/connect-favorite-device-1",
+    "c": "$ open raycast://extensions/raycast/clipboard-history/clipboard-history",
+    "f": "$ open raycast://extensions/erics118/file-manager/manage-files",
+    "m": "$ open raycast://extensions/raycast/navigation/search-menu-items",
+    "s": "$ open raycast://extensions/raycast/snippets/search-snippets"
+    },
+  "rcmd": {
+    "_self": "rcmd",
+    "a": "$ open -a \"App Store\"",
+    "b": "$ open -a \"Safari\"",
+    "c": "$ open -a \"Telegram\"",
+    "d": "$ open -a \"DevUtils\"",
+    "e": "$ open -a \"Mail\"",
+    "f": "$ open -a \"Finder\"",
+    "g": "$ open -a \"ChatGPT\"",
+    "k": "$ open -a \"Karabiner-Elements\"",
+    "m": "$ open -a \"Music\"",
+    "p": "$ open -a \"Photos\"",
+    "s": "$ open -a \"Shortcuts\"",
+    "t": "$ open -a \"Warp\"",
+    "u": "$ open -a \"DevUtils\"",
+    "v": "$ open -a \"Visual Studio Code\"",
+    "w": "$ open -a \"Camera Preview\"",
+    "z": "$ open -a \"Zoom\"",
+    "up_arrow": "cmd shift up_arrow"
+  },
+  "keyboard_fn": {
+    "_self": {
+      "a": "250 $ open raycast://extensions/raycast/emoji-symbols/search-emoji-symbols",
+      "h": "keyboard_fn"
+    }
+  },
+  // application group
+  "Telegram Desktop": {
+    "ropt open_bracket": "cmd shift up_arrow",
+    "ropt close_bracket": "cmd shift down_arrow"
+  },
+  // application group
+  "Photos": {
+    "ropt c": "$ open raycast://script-commands/photos-copy-location",
+    "ropt v": "$ open raycast://script-commands/photos-assign-location"
+  }
+}

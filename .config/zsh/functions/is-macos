@@ -1,0 +1,4 @@
+#!/bin/zsh
+#function is-macos {
+[[ $OSTYPE = *darwin* ]] || return 1
+#}

@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# Script: organize2.sh
+# Description: Organizes files from Downloads folder by extension type
+# Usage: ./organize2.sh
+# Returns: 0 on success, 1 on error
+
+set -euo pipefail
+
+# Define the path to the Downloads folder
+downloads_path="$HOME/Downloads"
+
+# Helper function to check if element is in array
+contains_element() {
+  local element="$1"
+  shift
+  local array=("$@")
+  for i in "${array[@]}"; do
+    [[ "$i" == "$element" ]] && return 0
+  done
+  return 1
+}
+
+# Folders
+audio_path="$downloads_path/Audio"
+documents_path="$downloads_path/Docs"
+images_path="$downloads_path/Images"
+videos_path="$downloads_path/Videos"
+
+# Check if directories exist
+for dir in "$downloads_path" "$audio_path" "$documents_path" "$images_path" "$videos_path"; do
+  if [[ ! -d "$dir" ]]; then
+    mkdir -p "$dir"
+  fi
+done
+
+# Extensions
+audio=("mp3" "ogg" "wav" "wma" "flac" "aac")
+video=("mp4" "mpg" "webm" "gif" "m4p" "m4v" "mov" "avi")
+document=("pdf" "doc" "docx" "xlxs" "odt" "tex" "pptx" "txt" "ott")
+image=("jpg" "jpeg" "png" "svg" "webp" "xcf" "bmp")
+
+for ext in "${audio[@]}" "${video[@]}" "${document[@]}" "${image[@]}"; do
+  while IFS= read -r -d $'\0' file; do
+    if contains_element "$ext" "${audio[@]}"; then
+      mv -v "$file" "$audio_path/"
+    elif contains_element "$ext" "${video[@]}"; then
+      mv -v "$file" "$videos_path/"
+    elif contains_element "$ext" "${document[@]}"; then
+      mv -v "$file" "$documents_path/"
+    elif contains_element "$ext" "${image[@]}"; then
+      mv -v "$file" "$images_path/"
+    fi
+  done < <(find "$downloads_path" -type f -name "*.$ext" -print0)
+done

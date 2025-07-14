@@ -1,0 +1,45 @@
+#!/bin/bash
+##############################################################################
+## Mount disk in MacOS from a terminal
+## Usage: {SCRIPT_NAME} [DiskName (default: DataDisk)]
+##
+## The script can mount an encripted APFS disk if it found a key file in the
+## location: ~/.config/<DiskName>.key
+##############################################################################
+
+set -o errexit   # Exit on command error
+set -o nounset   # Treat unset variables as errors
+set -o pipefail  # Ensure pipe failures are handled
+
+show_help() { sed -n '/^##/,/^$/s/^## \{0,1\}//p' "$0" | sed 's/{SCRIPT_NAME}/'"${0##*/}"'/g'; }
+
+NAME=${1:-"ThiccBoi"}
+[ -z "${NAME}" ] && echo "Error: please specify a disk name" && exit 1
+[ "${NAME}" == "--help" ] && show_help && exit 1
+
+KEY_FILE="${HOME}/.config/${NAME}.key"
+DISK=$(diskutil list | grep "${NAME}" | awk '{print $7}')
+[ -z "${DISK}" ] && echo "Error: can't find disk ${NAME}" && exit 1
+[ ! -f "${KEY_FILE}" ] && echo "Warning: key not found ${KEY_FILE}. Disk will be mounted without decription"
+
+# printf '%s\0' "${KEY}" | sudo hdiutil attach -stdinpass -mountpoint "${MPOINT}" "/dev/${DISK}" || exit 1
+if [ ! -f "${KEY_FILE}" ]; then
+  echo "Mount '/dev/${DISK}' disk..."
+  sudo diskutil mount "${DISK_UUID}" || exit 1
+else
+  DISK_UUID=$(diskutil apfs list | grep "Volume ${DISK}" | awk '{print $4}')
+  [ -z "${DISK_UUID}" ] && echo "Error: can't find disk ${NAME} UUID" && exit 1
+  echo "Mount '${DISK}/${DISK_UUID}' using a security key '${KEY_FILE}' to ${MPOINT}..."
+  KEY="$(head -n 1 "${KEY_FILE}")"
+  # echo "Key: [${KEY}]"
+  #printf '%s\0' "${KEY}" | diskutil apfs unlockVolume "${DISK_UUID}" -mountPoint "${MPOINT}" -stdinpass || exit 1
+  printf '%s\0' "${KEY}" | diskutil apfs unlockVolume "${DISK_UUID}" -stdinpass || exit 1
+fi
+
+sleep 1
+MPOINT="$(mount | grep DataDisk | awk '{print $3}')"
+[ -z "${MPOINT}" ] && echo "Failed: can't found a new mouted disk" && exit 1
+grep -qi "${NAME}" "${MPOINT}/.DISK_ID"
+[ $? -ne 0 ] && echo "Failed: mounted disk incorrect" && exit 1
+
+echo "Success"

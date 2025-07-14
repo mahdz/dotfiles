@@ -1,0 +1,69 @@
+{
+  "folders": [
+    {
+      "name": "🏠 dotfiles",
+      "path": "/Users/mh"
+    }
+  ],
+  "settings": {
+    // Git: Work with the bare repo
+    "git.enabled": true,
+    "git.detectSubmodules": false,
+    // VSCode should NOT auto initialize Git in ~
+    "git.autoRepositoryDetection": true,
+    // Exclude noisy home dirs from sidebar
+    "files.exclude": {
+      "**/.Trash": true,
+      "**/Library": true,
+      "**/Movies": true,
+      "**/Music": true,
+      "**/Pictures": true,
+      "**/Public": true,
+      "**/.DS_Store": true,
+      "**/.cache": true,
+      "**/.local/share/Trash": true
+    },
+    "files.watcherExclude": {
+      "**/.git/objects/**": true,
+      "**/.git/subtree-cache/**": true,
+      "**/node_modules/**": true,
+      "**/Library/**": true,
+      "**/Downloads/**": true,
+      "**/Pictures/**": true,
+      "**/Movies/**": true,
+      "**/Music/**": true
+    },
+    "search.exclude": {
+      "Library": true,
+      "Downloads": true,
+      "Pictures": true,
+      "Movies": true,
+      "Music": true
+    },
+    // Editor defaults for config repo
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.rulers": [
+      80
+    ],
+    "editor.wordWrap": "on",
+    // Recommended extensions
+    "extensions.ignoreRecommendations": false,
+    "terminal.integrated.defaultProfile.osx": "zsh",
+    "terminal.integrated.env.osx": {
+      "XDG_CONFIG_HOME": "${env:HOME}/.config",
+      "XDG_DATA_HOME": "${env:HOME}/.local/share"
+    },
+    "debug.javascript.defaultRuntimeExecutable": {
+      "pwa-node": "/Users/mh/.local/share/mise/shims/node"
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "foxundermoon.shell-format",
+      "timonwong.shellcheck",
+      "streetsidesoftware.code-spell-checker",
+      "yzhang.markdown-all-in-one"
+      ]
+  }
+}

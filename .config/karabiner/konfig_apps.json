@@ -1,0 +1,12 @@
+{
+  // application group
+  "Telegram Desktop": {
+    "ropt open_bracket": "cmd shift up_arrow",
+    "ropt close_bracket": "cmd shift down_arrow"
+  },
+  // application group
+  "Photos": {
+    "ropt c": "$ open raycast://script-commands/photos-copy-location",
+    "ropt v": "$ open raycast://script-commands/photos-assign-location"
+  }
+}

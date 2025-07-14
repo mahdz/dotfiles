@@ -1,0 +1,38 @@
+# Global EditorConfig - Default formatting rules for all file editing
+# This serves as a fallback when no project-specific .editorconfig exists
+root = true
+
+# Universal defaults for all files
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+max_line_length = 120
+
+# Python
+[*.{py,pyw}]
+indent_size = 4
+max_line_length = 80
+
+[*.json]
+insert_final_newline = false
+
+# Markdown - preserve trailing spaces (used for line breaks)
+[*.{md,markdown}]
+trim_trailing_whitespace = false
+max_line_length = off
+
+[*.toml]
+indent_style = space
+indent_size = 4
+
+[{*.sh,.mise/tasks/**/*,e2e/**/*,*.pkl}]
+indent_style = space
+indent_size = 2
+
+# shfmt
+switch_case_indent = true
+simplify = true

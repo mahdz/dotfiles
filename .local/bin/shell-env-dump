@@ -1,0 +1,74 @@
+#!/bin/bash
+
+# markdown_report.sh
+# Extract Zsh configuration and Git repo info into formatted Markdown
+
+set -euo pipefail
+
+ZDOTDIR=${ZDOTDIR:-"$HOME/.config/zsh"}
+DUMP_FILE="$HOME/.config/omz_diagdump_20250501-011031.txt"
+OUTPUT="$HOME/.config/shell_env_summary.md"
+
+sanitize() {
+  sed 's/`/\\`/g'
+}
+
+section_md() {
+  local title=$1
+  shift
+  local content=$("$@" | sanitize)
+  printf "## %s\n\n\`\`\`\n%s\n\`\`\`\n\n" "$title" "$content"
+}
+
+extract_env() {
+  grep -E '^(export|[^[:space:]]+=)' "$ZDOTDIR/.zshenv" 2>/dev/null || true
+}
+
+extract_aliases() {
+  grep -E '^alias ' "$ZDOTDIR/.zshrc" 2>/dev/null || true
+}
+
+extract_functions() {
+  awk '/^[a-zA-Z0-9_]+\(\)[[:space:]]*\{/,/^\}/' "$ZDOTDIR/.zshrc" 2>/dev/null
+}
+
+extract_plugins() {
+  grep -E 'plugin(s)?\(' "$ZDOTDIR/.zshrc" 2>/dev/null || true
+}
+
+extract_fpath() {
+  grep '^FPATH=' "$DUMP_FILE" | cut -d= -f2- | tr ':' '\n'
+}
+
+extract_git_info() {
+  awk '/oh-my-zsh git state:/,/^$/ { if ($0 !~ /oh-my-zsh git state:/) print }' "$DUMP_FILE"
+}
+
+extract_zsh_opts() {
+  awk '/^Zsh configuration:$/,/^zstyle:/' "$DUMP_FILE" | tail -n +2 | head -n -1
+}
+
+generate_markdown() {
+  {
+    printf "# Shell Configuration Summary\n\n"
+    section_md "ZDOTDIR" printf "%s\n" "$ZDOTDIR"
+    section_md ".zshenv Exports" extract_env
+    section_md ".zshrc Aliases" extract_aliases
+    section_md ".zshrc Functions" extract_functions
+    section_md ".zshrc Plugin Lines" extract_plugins
+    section_md "FPATH Entries" extract_fpath
+    section_md "Zsh Options" extract_zsh_opts
+    section_md "Git State for oh-my-zsh" extract_git_info
+  } > "$OUTPUT"
+}
+
+main() {
+  if [[ ! -f "$DUMP_FILE" ]]; then
+    printf "Missing diagnostic dump: %s\n" "$DUMP_FILE" >&2
+    return 1
+  fi
+  generate_markdown
+  printf "Markdown summary written to: %s\n" "$OUTPUT"
+}
+
+main "$@"

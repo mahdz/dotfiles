@@ -1,0 +1,72 @@
+# Set the shell to zsh
+shell=zsh
+
+# Allow opening any 'source'd file, even if not specified as input
+# Allow following sourced files not specified by path
+external-sources=true
+
+# Turn on warnings for unquoted variables with safe values
+#enable=quote-safe-variables
+
+# Turn on warnings for unassigned uppercase variables
+#enable=check-unassigned-uppercase
+
+# Disable warning about unsupported scripts
+disable=SC1071
+
+# Use braces when expanding arrays -- needed for Zsh, not Bash
+disable=SC1087
+
+# Disable warning about not following non-constant source
+disable=SC1090
+
+# Disable warning about not following files
+disable=SC1091
+
+# Disable warning about missing a shebang in the header
+disable=SC2148
+
+# Disable warning about local being undefined
+disable=SC3043
+
+# Disable warning about using 'echo' with backslashes
+disable=SC2028
+
+# Disable warning about using command substitution without quoting
+disable=SC2046
+
+# Disable warning about using 'local' keyword (not POSIX compliant, but is in Zsh)
+#disable=SC2039
+
+# Disable warning about direct use of command names without 'command' prefix
+disable=SC2119,SC2120,SC2121
+
+# Disable warning about using '==', which is non-POSIX, but works in Zsh
+disable=SC2193
+
+# Disable warning about using '[[ ]]', which is non-POSIX, but works in Zsh
+disable=SC3010
+
+disable=SC2154
+
+disable=SC2155
+
+disable=SC2153
+
+# Disable warning about using 'cd ... || exit'
+disable=SC2164
+
+# Disable warning about not quoting array expansions
+disable=SC2068
+
+#Disable warning about double quoting to prevent globbing
+#disable=SC2206,SC2086
+
+# Allow using `which` since it gives full paths and is common enough
+disable=SC2230
+
+# Allow [ ! -z foo ] instead of suggesting -n
+disable=SC2236
+
+# Disable warning about parameter expansions starting with (
+#disable=SC2296

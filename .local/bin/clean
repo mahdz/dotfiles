@@ -1,0 +1,488 @@
+#!/bin/bash
+#
+set -e
+
+# Function to display help message
+show_help() {
+  echo "Usage: $0 [-h|--help]"
+  echo
+  echo "Commands:"
+  echo "help          Display this help message"
+  echo "brew          Clean Homebrew cache & logs"
+  echo "telegram      Clean Telegram.app and Telegram Desktop media caches"
+  echo "trash         Clean user and Volume trashes"
+  echo "system        Clean System logs, etc."
+}
+
+delete() {
+  if [ -z "$1" ]; then
+    return 0
+  fi
+
+  /bin/rm -rf "$@" &>/dev/null &
+  sleep 0.05
+  return 0
+}
+
+# Function to clean Homebrew
+clean_brew() {
+  if type "brew" &>/dev/null; then
+    echo -e "\e[1;32m(•_•) > Cleaning brew...\e[0m"
+    /opt/homebrew/bin/brew cleanup -s &>/dev/null
+    rm -rf $(brew --cache) &>/dev/null
+    /opt/homebrew/bin/brew tap --repair &>/dev/null
+  fi
+}
+
+# Function to empty trash
+clean_trash() {
+  echo -e "\e[1;32m(•_•) > Cleaning trashes...\e[0m"
+  /bin/rm -rf ~/.Trash/* &>/dev/null
+  echo '[x] Local trash empty'
+  /bin/rm -rf /Volumes/*/.Trashes/* &>/dev/null
+  echo '[x] Volumes trash empty'
+}
+
+# Function to clean Homebrew cache
+clean_brew_cache() {
+  printf "\e[1;32m(•_•) > Cleaning Homebrew cache...\e[0m\n"
+
+  local p="$HOME/Library/Caches/Homebrew"
+  if [[ ! -d "$p" ]]; then
+    printf "Homebrew cache directory does not exist: %s\n" "$p" >&2
+    return 1
+  fi
+
+  local owner perm
+  owner=$(/usr/bin/stat -f%u:%g "$p") || {
+    printf "Failed to retrieve owner of %s\n" "$p" >&2
+    return 1
+  }
+  perm=$(/usr/bin/stat -f%Mp%Lp "$p") || {
+    printf "Failed to retrieve permissions of %s\n" "$p" >&2
+    return 1
+  }
+
+  /bin/rm -rf "$p" && /bin/mkdir -p "$p" && chown "$owner" "$p" && chmod "$perm" "$p" &&
+    printf "Homebrew cache folder successfully cleared\n" ||
+    printf "Cannot remove Homebrew cache folder\n"
+}
+
+clean_brew_logs() {
+  echo -e "\e[1;32m(•_•) > Cleaning Homebrew logs...\e[0m"
+
+  local p
+  p="$HOME/Library/Logs/Homebrew/"
+  local owner perm
+  owner=$(/usr/bin/stat -f%u:%g "$p") || {
+    printf "Failed to retrieve owner of %s\n" "$p" >&2
+    return 1
+  }
+  perm=$(/usr/bin/stat -f%Mp%Lp "$p") || {
+    printf "Failed to retrieve permissions of %s\n" "$p" >&2
+    return 1
+  }
+
+  /bin/rm -rf "$p" && /bin/mkdir -p "$p" && chown "$owner" "$p" && chmod "$perm" "$p" &&
+    printf "Homebrew logs folder successfully cleared\n" ||
+    printf "Cannot remove Homebrew logs folder\n"
+}
+
+clean_browsers_cache() {
+  echo -e "\e[1;32m(•_•) > Cleaning Google Chrome cache...\e[0m"
+
+  kill -9 "$(pgrep 'Google Chrome')" >/dev/null 2>&1
+
+  local p
+  p=$(echo "$HOME/Library/Caches/Google/Chrome/" | sed "s/~/\/Users\/$USERNAME/")
+  local owner
+  owner=$(/usr/bin/stat -f%u:%g "$p")
+  local perm
+  perm=$(/usr/bin/stat -f%Mp%Lp "$p")
+
+  /bin/rm -rf "$p" && /bin/mkdir -p "$p" && chown "$owner" "$p" && chmod "$perm" "$p" &&
+    echo "Google Chrome cache folder successfully cleared" ||
+    echo "Cannot remove Google Chrome cache folder"
+
+  echo -e "\e[1;32m(•_•) > Cleaning Firefox cache...\e[0m"
+  kill -9 "$(pgrep 'Firefox')" >/dev/null 2>&1
+
+  local p
+  p=$(echo "$HOME/Library/Caches/Firefox/" | sed "s/~/\/Users\/$USERNAME/")
+  local owner
+  owner=$(/usr/bin/stat -f%u:%g "$p")
+  local perm
+  perm=$(/usr/bin/stat -f%Mp%Lp "$p")
+}
+
+clean_discord_cache() {
+  echo -e "\e[1;32m(•_•) > Cleaning Discord cache...\e[0m"
+
+  kill -9 "$(pgrep 'Discord')" >/dev/null 2>&1
+  local p
+  p=$(echo "$HOME/Library/Application Support/discord/" | sed "s/~/\/Users\/$USERNAME/")
+  local owner
+  owner=$(/usr/bin/stat -f%u:%g "$p")
+  local perm
+  perm=$(/usr/bin/stat -f%Mp%Lp "$p")
+
+  sudo /bin/rm -rf "$p" && sudo /bin/mkdir "$p" && sudo chown "$owner" "$p" && sudo chmod "$perm" "$p" &&
+    echo "Discord cache folder successfully cleared" ||
+    echo "Cannot remove Discord cache folder"
+}
+
+clean_spotify_cache() {
+  echo -e "\e[1;32m(•_•) > Cleaning Spotify cache...\e[0m"
+
+  kill -9 "$(pgrep 'Spotify')" >/dev/null 2>&1
+  local p
+  p=$(echo "$HOME/Library/Application Support/Spotify/PersistentCache/Storage/" | sed "s/~/\/Users\/$USERNAME/")
+  local owner
+  owner=$(/usr/bin/stat -f%u:%g "$p")
+  local perm
+  perm=$(/usr/bin/stat -f%Mp%Lp "$p")
+
+  sudo /bin/rm -rf "$p" && sudo /bin/mkdir "$p" && sudo chown "$owner" "$p" && sudo chmod "$perm" "$p" &&
+    echo "Spotify cache folder successfully cleared" ||
+    echo "Cannot remove Spotify cache folder"
+}
+
+# Function to clean Telegram media cache
+clean_telegram() {
+  local telegramfolder
+  local telegramstablefolder
+  local telegrambetafolder
+
+  telegramfolder=$(/usr/bin/find ~/Library/Group\ Containers -type d -maxdepth 1 -name "*.keepcoder.Telegram")
+
+  if [ -d "$telegramfolder" ]; then
+    pkill -f Telegram && echo 'Telegram has been closed' || echo 'Telegram process is not running'
+
+    echo -e "\e[1;32m(•_•) > Cleaning Telegram media cache...\e[0m"
+
+    telegramstablefolder=$(/usr/bin/find "${telegramfolder}" -type d -maxdepth 1 -name "account-*")
+    telegrambetafolder=$(/usr/bin/find "${telegramfolder}/beta" -type d -maxdepth 1 -name "account-*")
+
+    if [[ -d "$telegramstablefolder" ]]; then
+      local p
+      p=$(echo "${telegramstablefolder}/postbox/media" | sed "s/~/\/Users\/$USERNAME/")
+      local owner
+      owner=$(/usr/bin/stat -f%u:%g "$p")
+      local perm
+      perm=$(/usr/bin/stat -f%Mp%Lp "$p")
+
+      sudo /bin/rm -rf "$p" &&
+        /bin/mkdir "$p" &&
+        chown "$owner" "$p" &&
+        chmod "$perm" "$p" &&
+        echo "telegram/stable media cache folder successfully cleared" ||
+        echo "Cannot remove Telegram media cache folder"
+
+      #rm -rf /Library/Logs/Adobe/* &>/dev/null
+      #rm -rf ~/Library/Application\ Support/Adobe/Common/Media\ Cache\ Files/* &>/dev/null
+    fi
+
+    if [[ -d "$telegrambetafolder" ]]; then
+      local p
+      p=$(echo "${telegrambetafolder}/postbox/media" | sed "s/~/\/Users\/$USERNAME/")
+      local owner
+      owner=$(/usr/bin/stat -f%u:%g "$p")
+      local perm
+      perm=$(/usr/bin/stat -f%Mp%Lp "$p")
+
+      sudo /bin/rm -rf "$p" &&
+        /bin/mkdir "$p" &&
+        chown "$owner" "$p" &&
+        chmod "$perm" "$p" &&
+        echo "telegram/beta media cache folder successfully cleared" ||
+        echo "Cannot remove Telegram media cache folder"
+
+    fi
+
+  fi
+}
+
+# Function to clean Telegram Desktop media cache
+clean_tdesktop() {
+  echo -e "\e[1;32m(•_•) > Cleaning Telegram Desktop media cache...\e[0m"
+
+  pkill -f Telegram && echo 'Telegram has been closed' || echo 'Telegram process is not running'
+
+  local m
+  m=$(echo "$HOME/Library/Application Support/Telegram Desktop/tdata/user_data/media_cache" | sed "s/~/\/Users\/$USERNAME/")
+  local p
+  p=$(echo "$HOME/Library/Application Support/Telegram Desktop/tdata/user_data/cache" | sed "s/~/\/Users\/$USERNAME/")
+  local owner
+  owner=$(/usr/bin/stat -f%u:%g "$p")
+  local perm
+  perm=$(/usr/bin/stat -f%Mp%Lp "$p")
+
+  sudo /bin/rm -rf "$p" && /bin/mkdir "$p" && chown "$owner" "$p" && chmod "$perm" "$p" &&
+    sudo /bin/rm -rf "$m" && /bin/mkdir "$m" && chown "$owner" "$m" && chmod "$perm" "$m" &&
+    echo "Telegram Desktop media cache folder successfully cleared" ||
+    echo "Cannot remove Telegram Desktop media cache folder"
+}
+
+clean_vscode_cache() {
+  echo -e "\e[1;32m(•_•) > Cleaning Visual Studio Code cache cache...\e[0m"
+
+  kill -9 "$(pgrep 'Electron')" >/dev/null 2>&1
+  local p
+  p=$(echo "$HOME/Library/Application Support/Code/Cache/" | sed "s/~/\/Users\/$USERNAME/")
+  local owner
+  owner=$(/usr/bin/stat -f%u:%g "$p")
+  local perm
+  perm=$(/usr/bin/stat -f%Mp%Lp "$p")
+
+  sudo /bin/rm -rf "$p" && sudo /bin/mkdir "$p" && sudo chown "$owner" "$p" && sudo chmod "$perm" "$p" &&
+    echo "Visual Studio Code cache cache folder successfully cleared" ||
+    echo "Cannot remove Visual Studio Code cache cache folder"
+}
+
+clean_emergency() {
+  # Notice: To be sure of correct operation you must run this scipt with SUDO privilegies
+  # This script closes popular apps, clear all your critycal user data and shutting down your system.
+  # WARNING: Some data maybe lost, make sure your data is backed up before you run this script
+  echo 'Killing popular processes'
+
+  echo 'Killing process: Google Chrome browser...'
+  pkill -9 "Google Chrome"
+
+  echo 'Killing process: Mozilla Firefox browser...'
+  killall 'firefox'
+
+  echo 'Killing process: Apple Safari browser...'
+  killall 'Safari'
+
+  echo 'Killing process: Telegram...'
+  killall 'Telegram'
+
+  echo 'Killing process: WhatsApp...'
+  killall 'WhatsApp'
+
+  echo 'Killing process: Skype...'
+  killall 'Skype'
+
+  echo 'Killing process: Zoom...'
+  killall 'zoom.us'
+
+  echo 'Killing process: Discord...'
+  killall 'Discord'
+
+  echo 'Killing process: Signal...'
+  killall 'Signal'
+
+  echo "Clearing $USER data"
+
+  # Cookies
+  /bin/rm -rf ~/Library/Cookies/*
+
+  # https://chromium.googlesource.com/chromium/src/+/HEAD/docs/user_data_dir.md
+  echo "Clearing browsers data..."
+
+  # Google Chrome
+  # https://chromium.googlesource.com/chromium/src/+/HEAD/docs/user_data_dir.md
+  # https://crunchify.com/how-to-purge-all-your-google-chrome-user-data-on-mac-os-x/
+
+  /bin/rm -rf ~/Library/Caches/Google/Chrome/*
+  /bin/rm -rf ~/Library/Caches/Google/Chromium/*
+  /bin/rm -rf ~/Library/Caches/Google/Chrome\ Beta/*
+  /bin/rm -rf ~/Library/Caches/Google/Chrome\ SxS/*
+
+  /bin/rm -rf "$(/usr/bin/find "$HOME/Library/Caches" -type d -maxdepth 1 -name "com.google.Chrome*")"
+
+  /bin/rm -rf ~/Library/Application\ Support/Google/Chrome/*
+  /bin/rm -rf ~/Library/Application\ Support/Google/Chromium/*
+  /bin/rm -rf ~/Library/Application\ Support/Google/Chrome\ Beta/*
+  /bin/rm -rf ~/Library/Application\ Support/Google/Chrome\ SxS/*
+
+  # Mozilla Firefox
+  # https://support.mozilla.org/en-US/kb/profiles-where-firefox-stores-user-data
+
+  /bin/rm -rf ~/Library/Caches/Mozilla/*
+  /bin/rm -rf ~/Library/Caches/Firefox/*
+
+  /bin/rm -rf ~/Library/Application\ Support/Firefox/Profiles/*
+
+  # Apple Safari
+  /bin/rm -rf ~/Library/Safari/Databases/*
+  /bin/rm -rf ~/Library/Safari/Local\ Storage/*
+
+  /bin/rm -f ~/Library/Safari/LastSession.plist
+  /bin/rm -f ~/Library/Safari/Bookmarks.plist
+  /bin/rm -f ~/Library/Safari/RecentlyClosedTabs.plist
+  /bin/rm -f ~/Library/Safari/SearchDescriptions.plist
+  /bin/rm -f ~/Library/Safari/PasswordBreachStore.plist
+
+  /bin/rm -rf ~/Library/Caches/com.apple.Safari/*
+
+  echo "Clearing messengers data..."
+
+  # Telegram
+  local telegramfolder
+  telegramfolder=$(/usr/bin/find ~/Library/Group\ Containers -type d -maxdepth 1 -name "*.keepcoder.Telegram")
+  local telegramaccountfolder
+  telegramaccountfolder=$(/usr/bin/find "${telegramfolder}/stable" -type d -maxdepth 1 -name "account-*")
+  /bin/rm -rf "${telegramaccountfolder}"
+
+  /bin/rm -rf ~/Library/Caches/ru.keepcoder.Telegram/*
+
+  # WhatsApp
+  /bin/rm -rf "$(/usr/bin/find "$HOME/Library/Group\ Containers" -type d -maxdepth 1 -name "*.desktop.WhatsApp")"
+
+  # Skype
+  /bin/rm -rf ~/Library/Application\ Support/Microsoft/Skype\ for\ Desktop/Cache/*
+  /bin/rm -rf ~/Library/Application\ Support/Microsoft/Skype\ for\ Desktop/Code\ Cache/*
+  /bin/rm -rf ~/Library/Application\ Support/Microsoft/Skype\ for\ Desktop/GPU\ Cache/*
+  /bin/rm -rf ~/Library/Application\ Support/Microsoft/Skype\ for\ Desktop/logs/*
+  /bin/rm -rf ~/Library/Application\ Support/Microsoft/Skype\ for\ Desktop/blob_storage/*
+  /bin/rm -rf ~/Library/Application\ Support/Microsoft/Skype\ for\ Desktop/Session\ Storage/*
+  /bin/rm -rf ~/Library/Application\ Support/Microsoft/Skype\ for\ Desktop/Local\ Storage/*
+
+  /bin/rm -rf ~/Library/Caches/com.skype.skype/*
+  /bin/rm -rf ~/Library/Caches/com.skype.skype.ShipIt/*
+
+  /bin/rm -f ~/Library/Application\ Support/Microsoft/Skype\ for\ Desktop/Cookies
+  /bin/rm -f ~/Library/Application\ Support/Microsoft/Skype\ for\ Desktop/Cookies-journal
+
+  # Signal
+  /bin/rm -rf ~/Library/Application\ Support/Signal/Cache/*
+  /bin/rm -rf ~/Library/Application\ Support/Signal/Code\ Cache/*
+  /bin/rm -rf ~/Library/Application\ Support/Signal/GPUCache/*
+  /bin/rm -rf ~/Library/Application\ Support/Signal/logs/*
+  /bin/rm -rf ~/Library/Application\ Support/Signal/blob_storage/*
+  /bin/rm -rf ~/Library/Application\ Support/Signal/Session\ Storage/*
+  /bin/rm -rf ~/Library/Application\ Support/Signal/Local\ Storage/*
+  /bin/rm -rf ~/Library/Application\ Support/Signal/temp/*
+
+  # Discord
+  /bin/rm -rf ~/Library/Application\ Support/discord/Cache/*
+  /bin/rm -rf ~/Library/Application\ Support/discord/Code\ Cache/*
+  /bin/rm -rf ~/Library/Application\ Support/discord/GPUCache/*
+  /bin/rm -rf ~/Library/Application\ Support/discord/logs/*
+  /bin/rm -rf ~/Library/Application\ Support/discord/blob_storage/*
+  /bin/rm -rf ~/Library/Application\ Support/discord/Session\ Storage/*
+  /bin/rm -rf ~/Library/Application\ Support/discord/Local\ Storage/*
+
+  # Zoom
+  /bin/rm -rf ~/Library/Application\ Support/zoom.us/*
+
+  # [TODO]: optional
+  #echo "Removing popular browsers"
+
+  # [TODO]: optional
+  #echo "Removing popular messengers"
+
+  # Zoom
+  # https://itectec.com/askdifferent/macos-unable-to-completely-uninstall-zoom-meeting-app/
+
+  #{
+  #  /bin/rm -rf /Applications/zoom.us.app
+  #  /bin/rm -rf ~/Applications/zoom.us.app
+  #  kextunload -b zoom.us.ZoomAudioDevice
+  #  /bin/rm -rf /System/Library/Extensions/ZoomAudioDevice.kext
+  #} &> /dev/null
+
+  #{
+  #    /bin/rm -rf ~/Downloads/zoomusInstaller.pkg
+  #    /bin/rm -rf /Applications/zoom.us.app
+  #    /bin/rm -rf ~/Desktop/Zoom
+  #    /bin/rm -rf ~/Library/Application Support/zoom.us
+  #    /bin/rm -rf ~/Library/Caches/us.zoom.xos
+  #    /bin/rm -rf ~/Library/Internet Plug-Ins/ZoomUsPlugIn.plugin
+  #    /bin/rm -rf ~/Library/Internet\ Plug-Ins/ZoomUsPlugIn.plugin
+  #    /bin/rm -rf ~/Library/Logs/zoom.us
+  #    /bin/rm -rf ~/Library/Logs/zoominstall.log
+  #    /bin/rm -rf ~/Library/Preferences/ZoomChat.plist
+  #    /bin/rm -rf ~/Library/Preferences/us.zoom.xos.plist
+  #    /bin/rm -rf ~/Library/Saved Application State/us.zoom.xos.savedState
+  #} &> /dev/null
+
+  echo "Clearing bash..."
+
+  # ZSH History [ HISTFILE=${XDG_DATA_HOME:-$HOME/.local/share}/zsh/zsh_history ]
+  if test -f "$HISTFILE"; then
+    echo "Removing $HISTFILE.."
+    /bin/rm -f "$HISTFILE"
+  fi
+
+  FILE=~/.bash_profile
+  if test -f "$FILE"; then
+    echo "Removing $FILE..."
+    /bin/rm -f "$FILE"
+  fi
+
+  DIR=/Users/$USER/.zsh_sessions
+  if [ -d "$DIR" ]; then
+    echo "Removing $DIR..."
+    /bin/rm -rf "$DIR"
+  fi
+
+  DIR=/Users/$USER/.bash_sessions
+  if [ -d "$DIR" ]; then
+    echo "Removing $DIR..."
+    /bin/rm -rf "$DIR"
+  fi
+
+  # Clearing Recycle Bin
+  echo "Clearing recycle bin..."
+  defaults write com.apple.finder WarnOnEmptyTrash -bool false
+  defaults write com.apple.finder EmptyTrashSecurely -bool false
+  /bin/rm - rf ~/.Trash/*
+  defaults write com.apple.finder EmptyTrashSecurely -bool true
+  defaults write com.apple.finder WarnOnEmptyTrash -bool true
+
+  # This can be useful for cleaning non-SSD drives.
+  # SSD drives has a TRIM and a special function "garbage disposal", which cleans the drive itself for later overwriting.
+  # For more information see https://appleinsider.ru/mac-os-x/kak-vospolzovatsya-propavshej-funkciej-diskovoj-utility.html
+  # This operation is optional and may takes several minutes!
+  # Please correct your disk(s) name(s)!
+
+  #echo "Erasing free space on your disks..."
+  #diskutil secureErase freespace 2 "/Volumes/Macintosh HD"
+
+  echo "DONE, Now your MacOS now will be shutting down!"
+
+  # Shutting down the system
+  shutdown -h now
+}
+
+main() {
+  local cmd="$1"
+
+  if [[ "$cmd" == "" ]]; then
+    echo "Error: expecting command" >&2
+    show_help && return 1
+  fi
+
+  if [[ "$cmd" == "help" ]]; then
+    show_help && return 0
+  fi
+
+  if [[ "$cmd" == "all" ]]; then
+    clean_brew && clean_brew_cache && clean_brew_logs && clean_telegram && clean_tdesktop && clean_trash && return 0
+  fi
+
+  if [[ "$cmd" == "brew" ]]; then
+    clean_brew && clean_brew_cache && clean_brew_logs && return 0
+  fi
+
+  if [[ "$cmd" == "telegram" ]]; then
+    clean_telegram && clean_tdesktop && return 0
+  fi
+
+  if [[ "$cmd" == "tdesktop" ]]; then
+    clean_tdesktop && return 0
+  fi
+
+  if [[ "$cmd" == "trash" ]]; then
+    clean_trash && return 0
+  fi
+
+  if [[ "$cmd" == "emergency" ]]; then
+    clean_emergency && return 0
+  fi
+}
+
+# Execute the main function
+main "$@"

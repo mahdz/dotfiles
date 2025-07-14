@@ -1,0 +1,512 @@
+[
+  {
+    "groups" : [
+      {
+        "color" : "#EB5545",
+        "disabled" : true,
+        "id" : "AE41C2AB-7FD3-4288-B3EB-C571EDEF8D19",
+        "name" : "Automation",
+        "symbol" : "autostartstop"
+      },
+      {
+        "color" : "#F2A23C",
+        "disabled" : true,
+        "id" : "52DB7DCC-165C-4E3E-8826-1B2B08AFDBC6",
+        "name" : "Applications",
+        "symbol" : "app.dashed",
+        "workflows" : [
+          {
+            "commands" : [
+              {
+                "applicationCommand" : {
+                  "action" : "open",
+                  "application" : {
+                    "bundleIdentifier" : "com.apple.finder",
+                    "bundleName" : "Finder",
+                    "displayName" : "Finder.app",
+                    "path" : "\/System\/Library\/CoreServices\/Finder.app"
+                  },
+                  "meta" : {
+                    "enabled" : true,
+                    "id" : "7D4C5981-C92D-46F3-AEB4-EFDF0205A8CD",
+                    "name" : ""
+                  }
+                }
+              }
+            ],
+            "execution" : "concurrent",
+            "id" : "5DDBA992-9D81-4FCE-8A03-A9B22F367FDA",
+            "name" : "Switch to Finder",
+            "trigger" : {
+              "keyboardShortcuts" : {
+                "allowRepeat" : false,
+                "keepLastPartialMatch" : true,
+                "shortcuts" : [
+                  {
+                    "id" : "E14E5F7C-C192-4746-A7C6-FEE5FE2BBB7F",
+                    "key" : "a",
+                    "modifiers" : [
+                      "fn"
+                    ]
+                  },
+                  {
+                    "id" : "E23677CD-6816-494F-B386-D626495831D0",
+                    "key" : "f"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "commands" : [
+              {
+                "applicationCommand" : {
+                  "action" : "open",
+                  "application" : {
+                    "bundleIdentifier" : "com.apple.TextEdit",
+                    "bundleName" : "TextEdit",
+                    "displayName" : "TextEdit.app",
+                    "path" : "\/System\/Applications\/TextEdit.app"
+                  },
+                  "meta" : {
+                    "enabled" : true,
+                    "id" : "899465F4-9E18-4411-9364-359BF3FDDD4F",
+                    "name" : ""
+                  }
+                }
+              }
+            ],
+            "disabled" : true,
+            "execution" : "concurrent",
+            "id" : "A8F3CC16-83A0-4F89-864C-8A32E97459B9",
+            "name" : "Switch to TextEdit",
+            "trigger" : {
+              "keyboardShortcuts" : {
+                "shortcuts" : [
+                  {
+                    "id" : "36B44083-4C40-41F3-818C-209FBDB1CD7E",
+                    "key" : "E",
+                    "modifiers" : [
+                      "fn"
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "commands" : [
+              {
+                "applicationCommand" : {
+                  "action" : "open",
+                  "application" : {
+                    "bundleIdentifier" : "dev.warp.Warp-Stable",
+                    "bundleName" : "Warp",
+                    "displayName" : "Warp.app",
+                    "path" : "\/Applications\/Warp.app"
+                  },
+                  "meta" : {
+                    "enabled" : true,
+                    "id" : "FA488964-8799-40F6-857F-A786F6E9CA97",
+                    "name" : "Open Warp.app"
+                  }
+                }
+              }
+            ],
+            "disabled" : true,
+            "execution" : "concurrent",
+            "id" : "5C8E877E-F717-418C-BBF6-56A4E5B1AC0B",
+            "name" : "Switch to Terminal",
+            "trigger" : {
+              "keyboardShortcuts" : {
+                "shortcuts" : [
+                  {
+                    "id" : "CB6A241D-F1D8-4FD1-9E69-53D3D658DDD6",
+                    "key" : "t"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "commands" : [
+              {
+                "applicationCommand" : {
+                  "action" : "open",
+                  "application" : {
+                    "bundleIdentifier" : "com.apple.Safari",
+                    "bundleName" : "Safari",
+                    "displayName" : "Safari.app",
+                    "path" : "\/Applications\/Safari.app"
+                  },
+                  "meta" : {
+                    "enabled" : true,
+                    "id" : "749C3C60-8C37-4286-9B66-0F3E50B1A932",
+                    "name" : ""
+                  }
+                }
+              }
+            ],
+            "disabled" : true,
+            "execution" : "concurrent",
+            "id" : "ABD5AA8F-8159-4E7A-808B-3217EFAF9E6D",
+            "name" : "Switch to Safari",
+            "trigger" : {
+              "keyboardShortcuts" : {
+                "shortcuts" : [
+                  {
+                    "id" : "D5EC2F38-BE1D-40D6-AA5D-FD36AA079FEC",
+                    "key" : "S",
+                    "modifiers" : [
+                      "fn"
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "commands" : [
+              {
+                "applicationCommand" : {
+                  "action" : "open",
+                  "application" : {
+                    "bundleIdentifier" : "com.apple.systempreferences",
+                    "bundleName" : "Finder",
+                    "displayName" : "System Settings.app",
+                    "path" : "\/System\/Applications\/System Settings.app"
+                  },
+                  "meta" : {
+                    "enabled" : true,
+                    "id" : "621A5B1B-A2F7-462E-9741-35CD3F0466A9",
+                    "name" : ""
+                  }
+                }
+              }
+            ],
+            "disabled" : true,
+            "execution" : "concurrent",
+            "id" : "139BF90B-354C-416F-A163-88C1012B5BAF",
+            "name" : "Open System Settings",
+            "trigger" : {
+              "keyboardShortcuts" : {
+                "shortcuts" : [
+                  {
+                    "id" : "4C49CE89-03C3-419D-9753-F261A7EB12B3",
+                    "key" : ",",
+                    "modifiers" : [
+                      "fn"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "color" : "#F9D64A",
+        "disabled" : true,
+        "id" : "2A4F682A-46F4-4F05-BA7D-36BD919F43D4",
+        "name" : "AppleScripts",
+        "symbol" : "applescript"
+      },
+      {
+        "color" : "#6BD35F",
+        "disabled" : true,
+        "id" : "C97F4D43-8AE0-4550-B3A5-0B42BC73A910",
+        "name" : "Files & Folders",
+        "symbol" : "folder",
+        "workflows" : [
+          {
+            "commands" : [
+              {
+                "openCommand" : {
+                  "meta" : {
+                    "enabled" : true,
+                    "id" : "8FBBB712-2212-43F2-980D-EE712FD6A347",
+                    "name" : ""
+                  },
+                  "path" : "\/Users\/mh"
+                }
+              }
+            ],
+            "disabled" : true,
+            "execution" : "concurrent",
+            "id" : "411958B6-29EA-46D0-86F5-ADC2A484C5F5",
+            "name" : "Open Home folder"
+          },
+          {
+            "commands" : [
+              {
+                "openCommand" : {
+                  "meta" : {
+                    "enabled" : true,
+                    "id" : "8F28A94D-6EA2-4426-9772-990668A411C5",
+                    "name" : ""
+                  },
+                  "path" : "\/Users\/mh\/Documents"
+                }
+              }
+            ],
+            "disabled" : true,
+            "execution" : "concurrent",
+            "id" : "5F17CF43-BB12-4952-9CAF-914F03CD3949",
+            "name" : "Open Documents folder",
+            "trigger" : {
+              "keyboardShortcuts" : {
+                "shortcuts" : [
+                  {
+                    "id" : "keyboard_shortcut_placeholder_id",
+                    "key" : "Recording ..."
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "commands" : [
+              {
+                "openCommand" : {
+                  "meta" : {
+                    "enabled" : true,
+                    "id" : "85A14A1C-E4E9-44C7-89A5-907A6965E278",
+                    "name" : ""
+                  },
+                  "path" : "\/Users\/mh\/Downloads"
+                }
+              }
+            ],
+            "disabled" : true,
+            "execution" : "concurrent",
+            "id" : "356DBC32-3209-4609-9937-B58693421E6E",
+            "name" : "Open Downloads folder",
+            "trigger" : {
+              "keyboardShortcuts" : {
+                "shortcuts" : [
+                  {
+                    "id" : "keyboard_shortcut_placeholder_id",
+                    "key" : "Recording ..."
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "color" : "#3984F7",
+        "disabled" : true,
+        "id" : "47D44C9C-0E6C-4A48-9AF0-39B521808C43",
+        "name" : "Rebinding",
+        "symbol" : "app.connected.to.app.below.fill"
+      },
+      {
+        "color" : "#B263EA",
+        "disabled" : true,
+        "id" : "02D1C5E6-C482-4FDE-8310-E261BEC01E2A",
+        "name" : "Shortcuts",
+        "symbol" : "flowchart"
+      },
+      {
+        "color" : "#5D5FDE",
+        "disabled" : true,
+        "id" : "EA94BAB8-8331-465D-A7DB-42303730D6DC",
+        "name" : "ShellScripts",
+        "symbol" : "terminal",
+        "workflows" : [
+          {
+            "commands" : [
+              {
+                "openCommand" : {
+                  "application" : {
+                    "bundleIdentifier" : "com.raycast.macos",
+                    "bundleName" : "Raycast",
+                    "displayName" : "Raycast.app",
+                    "path" : "\/Applications\/Raycast.app"
+                  },
+                  "meta" : {
+                    "delay" : 50,
+                    "enabled" : true,
+                    "id" : "4E670B60-6714-4844-AF1A-EFE88AC302A3",
+                    "name" : "Grant Admin Privileges for 1 Minute"
+                  },
+                  "path" : "raycast:\/\/extensions\/ph00lt0\/privileges\/temp"
+                }
+              },
+              {
+                "scriptCommand" : {
+                  "kind" : {
+                    "shellScript" : {
+
+                    }
+                  },
+                  "meta" : {
+                    "enabled" : true,
+                    "id" : "DFA428B7-38D9-4D00-95CA-713AED6A2355",
+                    "name" : "",
+                    "variableName" : "output"
+                  },
+                  "source" : {
+                    "path" : {
+                      "_0" : "\/Users\/mh\/.local\/bin\/clean tele"
+                    }
+                  }
+                }
+              }
+            ],
+            "execution" : "serial",
+            "id" : "A2C06992-8317-44D0-97F8-FB995FE82496",
+            "name" : "clean cache",
+            "trigger" : {
+              "application" : [
+                {
+                  "application" : {
+                    "bundleIdentifier" : "ru.keepcoder.Telegram",
+                    "bundleName" : "Telegram",
+                    "displayName" : "Telegram.app",
+                    "path" : "\/Applications\/Telegram.app"
+                  },
+                  "contexts" : [
+                    "closed"
+                  ],
+                  "id" : "5FB784B8-D088-4817-A9CF-5C2870B6B948"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "color" : "#A78F6D",
+        "disabled" : true,
+        "id" : "12769793-66DA-4283-B0BC-16254939C4EE",
+        "name" : "System",
+        "symbol" : "laptopcomputer",
+        "workflows" : [
+          {
+            "execution" : "serial",
+            "id" : "93684D5B-EAAB-48E2-8879-629926417A49",
+            "name" : "Untitled workflow"
+          }
+        ]
+      },
+      {
+        "color" : "#98989D",
+        "disabled" : true,
+        "id" : "F85C4930-0A47-45B9-8053-556C10DADB7B",
+        "name" : "Websites",
+        "symbol" : "safari",
+        "workflows" : [
+          {
+            "commands" : [
+              {
+                "openCommand" : {
+                  "meta" : {
+                    "enabled" : true,
+                    "id" : "B3625574-E432-4DB2-A4E2-676AB1ECB412",
+                    "name" : ""
+                  },
+                  "path" : "https:\/\/www.github.com"
+                }
+              }
+            ],
+            "execution" : "concurrent",
+            "id" : "3663FE35-E09C-4F47-B70B-A685BE2C8E28",
+            "name" : "Open github.com",
+            "trigger" : {
+              "keyboardShortcuts" : {
+                "shortcuts" : [
+                  {
+                    "id" : "9C74ECB1-F266-4426-AA3D-0E5110860709",
+                    "key" : "⇥",
+                    "modifiers" : [
+                      "fn"
+                    ]
+                  },
+                  {
+                    "id" : "78AD2C4A-A2BF-4938-9008-FB2F742F8A83",
+                    "key" : "G"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "color" : "#3984F7",
+        "disabled" : true,
+        "id" : "65529F0B-E126-42D0-AA87-8E513AC9C34D",
+        "name" : "Mail",
+        "rule" : {
+          "bundleIdentifiers" : [
+            "com.apple.mail"
+          ],
+          "id" : "F5CB0ACA-2C8D-4F1D-BA84-A05E816D6C99"
+        },
+        "symbol" : "folder",
+        "workflows" : [
+          {
+            "commands" : [
+              {
+                "textCommand" : {
+                  "kind" : {
+                    "insertText" : {
+                      "_0" : {
+                        "actions" : [
+
+                        ],
+                        "input" : "Stay hungry, stay awesome!\n--------------------------\nxoxo\nManny",
+                        "meta" : {
+                          "enabled" : true,
+                          "id" : "C4DD5A57-56D2-44BD-AEEB-732EAC07C868",
+                          "name" : "Signature"
+                        },
+                        "mode" : "Instant"
+                      }
+                    }
+                  }
+                }
+              }
+            ],
+            "execution" : "concurrent",
+            "id" : "110E0271-7EC8-45A9-B091-D291476861FA",
+            "name" : "Type mail signature",
+            "trigger" : {
+              "keyboardShortcuts" : {
+                "shortcuts" : [
+                  {
+                    "id" : "6105F4B9-E292-4B6B-994C-EE9A484B8F1F",
+                    "key" : "S",
+                    "modifiers" : [
+                      "fn",
+                      "@"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "color" : "#000",
+        "id" : "311FE0DB-3DA4-4D09-A965-627B43CF255B",
+        "name" : "Photos",
+        "rule" : {
+          "bundleIdentifiers" : [
+            "com.apple.Photos"
+          ],
+          "id" : "A5E943BC-BA49-4D02-BE1D-3B53E1D8286B"
+        },
+        "symbol" : "folder"
+      }
+    ],
+    "id" : "CB6D45A7-BCC1-40D1-AF6A-BBE6E30DD318",
+    "name" : "Default Configuration",
+    "userModes" : [
+
+    ]
+  }
+]

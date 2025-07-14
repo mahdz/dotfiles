@@ -1,0 +1,89 @@
+# Cask applications
+
+# Apps installed by cask in homebrew/cask
+cask adguard # /Applications/Adguard.app
+cask betterdisplay # /Applications/BetterDisplay.app
+cask cirrus # ~/Applications/Cirrus.app
+cask element # ~/Applications/Element.app
+cask figma@beta # ~/Applications/Figma Beta.app
+cask github # ~/Applications/GitHub Desktop.app
+cask jump-desktop-connect # /Applications/Jump Desktop Connect.app
+cask kekaexternalhelper # ~/Applications/KekaExternalHelper.app
+cask little-snitch # ~/Applications/Little Snitch.app
+cask logitune # /Applications/LogiTune.app
+cask qlmarkdown # ~/Applications/QLMarkdown.app
+cask raycast # ~/Applications/Raycast.app
+cask rectangle # ~/Applications/Rectangle.app
+cask telegram-desktop@beta # ~/Applications/Telegram.app
+cask visual-studio-code@insiders # ~/Applications/Visual Studio Code - Insiders.app
+cask yt-music # ~/Applications/YT Music.app
+cask zoom # /Applications/zoom.us.app
+
+# Cask is found, but no applications are found (could be fonts, system settings, or installed in other directory.)
+cask font-fira-code
+cask font-fira-code-nerd-font
+cask font-hack
+cask font-meslo-lg-nerd-font
+cask qlcolorcode
+cask qlimagesize
+cask qlprettypatch
+cask qlstephen
+cask quicklook-csv
+cask quicklook-json
+cask quicklookapk
+
+# Apps installed directly instead of by cask
+#cask appcleaner # /Applications/AppCleaner.app
+#cask applite # /Applications/Applite.app
+#cask etrecheckpro # /Applications/EtreCheckPro.app
+#cask find-empty-folders # /Applications/Find Empty Folders.app
+#cask lulu # /Applications/LuLu.app
+#cask onyx # /Applications/OnyX.app
+#cask pearcleaner # /Applications/Pearcleaner.app
+#cask suspicious-package # /Applications/Suspicious Package.app
+#cask iterm2 # /Applications/iTerm.app
+#cask coteditor # ~/Applications/CotEditor.app
+#cask keka # ~/Applications/Keka.app
+#cask openinterminal # ~/Applications/OpenInTerminal.app
+#cask qlvideo # ~/Applications/QuickLook Video.app
+#cask setapp # ~/Applications/Setapp
+#cask setapp # ~/Applications/Setapp.app
+#cask spotify # ~/Applications/Spotify.app
+#cask syntax-highlight # ~/Applications/Syntax Highlight.app
+#cask telegram-desktop # ~/Applications/Telegram Desktop.app
+#cask vlc # ~/Applications/VLC.app
+
+# Apps installed by cask in th-ch/youtube-music
+tap th-ch/youtube-music
+cask youtube-music # ~/Applications/YouTube Music.app
+
+# Apps installed by brew in homebrew/core
+
+# Apps installed from AppStore
+appstore 1586435171 Actions (3.4.0) # /Applications/Actions.app
+appstore 1037126344 Apple Configurator (2.17) # /Applications/Apple Configurator.app
+appstore 1632827132 Camera Preview (1.6.0) # /Applications/Camera Preview.app
+appstore 1472875808 CardPointers (6.1.1) # /Applications/CardPointers.app
+appstore 1355679052 Dropover (4.15.0) # /Applications/Dropover.app
+appstore 1533805339 Keepa - Price Tracker (4.19) # /Applications/Keepa - Price Tracker.app
+appstore 1440405750 MusicHarbor (4.9.1) # /Applications/MusicHarbor.app
+appstore 1472777122 PayPal Honey (16.5.1) # /Applications/PayPal Honey.app
+appstore 1459275972 Playlisty for Apple Music (3.18) # /Applications/Playlisty for Apple Music.app
+appstore 1519867270 Refined GitHub (24.8.20) # /Applications/Refined GitHub.app
+appstore 6504040051 Scratchpad (1.2.2) # /Applications/Scratchpad.app
+appstore 1522267256 Shareful (1.10.3) # /Applications/Shareful.app
+appstore 1594183810 Shortery (6.1) # /Applications/Shortery.app
+appstore 1463298887 Userscripts (4.5.4) # /Applications/Userscripts.app
+appstore 1607635845 Velja (2.0.6) # /Applications/Velja.app
+
+# Apps installed from AppStore, but casks are available.
+appstore 6448461551 Command X (1.4.5) # command-x, /Applications/Command X.app
+appstore 1447330651 Copilot (4.6.1) # copilot, /Applications/Copilot.app
+appstore 905953485 NordVPN (8.27.0) # nordvpn, /Applications/NordVPN.app
+appstore 899972312 WordService (2.8.3) # wordservice, /Applications/WordService.app
+
+# Apps installed but no casks are available
+# (System applications or directory installed.)
+# /Applications/Safari.app
+# ~/Applications/Amnesia.app
+# ~/Applications/YouTube.app

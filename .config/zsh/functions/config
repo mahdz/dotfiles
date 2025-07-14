@@ -1,0 +1,44 @@
+#!/usr/bin/env zsh
+
+# Function: config
+#
+# Description:
+#   Choose a configuration file to edit
+#
+# shellcheck disable=SC2168
+
+# Check for EDITOR
+if [ -z $EDITOR ]
+then
+    echo ""
+    echo "please set the EDITOR env to the editor of your choice"
+    return 1
+fi
+
+# Ensure XDG_CONFIG_HOME is set
+[ -z $XDG_CONFIG_HOME ] && export XDG_CONFIG_HOME=$HOME/.config
+
+# Define the helper function
+function zsh_menu() {
+    local back="<back>"
+    local prompt="Choose a zsh configuration file to edit or $back"
+    local choice=$(ls -1 $XDG_CONFIG_HOME/zsh/* | xargs basename | xargs gum choose --header=$prompt $back)
+    if [ $choice = $back ]
+    then
+        config
+    else
+        $EDITOR "$XDG_CONFIG_HOME/zsh/$choice"
+    fi
+}
+
+# Main menu
+local exit="<exit>"
+local prompt="Choose a configuration file to edit or $exit"
+local choice=$(gum choose $exit "config" "topgrade" "zsh" "karabiner" --header=$prompt)
+case $choice in
+    "config") $EDITOR $XDG_CONFIG_HOME/scripts/config ;;
+    "topgrade") $EDITOR $XDG_CONFIG_HOME/topgrade.d/topgrade.toml ;;
+    "karabiner") $EDITOR $XDG_CONFIG_HOME/karabiner/konfig.json ;;
+    "zsh") zsh_menu ;;
+    $exit) return 0 ;;
+esac

@@ -1,0 +1,170 @@
+# Get editor completions based on the config schema
+'' = 'https://starship.rs/config-schema.json'
+
+# Disables the custom module
+[custom]
+disabled = false
+
+format = """
+[╭](fg:separator)\
+$status\
+$directory\
+$git_branch\
+$git_status\
+$fill\
+$nodejs\
+$python\
+$cmd_duration\
+$sudo\
+$line_break\
+[│](fg:separator)\
+$line_break\
+[╰](fg:separator)\
+$character\
+"""
+
+# Inserts a blank line between shell prompts
+add_newline = true
+palette = "dracula"
+#palette = 'catppuccin_mocha'
+# palette = 'tokyo_night'
+
+# move the rest of the prompt to the right
+right_format = """${custom.ssh_keys}${custom.ssh_no_keys}"""
+
+###########################################
+
+[palettes.dracula]
+prompt_ok  = "#8047c1"
+prompt_err = "#e23140"
+icon       = "#161514"
+separator  = "#35312c"
+background = "#35312c"
+
+directory  = "#9f31e2"
+duration   = "#e26f31"
+status     = "#e23140"
+git_branch = "#31e268"
+git_status = "#31e268"
+
+foreground = '#F8F8F2'
+#background = '#282A36'
+current_line = '#44475A'
+primary = '#1E1F29'
+box = '#44475A'
+blue	= '#6272A4'
+cyan = '#8BE9FD'
+green	= '#50FA7B'
+orange = '#FFB86C'
+pink = '#FF79C6'
+purple = '#BD93F9'
+red	= '#FF5555'
+yellow = '#F1FA8C'
+
+[palettes.catppuccin_mocha]
+foreground = '#D9E0EE'
+background = '#1E1E2E'
+current_line = '#2E2E3E'
+primary = '#313244'
+box = '#2E2E3E'
+blue = '#8AADF4'
+cyan = '#76E3F6'
+green = '#A6E3A1'
+orange = '#F9AF74'
+pink = '#F5BDE6'
+purple = '#CBA6F7'
+red = '#F38BA8'
+yellow = '#F9E2AF'
+status = "#e23140"
+
+[palettes.tokyo_night]
+foreground = '#D8D8D8'
+background = '#1A1B26'
+current_line = '#2A2C37'
+primary = '#292E42'
+box = '#2A2C37'
+blue = '#7AA2F7'
+cyan = '#7FDBCA'
+green = '#98C379'
+orange = '#FF9E64'
+pink = '#FF75A0'
+purple = '#BB80B3'
+red = '#F7768E'
+yellow = '#E5C07B'
+status = "#e23140"
+
+###########################################
+
+[character]
+#format = """
+#[│](fg:seperator)
+#[╰─$symbol](fg:seperator) """
+success_symbol = '[](fg:prompt_ok)'
+error_symbol = '[](fg:prompt_err)'
+
+[status]
+format = "[─](fg:separator)[](fg:status)[](fg:icon bg:status)[](fg:status bg:background)[ $status](bg:background)[](fg:background)"
+pipestatus = true
+pipestatus_separator = "-"
+pipestatus_segment_format = "$status"
+pipestatus_format = "[─](fg:separator)[](fg:status)[](fg:icon bg:status)[](fg:status bg:background)[ $pipestatus](bg:background)[](fg:background)"
+disabled = false
+
+[directory]
+format = "[─](fg:separator)[](fg:directory)[](fg:icon bg:directory)[](fg:directory bg:background)[ $path](bg:background)[](fg:background)"
+truncate_to_repo = false
+truncation_length = 1
+truncation_symbol = ""
+fish_style_pwd_dir_length = 2
+read_only = " 󰌾"
+#read_only_style = ''
+
+[git_branch]
+format = "[─](fg:separator)[](fg:git_branch)[](fg:icon bg:git_branch)[](fg:git_branch bg:background)[ $branch](bg:background)"
+
+[git_status]
+format = "[](fg:background bg:git_status)[ $all_status$ahead_behind](fg:icon bg:git_status)[](fg:git_status)"
+
+[fill]
+symbol = '─'
+style = 'fg:current_line'
+
+[nodejs]
+format = '[─](fg:separator)[](fg:green)[$symbol](fg:primary bg:green)[](fg:green bg:box)[ $version](fg:foreground bg:box)[](fg:box)'
+detect_files = ["package.json", ".node-version", "!bunfig.toml", "!bun.lockb"]
+symbol = '󰎙 Node.js'
+
+[python]
+format = '[─](fg:separator)[](fg:green)[$symbol](fg:primary bg:green)[](fg:green bg:box)[ $version](fg:foreground bg:box)[](fg:box)'
+symbol = ' python'
+
+[sudo]
+format = '[─](fg:separator)[](fg:red)[ ](fg:primary bg:red)[](fg:red bg:box)[ $sudo](fg:foreground bg:box)[](fg:box) '
+symbol = "⚡"
+disabled = false
+
+[cmd_duration]
+format = "[─](fg:separator)[](fg:duration)[󱐋](fg:icon bg:duration)[](fg:duration bg:background)[ $duration](bg:background)[](fg:background)"
+min_time = 1000
+
+[time]
+format = "[](fg:duration)[󰥔](fg:icon bg:duration)[](fg:duration bg:background)[ $time](bg:background)[](fg:background)"
+disabled = false
+
+[custom.ssh_no_keys]
+description = "SSH missing keys"
+when = "ssh-add -l | grep -q 'no identities'"
+command = "echo 🚫"
+format = "$symbol[$output]($style) "
+shell = ["zsh", "--no-rcs"]
+symbol = "🔑"
+style = "bold fg:red"
+
+[custom.ssh_keys]
+description = "SSH key count"
+when = "ssh-add -l | grep -v -q 'no identities'"
+command = "ssh-add -l | grep -v 'no identities' | wc -l"
+format = "$symbol[$output]($style) "
+shell = ["zsh", "--no-rcs"]
+symbol = "🔑"
+style = "bold fg:green"

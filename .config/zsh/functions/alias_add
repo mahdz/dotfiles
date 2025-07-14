@@ -1,0 +1,62 @@
+#!/bin/zsh
+# Function: alias_add
+#
+# Description:
+#   Add or update an alias and immediately reload the aliases file.
+#   Checks for existing aliases before adding and provides proper error handling.
+#
+# Usage:
+#   alias_add <alias_name> <command>
+#
+# Arguments:
+#   alias_name: Name of the alias to create
+#   command: The command that the alias will execute
+#
+# Examples:
+#   alias_add ll 'ls -la'
+#   alias_add gp 'git push'
+#
+# Returns:
+#   0 - Success
+#   1 - Invalid arguments
+#   2 - Failed to write to aliases file
+#
+# shellcheck disable=SC2168
+
+local aliases="${ZDOTDIR}/zshrc.d/myaliases.zsh"
+local name="$1"
+local command="$2"
+
+# Check for required arguments
+if [[ -z "$name" || -z "$command" ]]; then
+  echo "Error: Missing required arguments"
+  echo "Usage: alias_add <alias_name> <command>"
+  return 1
+fi
+
+# Check if alias already exists
+if grep -q "^alias ${name}=" "${aliases}" 2>/dev/null; then
+  echo "Warning: Alias '${name}' already exists."
+  read -r "response?Do you want to update it? [y/N] "
+  if [[ ! "$response" =~ ^[Yy]$ ]]; then
+    echo "Operation cancelled."
+    return 0
+  fi
+  # Remove existing alias
+  sed -i '' "/^alias ${name}=/d" "${aliases}"
+fi
+
+# Add new alias
+if ! echo "alias ${name}='${command}'" >>"${aliases}"; then
+  echo "Error: Failed to write to aliases file"
+  return 2
+fi
+
+echo "Successfully added/updated alias: ${name}='${command}'"
+
+# Reload aliases
+if ! source "${aliases}"; then
+  echo "Warning: Failed to reload aliases file"
+fi
+
+return 0

@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+read -r -n 1 -p "$1 (y/n) " answer
+echo ""
+test "$answer" = "y"
+
+# # A function to prompt/read an interactive y/n response
+# # Stops reading after one character, meaning only 'y' or 'Y' will return 0
+# # _anything_ else will return 1
+# confirm() {
+#   read -rn 1 -p "${*:-Continue} [Y/N]? "
+#   printf -- '%s\n' ""
+#   case "${REPLY}" in
+#   [yY]) return 0 ;;
+#   *) return 1 ;;
+#   esac
+# }
+
+# # For a version that features a timeout:
+
+# # A function to prompt/read an interactive y/n response
+# # Stops reading after one character, meaning only 'y' or 'Y' will return 0
+# # Any other character, or an optional timeout (-t|--timeout) will return 1
+# confirm() {
+#   local confirm_args
+#   case "${1}" in
+#   -t | --timeout)
+#     confirm_args=(-t "${2}")
+#     set -- "${@:3}"
+#     ;;
+#   esac
+
+#   read "${confirm_args[@]}" -rn 1 -p "${*:-Continue} [Y/N]? "
+#   printf -- '%s\n' ""
+#   case "${REPLY}" in
+#   [yY]) return 0 ;;
+#   *) return 1 ;;
+#   esac
+# }

@@ -1,0 +1,105 @@
+#
+# .zplugins.txt – Antidote plugins file (rewritten for efficiency & stability)
+#
+
+# ------------------------------------------------------------------------------
+# CORE ENVIRONMENT SETUP (load first, no defer)
+# ------------------------------------------------------------------------------
+
+$ZSH_CUSTOM/plugins/starship-ftl conditional:is-theme-starship
+mattmc3/zephyr path:plugins/environment
+mattmc3/zephyr path:plugins/homebrew
+$ZSH_CUSTOM/plugins/xdg
+
+# ------------------------------------------------------------------------------
+# OMZ ADAPTERS + PROMPTS  (non-deferred)
+# ------------------------------------------------------------------------------
+
+getantidote/use-omz
+
+mattmc3/zephyr path:plugins/prompt
+$ZDOTDIR/themes kind:fpath
+
+# ------------------------------------------------------------------------------
+# CRITICAL OH-MY-ZSH LIBRARIES (sourced early, no defer)
+# ------------------------------------------------------------------------------
+
+ohmyzsh/ohmyzsh path:lib/async_prompt.zsh
+ohmyzsh/ohmyzsh path:lib/completion.zsh
+#ohmyzsh/ohmyzsh path:lib/directories.zsh
+ohmyzsh/ohmyzsh path:lib/key-bindings.zsh
+ohmyzsh/ohmyzsh path:lib/termsupport.zsh
+
+# ------------------------------------------------------------------------------
+# NON-CRITICAL OH-MY-ZSH LIBRARIES (safe to defer)
+# ------------------------------------------------------------------------------
+
+ohmyzsh/ohmyzsh path:lib/cli.zsh # kind:defer
+#ohmyzsh/ohmyzsh path:lib/clipboard.zsh # kind:defer
+#ohmyzsh/ohmyzsh path:lib/compfix.zsh # kind:defer
+#ohmyzsh/ohmyzsh path:lib/correction.zsh # kind:defer
+ohmyzsh/ohmyzsh path:lib/diagnostics.zsh # kind:defer
+ohmyzsh/ohmyzsh path:lib/functions.zsh
+ohmyzsh/ohmyzsh path:lib/git.zsh # kind:defer
+ohmyzsh/ohmyzsh path:lib/grep.zsh # kind:defer
+ohmyzsh/ohmyzsh path:lib/history.zsh # kind:defer
+ohmyzsh/ohmyzsh path:lib/misc.zsh # kind:defer
+#ohmyzsh/ohmyzsh path:lib/prompt_info_functions.zsh
+ohmyzsh/ohmyzsh path:lib/spectrum.zsh # kind:defer
+#ohmyzsh/ohmyzsh path:lib/theme-and-appearance.zsh
+ohmyzsh/ohmyzsh path:lib/vcs_info.zsh
+
+# ------------------------------------------------------------------------------
+# DEV TOOLS (safe to defer)
+# ------------------------------------------------------------------------------
+
+ohmyzsh/ohmyzsh path:plugins/git
+#ohmyzsh/ohmyzsh path:plugins/mise  # Disabled - using shims instead for script compatibility
+$ZSH_CUSTOM/plugins/python # kind:defer
+#ohmyzsh/ohmyzsh path:plugins/python
+matthiasha/zsh-uv-env # kind:defer
+#$ZSH_CUSTOM/plugins/ruby # kind:defer
+
+
+# ------------------------------------------------------------------------------
+# NON-CRITICAL ZEPHYR PLUGINS (safe to defer)
+# ------------------------------------------------------------------------------
+
+# These are consolidated and organized by priority
+mattmc3/zephyr path:plugins/color
+mattmc3/zephyr path:plugins/compstyle
+mattmc3/zephyr path:plugins/directory
+mattmc3/zephyr path:plugins/helper
+mattmc3/zephyr path:plugins/history
+mattmc3/zephyr path:plugins/prompt
+mattmc3/zephyr path:plugins/utility
+mattmc3/zephyr path:plugins/editor
+mattmc3/zephyr path:plugins/zfunctions
+mattmc3/zephyr path:plugins/macos
+mattmc3/zephyr path:plugins/confd
+
+# ------------------------------------------------------------------------------
+# UTILITIES (safe to defer)
+# ------------------------------------------------------------------------------
+
+ohmyzsh/ohmyzsh path:plugins/ssh-agent
+ohmyzsh/ohmyzsh path:plugins/eza # kind:defer
+ohmyzsh/ohmyzsh path:plugins/zoxide # kind:defer
+ohmyzsh/ohmyzsh path:plugins/copypath # kind:defer
+ohmyzsh/ohmyzsh path:plugins/common-aliases # kind:defer
+srijanshetty/zsh-suffix-alias # kind:defer
+#romkatv/zsh-bench kind:path # kind:defer
+marlonrichert/zsh-hist # kind:defer
+romkatv/zsh-no-ps2
+agkozak/zhooks
+
+
+# ------------------------------------------------------------------------------
+# FINAL PLUGINS (loaded last, no defer unless known-safe)
+# ------------------------------------------------------------------------------
+
+zsh-users/zsh-autosuggestions conditional:is-not-warpterm post:post-autosuggestions
+#zsh-users/zsh-history-substring-search conditional:is-not-warpterm post:post-history-substring-search
+zsh-users/zsh-syntax-highlighting conditional:is-not-warpterm  # DO NOT DEFER
+
+# vi: ft=properties

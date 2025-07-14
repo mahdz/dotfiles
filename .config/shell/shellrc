@@ -1,0 +1,651 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2034
+# =============================================================================
+# Shared Utilities Script
+# =============================================================================
+# Provides colorized output, user interaction, and utility functions for
+# consistent behavior across all dotfiles installation scripts
+#
+# Functions provided:
+#   - Color-coded output functions (info, warn, error, success, debug)
+#   - Section and subsection headers
+#   - User confirmation prompts with defaults
+#   - Command existence checking
+#
+# Usage:
+#   source "$XDG_CONFIG_HOME/shell/shellrc"
+#   info "This is an informational message"
+
+# SSH Agent
+export SSH_AUTH_SOCK="$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh"
+
+# Used for input using the __checkSudo function
+# You can't output text to display in the Terminal while a subshell (with '$()') is waiting for the command output.
+# It will display only in the end, which isn't useful in the while condition I'm using.
+# See https://stackoverflow.com/a/64810239/895232
+sudo_needed=0
+
+# Constants
+github_api="https://api.github.com"
+videos_extensions=".mp4|.avi|.mov|.m4p|.m4v|.webm|.mpg|.mp2|.mpeg|.mpe|.mpv|.ogg|.wmv|.qt"
+images_extensions=".png|.jpeg|.jpg|.gif|.bmp|.tiff"
+
+# =============================================================================
+# Shared Utilities Script
+# =============================================================================
+
+# --- Python & uv Specific Settings ---
+# uv generally respects XDG variables for its cache and data directories.
+# However, you can explicitly guide it for maximum control.
+
+# uv cache directory (should default to XDG_CACHE_HOME/uv)
+export UV_CACHE_DIR="${XDG_CACHE_HOME}/uv" # Explicitly set if default is not desired
+
+# uv Python installations directory (should default to XDG_DATA_HOME/uv/python)
+export UV_PYTHON_INSTALL_DIR="${XDG_DATA_HOME}/uv/python" # Explicitly set if default is not desired
+
+# uv tool installations directory (should default to XDG_DATA_HOME/uv/tools)
+export UV_TOOL_DIR="${XDG_DATA_HOME}/uv/tools" # Explicitly set if default is not desired
+
+# uv tool binary directory (should default to XDG_DATA_HOME/bin or XDG_BIN_HOME)
+# uv usually places executables in XDG_DATA_HOME/bin, which we've added to PATH.
+# If you want to explicitly set it:
+export UV_TOOL_BIN_DIR="${XDG_DATA_HOME}/bin"
+
+# Python specific variables for uv (mostly handled by uv itself)
+# PYTHONDONTWRITEBYTECODE: Prevents Python from writing .pyc files to source directories
+export PYTHONDONTWRITEBYTECODE=1
+
+# PYTHONSTARTUP: Path to a Python startup script (e.g., for common imports)
+# If you have one, place it in an XDG-compliant location.
+# export PYTHONSTARTUP="${XDG_CONFIG_HOME}/python/pythonrc.py"
+
+# --- Mise Specific Settings ---
+# mise is designed to be XDG-compliant by default for its configuration.
+# Its main configuration file is usually ~/.config/mise/config.toml (or $XDG_CONFIG_HOME/mise/config.toml).
+# Its cache and data directories should also follow XDG.
+
+# Explicitly ensure mise uses XDG paths if it somehow doesn't by default
+# This is generally not needed as mise is XDG-aware.
+export MISE_CONFIG_HOME="${XDG_CONFIG_HOME}/mise"
+export MISE_DATA_DIR="${XDG_DATA_HOME}/mise"
+export MISE_CACHE_DIR="${XDG_CACHE_HOME}/mise"
+
+# Optional: Disable mise version warnings if you're managing Python versions manually or externally
+export MISE_PYTHON_AUTO_INSTALL=0 # Example if you don't want mise to auto-install Python versions
+
+
+
+# =============================================================================
+# COLOR DEFINITIONS
+# =============================================================================
+
+BOLD="\033[1m"
+ITALIC="\033[3m"
+GREEN="\033[32m"
+BLUE="\033[34m"
+YELLOW="\033[33m"
+RED="\033[31m"
+CYAN="\033[36m"
+NORMAL="\033[0m"
+
+colorize() {
+  printf "\x1b[${1}m"
+}
+
+NC=$(colorize '0') # No Color
+BLACK=$(colorize '0;30')
+DARK_GRAY=$(colorize '1;30')
+RED=$(colorize '0;31')
+LIGHT_RED=$(colorize '1;31')
+GREEN=$(colorize '0;32')
+LIGHT_GREEN=$(colorize '1;32')
+ORANGE=$(colorize '0;33')
+YELLOW=$(colorize '1;33')
+BLUE=$(colorize '0;34')
+LIGHT_BLUE=$(colorize '1;34')
+PURPLE=$(colorize '0;35')
+LIGHT_PURPLE=$(colorize '1;35')
+CYAN=$(colorize '0;36')
+LIGHT_CYAN=$(colorize '1;36')
+LIGHT_GRAY=$(colorize '0;37')
+WHITE=$(colorize '1;37')
+
+# Text colors
+# see: https://stackoverflow.com/a/4332530/8802485
+
+TEXT_BLACK=$(tput setaf 0)
+TEXT_RED=$(tput setaf 1)
+TEXT_GREEN=$(tput setaf 2)
+TEXT_YELLOW=$(tput setaf 3)
+TEXT_BLUE=$(tput setaf 4)
+TEXT_MAGENTA=$(tput setaf 5)
+TEXT_CYAN=$(tput setaf 6)
+TEXT_WHITE=$(tput setaf 7)
+TEXT_BRIGHT=$(tput bold)
+TEXT_NORMAL=$(tput sgr0)
+TEXT_BLINK=$(tput blink)
+TEXT_REVERSE=$(tput smso)
+TEXT_UNDERLINE=$(tput smul)
+
+blue() {
+  printf "${BLUE}${1}${NC}"
+}
+
+light_blue() {
+  printf "${LIGHT_BLUE}${1}${NC}"
+}
+
+purple() {
+  printf "${PURPLE}${1}${NC}"
+}
+
+light_purple() {
+  printf "${LIGHT_PURPLE}${1}${NC}"
+}
+
+cyan() {
+  printf "${CYAN}${1}${NC}"
+}
+
+light_cyan() {
+  printf "${LIGHT_CYAN}${1}${NC}"
+}
+
+green() {
+  printf "${GREEN}${1}${NC}"
+}
+
+light_green() {
+  printf "${LIGHT_GREEN}${1}${NC}"
+}
+
+red() {
+  printf "${RED}${1}${NC}"
+}
+
+light_red() {
+  printf "${LIGHT_RED}${1}${NC}"
+}
+
+yellow() {
+  printf "${YELLOW}${1}${NC}"
+}
+
+# =============================================================================
+# OUTPUT FUNCTIONS
+# =============================================================================
+
+# Print a banner with a colored border and text
+# Usage: banner "Your message here" "color"
+# Arguments: message text to display and color (e.g., "red", "green", "blue")
+# Returns: always 0
+banner() {
+  # Capture the text and color arguments
+  local text="$1"
+  local color="$2"
+
+  # Define the text and border styles
+  local text_color="${TEXT_BRIGHT}$color"
+  local border_color="${TEXT_NORMAL}$color"
+  local border_char="="
+  local border_char_top_left_corner="╔"
+  local border_char_top_right_corner="╗"
+  local border_char_bottom_right_corner="╝"
+  local border_char_bottom_left_corner="╚"
+  local border_char_horizontal="═"
+  local border_char_vertical="║"
+
+  # Calculate the width of the text, adding one extra column per emoji (since they generally occupy two columns onscreen)
+  local char_count=${#text}
+  local emoji_count
+  emoji_count=$(echo -n "$text" | python3 -c "import sys, unicodedata; print(sum((unicodedata.category(ch) == 'So') for ch in sys.stdin.read()))")
+  local padding_left=1
+  local padding_right=1
+  local text_cols=$((padding_left + char_count + emoji_count + padding_right))
+
+  # Build the banner components
+  local border_top="$border_color$border_char_top_left_corner$(
+    repeat $text_cols
+    printf $border_char_horizontal
+  )$border_char_top_right_corner"
+  local border_vertical="$border_color$border_char_vertical"
+  local border_bottom="$border_color$border_char_bottom_left_corner$(
+    repeat $text_cols
+    printf $border_char_horizontal
+  )$border_char_bottom_right_corner"
+  local text="$text_color $text "
+
+  # Output the assembled banner
+  printf "\n$border_top\n$border_vertical$text$border_vertical\n$border_bottom\n\n${TEXT_NORMAL}"
+}
+
+# Print informational message with green color coding
+# Usage: info "This is an informational message"
+# Arguments: message text to display
+# Returns: always 0
+ info() {
+   printf "%b\\n" "${BOLD}${GREEN}[INFO]${NORMAL} $*"
+ }
+#info() {
+#  local text="$1"
+#  local color="${TEXT_WHITE}"
+#  banner $text $color
+#}
+
+# Print warning message with yellow color coding
+# Usage: warn "This is a warning message"
+# Arguments: message text to display
+# Returns: always 0
+ warn() {
+   printf "%b\\n" "${BOLD}${YELLOW}[WARN]${NORMAL} $*"
+ }
+#warn() {
+#  local text="$1"
+#  local color="${TEXT_YELLOW}"
+#  banner $text $color
+#}
+# warn() {
+#   echo "$(light_red '**WARN**') ${1}"
+# }
+
+# Print error message with red color coding
+# Usage: error "This is an error message"
+# Arguments: message text to display
+# Returns: always 0
+ error() {
+   printf "%b\\n" "${BOLD}${RED}[ERROR]${NORMAL} $*"
+ }
+#error() {
+#  local text="$1"
+#  local color="${TEXT_RED}"
+#  banner $text $color
+#}
+# error() {
+#   echo "$(red '**ERROR**') ${1}"
+#   exit 1
+# }
+
+# Print success message with green color coding
+# Usage: success "Operation completed successfully"
+# Arguments: message text to display
+# Returns: always 0
+# success() {
+#   printf "%b\\n" "${BOLD}${GREEN}[SUCCESS]${NORMAL} $*"
+# }
+success() {
+  echo "$(green '**SUCCESS**') ${1}"
+}
+
+# Print something with style
+# Usage: say "This is a styled message"
+# Arguments: message text to display
+# Returns: always 0
+say() {
+  gum style --foreground 93 "$1"
+}
+
+# Print debug message (only when DEBUG environment variable is set to 1)
+# Usage: debug "Debug information: $variable"
+# Arguments: message text to display
+# Returns: always 0
+DEBUG=${DEBUG:-0} # Default to off, enable with DEBUG=1
+
+debug() {
+  if [[ "${DEBUG:-}" == "1" ]]; then
+    printf "%b\\n" "${CYAN}[DEBUG]${NORMAL} $*"
+  fi
+}
+
+# Print formatted section header for organizing output
+# Usage: section "Installation Phase"
+# Arguments: section title text
+# Returns: always 0
+section() {
+  printf "\\n%b\\n" "${BOLD}${BLUE}=== $* ===${NORMAL}"
+}
+
+# Print formatted subsection header for organizing output
+# Usage: subsection "Setting up dependencies"
+# Arguments: subsection title text
+# Returns: always 0
+subsection() {
+  printf "\\n%b\\n" "${BLUE}--- $* ---${NORMAL}"
+}
+
+# Print formatted section header with a custom title
+# Usage: section_header "Custom Title"
+# Arguments: section title text
+# Returns: always 0
+section_header() {
+  echo "$(red '---------------------')"
+  echo "$(blue '==>') $(purple "${1}")"
+}
+
+# =============================================================================
+# UTILITY FUNCTIONS
+# =============================================================================
+
+# Check if command exists
+# Usage: command_exists "git" && echo "Git is installed"
+# Arguments: command_name
+# Returns: 0 if command exists, 1 otherwise
+command_exists() {
+  type "$1" >/dev/null 2>&1
+}
+
+have() {
+  if [ -z "$1" ]; then
+    echo "Usage: have <command, alias or function>"
+    return 1 # false
+  fi
+
+  # Check if a command, alias or with the provided name exists
+  if type "$1" &>/dev/null; then
+    return 0 # true
+  else
+    return 1 # false
+  fi
+}
+
+# Check if a string is non-empty
+# Usage: is_non_zero_string "value" && echo "String is non-empty"
+# Arguments: string
+# Returns: 0 if non-empty, 1 if empty
+is_non_zero_string() {
+  [[ -n "${1}" ]]
+}
+
+# Remove trailing slash if present
+# Usage: strip_trailing_slash "/path/to/dir/" || echo "No trailing slash"
+# Arguments: Path
+strip_trailing_slash() {
+  echo "${1%\/}"
+}
+
+# Extract the last segment of a path
+# Usage: extract_last_segment "/path/to/dir/" || echo "Last segment is 'dir'"
+# Arguments: Path
+extract_last_segment() {
+  local without_trailing_slash="$(strip_trailing_slash "${1}")"
+  echo "${without_trailing_slash##*/}"
+  unset without_trailing_slash
+}
+
+# Validate that input is not empty
+# Usage: validate_not_empty "value" "Field name" || return 1
+# Arguments: value, field_name
+# Returns: 0 if valid, 1 if empty
+validate_not_empty() {
+  local value="$1"
+  local field_name="${2:-Input}"
+
+  if [[ -z "$value" ]]; then
+    error "$field_name cannot be empty"
+    return 1
+  fi
+  return 0
+}
+
+# Validate directory path exists
+# Usage: validate_directory "/path/to/dir" "Directory" || return 1
+# Arguments: path, description
+# Returns: 0 if directory exists, 1 otherwise
+validate_directory() {
+  local path="$1"
+  local description="${2:-Directory}"
+
+  if [[ ! -d "$path" ]]; then
+    error "$description does not exist: $path"
+    return 1
+  fi
+  return 0
+}
+
+# Check if a directory exists
+is_directory() {
+  is_non_zero_string "${1}" && [[ -d "${1}" ]]
+}
+
+# Check if a directory has children (i.e., is not empty)
+dir_has_children() {
+  is_directory "${1}" && is_non_zero_string "$(ls -A "${1}")"
+}
+
+# Ensure a directory exists, creating it if necessary
+ensure_dir_exists() {
+  if is_non_zero_string "${1}"; then
+    mkdir -pv "${1}"
+  else
+    warn "Skipping creation of the directory since '$(yellow "${1}")' is not defined"
+  fi
+}
+
+# Validate file exists
+# Usage: validate_file "/path/to/file" "Configuration file" || return 1
+# Arguments: path, description
+# Returns: 0 if file exists, 1 otherwise
+validate_file() {
+  local path="$1"
+  local description="${2:-File}"
+
+  if [[ ! -f "$path" ]]; then
+    error "$description does not exist: $path"
+    return 1
+  fi
+  return 0
+}
+
+# Check if a file exists
+is_file() {
+  is_non_zero_string "${1}" && [[ -f "${1}" ]]
+}
+
+# Check if a file is executable
+# Usage: is_executable "/path/to/file" && echo "File is executable"
+# Arguments: path
+# Returns: 0 if executable, 1 otherwise
+is_executable() {
+  is_non_zero_string "${1}" && [[ -x "${1}" ]]
+}
+
+# Validate path is writable
+# Usage: validate_writable "/path/to/dir" "Target directory" || return 1
+# Arguments: path, description
+# Returns: 0 if writable, 1 otherwise
+validate_writable() {
+  local path="$1"
+  local description="${2:-Path}"
+
+  if [[ ! -w "$path" ]]; then
+    error "$description is not writable: $path"
+    return 1
+  fi
+  return 0
+}
+
+# Validate user has required permissions
+# Usage: validate_not_root || return 1
+# Returns: 0 if not running as root, 1 if running as root
+validate_not_root() {
+  if [[ "$(id -u)" -eq 0 ]]; then
+    error "This script should not be run as root. Please run as a regular user."
+    return 1
+  fi
+  return 0
+}
+
+# Get user confirmation with default option
+# Usage: confirm "Continue?" "Y" && echo "User confirmed"
+# Arguments: prompt_text - the question to ask user
+#           default_option - default choice (Y or N), defaults to N
+# Returns: 0 if user confirms (Y/y), 1 otherwise
+confirm() {
+  local prompt="$1"
+  local default="${2:-N}"
+  local response
+
+  # Validate inputs
+  validate_not_empty "$prompt" "Prompt" || return 1
+
+  # Ensure default is Y or N
+  case "$default" in
+  [Yy] | [Nn]) ;;
+  *)
+    error "Default option must be Y or N, got: $default"
+    return 1
+    ;;
+  esac
+
+  read -p "$prompt [$default] " -n 1 -r response
+  echo
+
+  if [[ -z "$response" ]]; then
+    response="$default"
+  fi
+
+  [[ "$response" =~ ^[Yy]$ ]]
+}
+
+is_git_repo() {
+  is_non_zero_string "${1}" && is_directory "${1}/.git"
+}
+
+load_file_if_exists() {
+  # shellcheck disable=SC2015
+  # shellcheck disable=SC1090
+  is_file "${1}" && source "${1}"
+}
+
+delete_directory_if_exists() {
+  is_directory "${1}" && echo "$(red 'Deleting') '$(green "${1}")'" && sudo rm -rf "${1}"
+}
+
+is_zsh() {
+  [[ "${0}" =~ 'zsh' ]]
+}
+
+if is_zsh; then
+  # to reload Zsh configuration files.
+  # WARNING: Sourcing .zshenv/.zshrc/.zlogin from a file that might be sourced *by* them
+  # can lead to infinite loops or unexpected behavior if not called carefully.
+  # This is likely intended for manual use or specific bootstrap scenarios after config changes.
+  # Note: This is kind of equivalent to 'omz reload', but that doesn't seem to work when installing on a vanilla OS
+  load_zsh_configs() {
+    local file_list=('.zshenv' '.zshrc' '.zlogin')
+    for file in "${file_list[@]}"; do
+      load_file_if_exists "${ZDOTDIR}/${file}"
+    done
+    unset file
+    unset file_list
+  }
+fi
+
+append_to_path_if_dir_exists() {
+  is_directory "${1}" && path+="${1}"
+}
+
+append_to_fpath_if_dir_exists() {
+  is_directory "${1}" && fpath+="${1}"
+}
+
+prepend_to_path_if_dir_exists() {
+  is_directory "${1}" && export PATH="${1}:${PATH+:${PATH}}"
+}
+
+prepend_to_manpath_if_dir_exists() {
+  is_directory "${1}" && export MANPATH="${1}:${MANPATH+:${MANPATH}}"
+}
+
+prepend_to_ldflags_if_dir_exists() {
+  is_directory "${1}" && export LDFLAGS="-L${1} ${LDFLAGS+ ${LDFLAGS}}"
+}
+
+prepend_to_cppflags_if_dir_exists() {
+  is_directory "${1}" && export CPPFLAGS="-I${1} ${CPPFLAGS+ ${CPPFLAGS}}"
+}
+
+prepend_to_pkg_config_path_if_dir_exists() {
+  is_directory "${1}" && export PKG_CONFIG_PATH="${1}${PKG_CONFIG_PATH+:${PKG_CONFIG_PATH}}"
+}
+
+is_macos() {
+  [[ "${OSTYPE}" =~ 'darwin' ]]
+}
+
+is_linux() {
+  [[ "${OSTYPE}" =~ 'Linux' ]]
+}
+
+is_windows() {
+  [[ "${OSTYPE}" =~ 'MINGW' ]]
+}
+
+keep_sudo_alive() {
+  section_header 'Keeping sudo alive till this script has finished'
+  sudo -v
+  while true; do
+    sudo -n true
+    sleep 60
+    kill -0 "$$" || exit
+  done 2>/dev/null &
+}
+
+folder_size() {
+  echo $(cyan "$(/usr/bin/du -sh "${1}" | cut -f1)")
+}
+
+clone_repo_into() {
+  local target_folder="${2}"
+  ensure_dir_exists "${target_folder}"
+  if ! is_git_repo "${target_folder}"; then
+    local tmp_folder="$(mktemp -d)"
+    # Note: Do not use --depth while cloning since that messes up when using upstream to rebase from
+    git -C "${tmp_folder}" clone -q "${1}" .
+    mv "${tmp_folder}/.git" "${target_folder}"
+    git -C "${target_folder}" checkout .
+    git -C "${target_folder}" submodule update --init --recursive --remote --rebase --force
+    rm -rf "${tmp_folder}"
+    success "Successfully cloned '$(yellow "${1}")$(green "' into '")$(yellow "${target_folder}")$(green "'")"
+
+    local target_branch="${3}"
+    if is_non_zero_string "${target_branch}"; then
+      git -C "${target_folder}" switch "${target_branch}"
+      local checked_out_branch="$(git -C "${target_folder}" branch --show-current)"
+      [[ "${checked_out_branch}" != "${target_branch}" ]] && error "'${target_branch}' is not equal to the branch that was checked out: '${checked_out_branch}'; something is wrong. Please correct before retrying!"
+      unset checked_out_branch
+    fi
+    unset tmp_folder
+    unset target_branch
+  else
+    warn "Skipping cloning of '$(yellow "${1}")' since '$(yellow "${target_folder}")' is already a git repo"
+  fi
+  unset target_folder
+}
+
+set_ssh_folder_permissions() {
+  local target_folder="${HOME}/.ssh"
+  ensure_dir_exists "${target_folder}"
+  # Set directory permissions first
+  chmod 700 "${target_folder}"
+  if dir_has_children "${target_folder}"; then
+    find "${target_folder}" -type f -exec chmod 600 {} \;
+    success "Ensured correct permissions for '$(yellow "${target_folder}")' and files within it."
+  else
+    warn "'$(yellow "${target_folder}")' exists but is empty. No file permissions to set."
+  fi
+  unset target_folder
+}
+
+# if is_macos; then
+# Uninstall and reinstall xcode (useful immediately after upgrade or if reinstalling the OS)
+# TODO: Kept for reference purposes
+# reinstall_xcode() {
+#   # delete if already present
+#   delete_directory_if_exists '/Applications/Xcode.app'
+
+#   xcode-select --install
+#   sudo xcodebuild -license accept -quiet || true
+#   success 'Successfully installed xcode'
+# }
+# fi

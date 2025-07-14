@@ -1,0 +1,50 @@
+
+# inputrc is the config for GNU Readline. Anything that uses Readline
+# benefits from these configs (in case you're wondering why they aren't
+# in .bashrc).
+# From http://www.ukuug.org/events/linux2003/papers/bash_tips/
+# https://github.com/JEG2/dotfiles/blob/master/inputrc
+
+# allow the use of the Home/End keys
+"\e[1~": beginning-of-line
+"\e[4~": end-of-line
+
+# allow the use of the Delete/Insert keys
+"\e[3~": delete-char
+"\e[2~": quoted-insert
+
+# mappings for "page up" and "page down"
+# to step to the beginning/end of the history
+"\e[5~": beginning-of-history
+"\e[6~": end-of-history
+
+"\e[5C": forward-word
+"\e[5D": backward-word
+"\e\e[C": forward-word
+"\e\e[D": backward-word
+
+# Make Tab autocomplete regardless of filename case
+set completion-ignore-case on
+set expand-tilde on
+# Allow UTF-8 input and output, instead of showing stuff like $'\0123\0456'
+set convert-meta off
+set input-meta on
+set output-meta on
+# List all matches in case multiple possible completions are possible
+set show-all-if-ambiguous on
+# Show extra file information when completing, like `ls -F` does
+set visible-stats on
+set bell-style none
+
+# Use the text that has already been typed as the prefix for searching through
+# commands (i.e. more intelligent Up/Down behavior)
+"\e[B": history-search-forward
+"\e[A": history-search-backward
+
+# Be more intelligent when autocompleting by also looking at the text after
+# the cursor. For example, when the current line is "cd ~/src/mozil", and
+# the cursor is on the "z", pressing Tab will not autocomplete it to "cd
+# ~/src/mozillail", but to "cd ~/src/mozilla". (This is supported by the
+# Readline used by Bash 4.)
+set skip-completed-text on
+set mark-symlinked-directories on

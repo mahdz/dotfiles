@@ -1,0 +1,26 @@
+# Save all videos here
+--paths "~/Downloads/tmp"
+--output %(title)s.%(ext)s
+
+# Mark video as watched
+--mark-watched
+
+# Restrict filenames to only ASCII characters, and avoid "&" and spaces in filenames
+--restrict-filenames
+
+# Do not overwrite existing output files
+--no-overwrites
+
+# Output progress bar as new lines
+--newline
+
+#Print various debugging information
+--verbose
+
+# Download best quality
+--format 299+140/137+140/best
+
+# Download only the video, if the URL refers to a video AND a playlist
+--yes-playlist
+
+--cookies ~/.local/share/yt-dlp/cookies.txt
