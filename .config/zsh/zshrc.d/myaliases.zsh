@@ -116,8 +116,23 @@ dotcode() {
   # Launch VS Code with the workspace, passing GIT_WORK_TREE and GIT_DIR only for this process
   GIT_WORK_TREE="$HOME" GIT_DIR="${DOTFILES}" code "$HOME/.config/vscode/dotfiles.code-workspace"
 }
+
 alias zdot='cd "${ZDOTDIR:-$HOME/.config/zsh}"'
 
+# =============================================================================
+# LLMs
+# =============================================================================
+
+: ${DOTFILES:=$HOME/.dotfiles}
+
+dot() {
+  command git --git-dir="${DOTFILES}" --work-tree="$HOME" "$@"
+}
+
+ollama() {
+  # Ensure 'ollama' uses the specififed model path
+  OLLAMA_MODELS="${XDG_DATA_HOME:-$HOME/.local/share}/ollama/models" command ollama "$@"
+}
 
 # =============================================================================
 # Secrets

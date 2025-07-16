@@ -148,7 +148,8 @@ local.*
 # UV creates symlinks pointing to ~/.local/share/uv/tools/
 .local/bin/*
 !.local/bin/*.sh
-!.local/bin/*.py
+# Exclude UV tool symlinks (they point to ~/.local/share/uv/tools/)
+# UV can recreate these with: uv tool sync
 !.local/bin/ai-*
 !.local/bin/auto_*
 !.local/bin/backup

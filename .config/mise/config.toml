@@ -10,6 +10,7 @@
 "npm:eslint-plugin-prettier" = "latest"
 "npm:npkill" = "latest"
 "npm:npm-check" = "latest"
+"npm:mem0ai" = "latest"
 "asdf:mise-plugins/mise-sops" = "3.10.2"
 "asdf:threkk/asdf-age" = "1.2.1"
 bun = "latest"
