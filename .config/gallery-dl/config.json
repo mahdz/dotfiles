@@ -9,7 +9,7 @@
 			"directory": ["{user[id]} {user[account]}"],
 			"archive": "~/Downloads/.tmp/gallery-dl/archive.db",
 			"filename": "{id}_p{num}.{extension}",
-			"refresh-token": "[PIXIV_REFRESH_TOKEN]",
+			"refresh-token": "{env[PIXIV_REFRESH_TOKEN]}",
 			"metadata": true,
 			"tags": "original",
 			"skip": "abort:10",
