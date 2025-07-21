@@ -197,6 +197,11 @@ local.*
 !LICENSE
 !README.me
 
+# Exclude environment files with secrets
+.env
+*.env
+.config/.env*
+
 # final
 *_history*
 .DS_Store
