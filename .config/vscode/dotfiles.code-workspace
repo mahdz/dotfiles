@@ -3,67 +3,69 @@
     {
       "name": "🏠 dotfiles",
       "path": "/Users/mh"
-    }
+    },
   ],
   "settings": {
     // Git: Work with the bare repo
     "git.enabled": true,
-    "git.detectSubmodules": false,
-    // VSCode should NOT auto initialize Git in ~
-    "git.autoRepositoryDetection": true,
+    "terminal.integrated.env.osx": {
+      "GIT_DIR": "${env:HOME}/.dotfiles",
+      "GIT_WORK_TREE": "${env:HOME}",
+      "XDG_CONFIG_HOME": "${env:HOME}/.config",
+      "XDG_DATA_HOME": "${env:HOME}/.local/share",
+    },
     // Exclude noisy home dirs from sidebar
     "files.exclude": {
+      "**/.git": true,
+      "**/.DS_Store": true,
       "**/.Trash": true,
       "**/Library": true,
-      "**/Movies": true,
       "**/Music": true,
       "**/Pictures": true,
-      "**/Public": true,
-      "**/.DS_Store": true,
-      "**/.cache": true,
-      "**/.local/share/Trash": true
-    },
-    "files.watcherExclude": {
-      "**/.git/objects/**": true,
-      "**/.git/subtree-cache/**": true,
-      "**/node_modules/**": true,
-      "**/Library/**": true,
-      "**/Downloads/**": true,
-      "**/Pictures/**": true,
-      "**/Movies/**": true,
-      "**/Music/**": true
     },
     "search.exclude": {
-      "Library": true,
-      "Downloads": true,
-      "Pictures": true,
-      "Movies": true,
-      "Music": true
+      "**/.git": true,
+      "**/.DS_Store": true,
+    },
+    "files.watcherExclude": {
+      "**/.git/**": true,
+      "**/.DS_Store": true,
     },
     // Editor defaults for config repo
     "editor.tabSize": 2,
     "editor.insertSpaces": true,
-    "editor.rulers": [
-      80
-    ],
+    "editor.rulers": [80],
     "editor.wordWrap": "on",
     // Recommended extensions
     "extensions.ignoreRecommendations": false,
-    "terminal.integrated.defaultProfile.osx": "zsh",
-    "terminal.integrated.env.osx": {
-      "XDG_CONFIG_HOME": "${env:HOME}/.config",
-      "XDG_DATA_HOME": "${env:HOME}/.local/share"
-    },
     "debug.javascript.defaultRuntimeExecutable": {
-      "pwa-node": "/Users/mh/.local/share/mise/shims/node"
-    }
+      "pwa-node": "/Users/mh/.local/share/mise/shims/node",
+    },
+    "[gitconfig]": {
+      "editor.defaultFormatter": "yy0931.gitconfig-lsp",
+      "editor.wordWrap": "on",
+      "editor.formatOnPaste": true,
+      "editor.formatOnSave": true,
+      "files.trimTrailingWhitespace": false,
+    },
+    "[json][jsonc]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnSave": true,
+    },
+    "[markdown]": {
+      "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
+      "editor.formatOnPaste": true,
+      "editor.formatOnSave": true,
+    },
+    "[shellscript]": {
+      "editor.defaultFormatter": "foxundermoon.shell-format",
+      "editor.formatOnPaste": true,
+    },
+    "[toml]": {
+      "editor.defaultFormatter": "tamasfe.even-better-toml",
+    },
+    "[yaml]": {
+      "editor.defaultFormatter": "redhat.vscode-yaml",
+    },
   },
-  "extensions": {
-    "recommendations": [
-      "foxundermoon.shell-format",
-      "timonwong.shellcheck",
-      "streetsidesoftware.code-spell-checker",
-      "yzhang.markdown-all-in-one"
-      ]
-  }
 }

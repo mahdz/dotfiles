@@ -104,6 +104,7 @@ find_shell_config_files() {
         "$HOME/.config/${shell_name}/.zaliases"
         "$HOME/.config/${shell_name}/.aliases"  # Common name for alias files without extension
         "$HOME/.config/${shell_name}/.functions"  # Common name for function files without extension
+        "$HOME/.config/${shell_name}/zshrc.d/myaliases.zsh"
         "/etc/${shell_name}rc"
         "/etc/profile"
     )

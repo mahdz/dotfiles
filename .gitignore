@@ -62,6 +62,12 @@
 !.config/eza/
 !.config/eza/**
 
+!.config/gallery-dl/
+!.config/gallery-dl/*.json
+
+!.config/gh/
+!.config/gh/*.yml
+
 !.config/glow/
 !.config/glow/**
 
@@ -76,6 +82,12 @@
 
 !.config/mise/
 !.config/mise/**
+
+!.config/pw/
+!.config/pw/*.conf
+
+!.config/ripgrep/
+!.config/ripgrep/*
 
 !.config/superfile/
 !.config/superfile/*.toml
@@ -123,10 +135,8 @@
 #------------------------------------------------------------------------------
 # Project Directories
 #------------------------------------------------------------------------------
-!Developer/
-#!Developer/dotfiles/
-#!Developer/dotfiles/**
-#/Developer/dotfiles/.*/
+!memory-bank/
+!memory-bank/**
 
 #------------------------------------------------------------------------------
 # Re-ignore Local Files

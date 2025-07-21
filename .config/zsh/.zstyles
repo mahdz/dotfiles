@@ -13,7 +13,7 @@
 # Keep all 3 for different test scenarios.
 # antidote_repo=$ANTIDOTE_HOME/mattmc3/antidote
 # antidote_repo=~/Developer/repos/mattmc3/antidote
-antidote_repo=${HOMEBREW_PREFIX:-/opt/homebrew}/opt/antidote/share/antidote
+antidote_repo=${HOMEBREW_PREFIX:=/opt/homebrew}/opt/antidote/share/antidote
 
 zstyle ':antidote:home' path $ANTIDOTE_HOME
 zstyle ':antidote:repo' path $antidote_repo
@@ -30,7 +30,7 @@ zstyle ':zephyr:plugin:*' use-xdg-basedirs 'yes'
 zstyle ':zephyr:plugin:*' color 'yes'
 
 # Skip all aliases
-zstyle ':zephyr:plugin:*:alias' 'skip' 'yes'
+zstyle ':zephyr:plugin:history:alias' 'skip' 'yes '
 
 #
 # Editor

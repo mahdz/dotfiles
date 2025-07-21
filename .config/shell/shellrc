@@ -205,12 +205,15 @@ banner() {
   local text_cols=$((padding_left + char_count + emoji_count + padding_right))
 
   # Build the banner components
-  local border_top="$border_color$border_char_top_left_corner$(
+  local border_top
+  border_top="$border_color$border_char_top_left_corner$(
     repeat $text_cols
     printf $border_char_horizontal
   )$border_char_top_right_corner"
-  local border_vertical="$border_color$border_char_vertical"
-  local border_bottom="$border_color$border_char_bottom_left_corner$(
+  local border_vertical
+  border_vertical="$border_color$border_char_vertical"
+  local border_bottom
+  border_bottom="$border_color$border_char_bottom_left_corner$(
     repeat $text_cols
     printf $border_char_horizontal
   )$border_char_bottom_right_corner"
@@ -274,7 +277,7 @@ banner() {
 #   printf "%b\\n" "${BOLD}${GREEN}[SUCCESS]${NORMAL} $*"
 # }
 success() {
-  echo "$(green '**SUCCESS**') ${1}"
+  printf "%b\\n" "${BOLD}${GREEN}[SUCCESS]${NORMAL} $*"
 }
 
 # Print something with style
@@ -318,8 +321,8 @@ subsection() {
 # Arguments: section title text
 # Returns: always 0
 section_header() {
-  echo "$(red '---------------------')"
-  echo "$(blue '==>') $(purple "${1}")"
+  printf "%b\\n" "${RED}---------------------${NORMAL}"
+  printf "%b %b\\n" "${BLUE}==>${NORMAL}" "${PURPLE}${1}${NORMAL}"
 }
 
 # =============================================================================
@@ -367,7 +370,8 @@ strip_trailing_slash() {
 # Usage: extract_last_segment "/path/to/dir/" || echo "Last segment is 'dir'"
 # Arguments: Path
 extract_last_segment() {
-  local without_trailing_slash="$(strip_trailing_slash "${1}")"
+  local without_trailing_slash
+  without_trailing_slash="$(strip_trailing_slash "${1}")"
   echo "${without_trailing_slash##*/}"
   unset without_trailing_slash
 }
@@ -580,6 +584,17 @@ is_linux() {
 is_windows() {
   [[ "${OSTYPE}" =~ 'MINGW' ]]
 }
+is_bsd() {
+  [[ "${OSTYPE}" =~ 'bsd' ]]
+}
+
+is_cygwin() {
+  [[ "${OSTYPE}" =~ 'cygwin' ]]
+}
+
+is_termux() {
+    [[ "${OSTYPE}" =~ 'linux-android' ]]
+}
 
 keep_sudo_alive() {
   section_header 'Keeping sudo alive till this script has finished'
@@ -599,7 +614,8 @@ clone_repo_into() {
   local target_folder="${2}"
   ensure_dir_exists "${target_folder}"
   if ! is_git_repo "${target_folder}"; then
-    local tmp_folder="$(mktemp -d)"
+    local tmp_folder
+    tmp_folder="$(mktemp -d)"
     # Note: Do not use --depth while cloning since that messes up when using upstream to rebase from
     git -C "${tmp_folder}" clone -q "${1}" .
     mv "${tmp_folder}/.git" "${target_folder}"
@@ -611,7 +627,8 @@ clone_repo_into() {
     local target_branch="${3}"
     if is_non_zero_string "${target_branch}"; then
       git -C "${target_folder}" switch "${target_branch}"
-      local checked_out_branch="$(git -C "${target_folder}" branch --show-current)"
+      local checked_out_branch
+      checked_out_branch="$(git -C "${target_folder}" branch --show-current)"
       [[ "${checked_out_branch}" != "${target_branch}" ]] && error "'${target_branch}' is not equal to the branch that was checked out: '${checked_out_branch}'; something is wrong. Please correct before retrying!"
       unset checked_out_branch
     fi

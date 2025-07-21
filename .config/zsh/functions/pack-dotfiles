@@ -1,0 +1,91 @@
+#!/usr/bin/env zsh
+# Dotfiles Configuration Summary Function
+
+# Unset itself to avoid recursion
+  unfunction pack-dotfiles
+
+__pack-dotfiles() {
+  local output_file="${1:-$HOME/Desktop/dotfiles_settings_summary.txt}"
+  local zdotdir="${ZDOTDIR:-$HOME/.config/zsh}"
+  local -a dot_cmd=(git --git-dir="$HOME/.dotfiles" --work-tree="$HOME")
+
+  setopt local_options null_glob
+
+  info "Creating dotfiles summary at: $output_file"
+
+  _pack_append_file() {
+    local file_path="$1"
+    if [[ -f "$file_path" ]]; then
+      print "\n<file path=\"$file_path\">"
+      cat "$file_path"
+      print '</file>'
+    else
+      warn "file missing: $file_path"
+    fi
+  }
+
+  {
+    print "# Dotfile Configuration Summary"
+    print "# Generated on: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+    print "# Hostname: $(hostname)"
+    print "# Shell: $SHELL"
+    print "# ZDOTDIR: $zdotdir"
+    print "# Dotfiles Git SHA: $(${dot_cmd[@]} rev-parse --short HEAD 2>/dev/null || print 'N/A')"
+    print ""
+
+    print '\n<file path="global:git-config">'
+    git config --global --list 2>/dev/null | sort || warn "# No global git config found"
+    print '</file>'
+
+    print '\n<file path="local:dotfiles-config">'
+    "${dot_cmd[@]}" config --local --list 2>/dev/null | sort || warn "# No dotfiles git config found"
+    print '</file>'
+
+    local -a ignore_files=(
+      "$HOME/.gitignore"
+      "$HOME/.dotfiles/info/exclude"
+      "$HOME/.config/git/ignore"
+    )
+    for file in "${ignore_files[@]}"; do
+      _pack_append_file "$file"
+    done
+
+    print '\n<file path="dotfiles:untracked-directories">'
+    "${dot_cmd[@]}" ls-files --others --exclude-standard --directory 2>/dev/null | sort || warn "# No untracked directories found"
+    print '</file>'
+
+    print '\n<!-- ZSH Configuration Files -->'
+
+    local -a zsh_files=(
+      "$HOME/.zshenv"
+      "$zdotdir/.zshenv"
+      "$zdotdir/.zprofile"
+      "$HOME/.config/shell/shellrc"
+      "$zdotdir/.zstyles"
+      "$zdotdir/.zsh_plugins.txt"
+      "$zdotdir/.zshrc"
+    )
+
+    if [[ -d "$zdotdir/zshrc.d" ]]; then
+      zsh_files+=("$zdotdir/zshrc.d/"*(N))
+    else
+      warn "zshrc.d directory not found at $zdotdir/zshrc.d"
+    fi
+
+    for file in "${zsh_files[@]}"; do
+      _pack_append_file "$file"
+    done
+  } > "$output_file"
+
+  success "Configuration summary created at $output_file"
+  info "File size: $(du -h "$output_file" | cut -f1)"
+  info "Line count: $(wc -l < "$output_file")"
+}
+
+# Load dependencies or environment if needed here
+# Then call the real function with all passed arguments
+__pack-dotfiles "$@"
+
+
+# Setup completion for the lazy-loaded function
+compdef _files pack-dotfiles

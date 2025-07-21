@@ -15,16 +15,60 @@
 # aliases - Zsh and bash aliases
 #
 
-# References
-(( $+commands[br] )) && alias tree="${aliases[tree]:-tree} -Ch"
-# - https://github.com/webpro/dotfiles/blob/master/system/.alias
-# - https://github.com/mathiasbynens/dotfiles/blob/master/.aliases
-# - https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/common-aliases/common-aliases.plugin.zsh
-#
+# =============================================================================
+# Directory Navigation
+# =============================================================================
+# iwd - initial working directory
+: ${IWD:=$PWD}
+alias iwd="cd $IWD"
 
-# single character shortcuts - be sparing!
-alias l='ls'
-alias g='git'
+alias zdot='cd "${ZDOTDIR:-$HOME/.config/zsh}"'
+
+# ============================
+# Pipe and Redirection Aliases
+# ============================
+# zsh suffix aliases
+alias -g G='| grep -E'
+#alias -g H='| head'
+alias -g L='| less'
+alias -g M='| more'
+alias -g S='| sort'
+#alias -g T='| tail'
+alias -g Z='| fzf'
+
+alias CA='2>&1 | cat -A'
+alias LL='2>&1 | less'
+alias NE='2> /dev/null'
+alias NUL='> /dev/null 2>&1'
+
+# ============================
+# Alias Management
+# ============================
+# Find + manage aliases
+alias al='alias | less'         # List all aliases
+alias as='alias | command grep' # Search aliases
+alias ar='unalias'              # Remove given alias
+
+# ============================
+# Brew Aliases
+# ============================
+alias bbd='brew bundle dump --force --no-upgrade --all --file=$HOME/.config/homebrew/Brewfile'
+alias bc='bc -ql'
+alias bfc='brew file casklist && o Caskfile'
+alias brewg='brew graph --installed --highlight-leaves | fdp -T png -o graph.png && open graph.png'
+alias brewinfo='brew leaves | xargs brew desc --eval-all'
+alias brewup='brew cu --all --interactive --include-mas; brew outdated; brew upgrade;'
+
+# ============================
+# History and Search Aliases
+# ============================
+alias h=' history' # Shows full history
+#alias hist='fc -li'
+alias history='omz_history'
+alias history-stat='history 0 | awk ''{print $2}'' | sort | uniq -c | sort -n -r | head'
+alias h-search=' fc -El 0 | grep' # Searchses for a word in terminal history
+alias histrg=' history -500 | rg' # Rip grep search recent history
+alias hgrep='fc -El 0 | grep'
 
 # mask built-ins with better defaults
 alias ping='ping -c 5'
@@ -35,14 +79,8 @@ alias type='type -a'
 # Verbosity and settings that you pretty much just always are going to want.
 alias cp="\${aliases[cp]:-cp} -p"
 alias mv='mv -iv'
-alias bc='bc -ql'
 alias mkdir='mkdir -pv'
 alias ffmpeg='ffmpeg -hide_banner'
-
-# more ways to ls
-alias ll='ls -lh'
-alias la='ls -lAh'
-alias ldot='ls -ld .*'
 
 # fix typos
 #alias get=git
@@ -50,22 +88,9 @@ alias quit='exit'
 alias cd..='cd ..'
 alias zz='exit'
 
-# editor
-# Preferred editor for remote sessions
-test -n "${SSH_CONNECTION}" && export EDITOR=nano
-# Use code if it's installed (both Mac OSX and Linux)
-(( $+commands[code] )) && export EDITOR=code
-# If neither of the above works, then fall back to nano
-(( $+commands[micro] )) && test -z "${EDITOR}" && export EDITOR=micro
-
 # edit quicker with functions
 ea() { ${EDITOR} "${ZDOTDIR:-$HOME}/zshrc.d/myaliases.zsh" & disown; }
 ez() { ${EDITOR} "${ZDOTDIR:-$HOME}/.zshrc" >/dev/null & disown; }
-
-# Find + manage aliases
-alias al='alias | less'         # List all aliases
-alias as='alias | command grep' # Search aliases
-alias ar='unalias'              # Remove given alias
 
 # find#aliaenlinks='find . -type l | (while read FN ; do test -e "$FN" || ls -ld "$FN"; done)'
 #alias clea"logs='rm -r"v */log/*.log'
@@ -117,17 +142,10 @@ dotcode() {
   GIT_WORK_TREE="$HOME" GIT_DIR="${DOTFILES}" code "$HOME/.config/vscode/dotfiles.code-workspace"
 }
 
-alias zdot='cd "${ZDOTDIR:-$HOME/.config/zsh}"'
 
 # =============================================================================
 # LLMs
 # =============================================================================
-
-: ${DOTFILES:=$HOME/.dotfiles}
-
-dot() {
-  command git --git-dir="${DOTFILES}" --work-tree="$HOME" "$@"
-}
 
 ollama() {
   # Ensure 'ollama' uses the specififed model path
@@ -140,27 +158,10 @@ ollama() {
 
 alias secrets='cd "${XDG_CONFIG_HOME:-$HOME/.config}/secrets"'
 
-export GNUPGHOME=${GNUPGHOME:=${XDG_DATA_HOME:-$HOME/.local/share}/gnupg}
-[[ -e $GNUPGHOME:h ]] || mkdir -p "$GNUPGHOME:h"
-alias gpg='${aliases[gpg]:-gpg} --homedir "$GNUPGHOME"'
 
-# iwd - initial working directory
-: ${IWD:=$PWD}
-alias iwd='cd "$IWD"'
 
-# Command line history
-alias h=' history' # Shows full history
-alias h-search=' fc -El 0 | grep' # Searchses for a word in terminal history
-alias histrg=' history -500 | rg' # Rip grep search recent history
 
-# zsh suffix aliases
-#alias -g H='| head'
-#alias -g T='| tail'
-alias -g G='| grep -E'
-alias -g S='| sort'
-alias -g L='| less'
-alias -g M='| more'
-alias -g Z='| fzf'
+
 (( $+commands[bat] )) && alias -g -- -h='-h 2>&1 | bat --language=help --style=plain'
 (( $+commands[bat] )) && alias -g -- --help='--help 2>&1 | bat --language=help --style=plain'
 

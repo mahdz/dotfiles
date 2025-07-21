@@ -14,10 +14,6 @@
 unsetopt hist_reduce_blanks      # Remove extra blanks from commands added to the history list.
 unsetopt NO_share_history        # Don't share history between all sessions.
 
-# History aliases.
-alias h=' fc -li'
-history-stat() { history 0 | awk '{print $2}' | sort | uniq -c | sort -n -r | head; }
-
 IGNORE_COMMANDS=(
   # Directory listing
   #    "ls" "exa" "eza" "lsd" "l" "ll" "la"

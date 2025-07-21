@@ -71,12 +71,12 @@
 
 # GitHub CLI integration for credential management
 [credential "https://github.com"]
-    helper =
-    helper = !/opt/homebrew/bin/gh auth git-credential
+  helper =
+  helper = !/opt/homebrew/bin/gh auth git-credential
 
 [credential "https://gist.github.com"]
-    helper =
-    helper = !/opt/homebrew/bin/gh auth git-credential
+  helper =
+  helper = !/opt/homebrew/bin/gh auth git-credential
 
 [checkout]
   # Setting a default remote is useful only when several remotes are setup, e.g.
@@ -89,25 +89,12 @@
   # SOURCE: 21oct2021 https://stackoverflow.com/a/60724734
   defaultRemote = origin
 
-[diff]
-    tool = default-difftool
-
-[difftool "default-difftool"]
-    cmd = code --wait --diff $LOCAL $REMOTE
-
 [merge]
-    tool = code
-    ff = true
+  tool = code
+  ff = true
 
 [mergetool "code"]
-    cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
-
-[pager]
-  diff = delta
-  log = delta
-  reflog = delta
-  # Use 'git view' to use delta.
-  show = less -FRXK
+  cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
 
 [color]
   ui = auto
@@ -126,6 +113,11 @@
   new = green
   whitespace = blue
 
+[color "status"]
+  added = green
+  changed = yellow
+  untracked = red
+
 [log]
   decorate = short
   # Like the default, but designed to be shown alonside %{a,c}r and %{a,c}D:
@@ -138,8 +130,8 @@
 
 [pretty]
   original = %C(yellow)%h%C(green) %ad %C(reset)| %s%C(red)%d %C(blue)[%an]%C(reset)
-  graph    = %C(yellow)%h %C(reset)%s %C(blue)[%an]%C(red bold)%d%C(reset)
-  hist     = %C(yellow)%H%C(magenta)% (describe)%C(red bold)%d%n%s%n%C(green) %>(14)%ar | %>(31)%aD | %ad %C(white)| %C(blue)authored  by %an <%ae>%n%C(white dim) %>(14)%cr | %>(31)%cD | %cd % | committed by %cn <%ce> | signed %G?% GS%n%n%-b%n%n%-N%n%C(reset)
+  graph = %C(yellow)%h %C(reset)%s %C(blue)[%an]%C(red bold)%d%C(reset)
+  hist = %C(yellow)%H%C(magenta)% (describe)%C(red bold)%d%n%s%n%C(green) %>(14)%ar | %>(31)%aD | %ad %C(white)| %C(blue)authored  by %an <%ae>%n%C(white dim) %>(14)%cr | %>(31)%cD | %cd % | committed by %cn <%ce> | signed %G?% GS%n%n%-b%n%n%-N%n%C(reset)
 
 [push]
   autoSetupRemote = true
@@ -156,6 +148,7 @@
 
 [rebase]
   autoSquash = true
+  missingCommitsCheck = warn
   autoStash = true
   updateRefs = true
 
@@ -171,7 +164,7 @@
 
   # Logging
   lg = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)' --all
-	log1 = log --all --decorate --oneline --graph --author
+  log1 = log --all --decorate --oneline --graph --author
 
   # Utility
   stat = status -sb
@@ -184,10 +177,6 @@
 
   # Clone a repo but get only the current commit instead of the full history. Useful for installing tools.
   shallow-clone = clone --depth=1
-
-  # status {{
-  stat = status -sb
-  # }}
 
   # misc {{
   revert = !git stash && git reset --hard

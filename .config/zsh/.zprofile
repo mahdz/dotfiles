@@ -31,8 +31,11 @@ path_prepend() {
 # =============================================================================
 
 # Initialize Homebrew (Apple Silicon) - MUST be first for proper tool detection
-if [[ -x "/opt/homebrew/bin/brew" ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
+if command -v brew &> /dev/null; then
+  HOMEBREW_PREFIX="$(brew --prefix)"
+  path_prepend "$HOMEBREW_PREFIX/bin"
+  path_prepend "$HOMEBREW_PREFIX/sbin"
+  path_prepend "$HOMEBREW_PREFIX/opt/git/bin"
 fi
 
 # =============================================================================
@@ -42,22 +45,15 @@ fi
 
 # User-specific development tools (highest priority)
 # Ensure mise shim directory is at the front of PATH
-if [[ -d "$HOME/.local/share/mise/shims" ]]; then
-  export PATH="$HOME/.local/share/mise/shims:$PATH"
-fi
+path_prepend "${XDG_DATA_HOME:-$HOME/.local/share}/mise/shims"
 
 # npm global bin directory
-path_prepend "$HOME/.local/share/npm/bin"
-
-# Homebrew packages (high priority)
-path_prepend "$(brew --prefix)/bin"
-path_prepend "$(brew --prefix)/sbin"
-
-# Force Homebrew Git to be first in PATH (takes precedence over standard Homebrew)
-path_prepend "$(brew --prefix)/opt/git/bin"
+path_prepend "${XDG_DATA_HOME:-$HOME/.local/share}/npm/bin"
 
 # User-installed tools (high priority)
 path_prepend "/usr/local/bin"
+path_prepend "$HOME/.local/bin"
+path_prepend "$HOME/bin"
 
 # =============================================================================
 # DEVELOPMENT TOOLS AND LANGUAGES
@@ -68,7 +64,7 @@ path_prepend "/usr/local/bin"
 # =============================================================================
 
 # VS Code Scripts
-path_append "${XDG_CONFIG_HOME}/vscode"
+path_append "${XDG_CONFIG_HOME:-$HOME/.config}/vscode"
 
 # GPG Suite
 # path_append "/usr/local/MacGPG2/bin"

@@ -8,9 +8,23 @@
 # =============================================================================
 
 # Apps
-export EDITOR=micro
-export VISUAL=code
+# Preferred editor for remote sessions
+if [[ -n "${SSH_CONNECTION}" ]]; then
+  export EDITOR=nano
+elif (( $+commands[code] )); then
+  export EDITOR=code
+elif (( $+commands[micro] )); then
+  export EDITOR=micro
+else
+  export EDITOR=nano
+fi
+
+# Align VISUAL with EDITOR if not set
+export VISUAL=${VISUAL:-$EDITOR}
+
+# Set pager and options
 export PAGER=less
+export LESS='-iRFXMx4'
 
 # The github username where the setup scripts are downloaded from
 export GH_USERNAME='mahdz'
@@ -34,39 +48,6 @@ export SCRIPTS='/Users/mh/Developer/repos/id774/scripts'
 
 [ -f ${XDG_DATA_HOME}/secrets/secrets.zsh ] && source ${XDG_DATA_HOME}/secrets/secrets.zsh
 
-# # clone external plugins/themes
-# function zsh_custom_clone {
-#   emulate -L zsh
-#   setopt local_options no_monitor pipefail
-#   local repo dest
-#   dest="${ZSH_CUSTOM:-${ZSH:-$HOME/.oh-my-zsh}/custom}/$1"; shift
-#   mkdir -p "$dest"
-#   for repo in $@; do
-#     if [[ ! -d $dest/${repo:t} ]]; then
-#       git -C $dest clone --quiet --recursive --depth 1 https://github.com/$repo &
-#     fi
-#   done
-#   wait
-# }
-
-# zsh_custom_clone plugins \
-# #  aloxaf/fzf-tab \
-# #  jeffreytse/zsh-vi-mode \
-# #  kaelzhang/shell-safe-rm \
-# #  mattmc3/zman \
-# #  romkatv/zsh-no-ps2 \
-# #  zdharma-continuum/fast-syntax-highlighting \
-# #  zsh-users/zsh-autosuggestions \
-# #  zsh-users/zsh-completions \
-# #  zsh-users/zsh-history-substring-search
-
-# zsh_custom_clone themes \
-# #  romkatv/powerlevel10k
-
-# zsh_custom_clone .external \
-#  # kaelzhang/shell-safe-rm \
-#   romkatv/zsh-bench
-
 # -----------------------------------------------------
 # ╭─────────╮
 # │ VS Code │
@@ -83,16 +64,47 @@ export SCRIPTS='/Users/mh/Developer/repos/id774/scripts'
 # ╭─────────╮
 # │ Python  │
 # ╰─────────╯
-# Define hook functions
+
+# Hook to run after virtual environment activation
 _venv_post_hook() {
-    v cd
-    v venv
+  # Change to project root directory (if applicable)
+  # Example: cd to directory containing the virtualenv or a known project folder
+  if [[ -f "pyproject.toml" || -f "setup.py" ]]; then
+    echo "In project root"
+  else
+    echo "Warning: Not in project root"
+  fi
+
+  # Show active Python version and virtualenv path
+  echo "Python version: $(python --version)"
+  echo "Virtualenv: $VIRTUAL_ENV"
+
+  # Activate virtualenv-specific environment variables or aliases
+  #export FLASK_ENV=development
+  #export DJANGO_SETTINGS_MODULE=myproject.settings.local
+
+  # List installed packages (optional)
+  #pip list --format=columns | head -20
+
+  # Run any project-specific initialization scripts
+  # ./scripts/post_activate.sh
 }
 
+# Hook to run after virtual environment deactivation
 _venv_post_hook_deactivate() {
-    v cd
-    v reset_venv
+  # Return to previous directory or project root if desired
+  # cd -
+
+  # Unset virtualenv-specific environment variables
+  #unset FLASK_ENV
+  #unset DJANGO_SETTINGS_MODULE
+
+  # Clean up any temporary files or caches related to the venv
+  rm -rf .pytest_cache
+
+  echo "Virtual environment deactivated."
 }
+
 
 # Register the hooks
 zsh_uv_add_post_hook_on_activate '_venv_post_hook'

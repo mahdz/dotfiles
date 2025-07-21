@@ -1,0 +1,35 @@
+# Ripgrep configuration file
+# Don't let ripgrep vomit really long lines to my terminal, and show a preview.
+--max-columns=150
+--max-columns-preview
+
+# Search hidden files / directories (e.g. dotfiles) by default
+--hidden
+
+# Using glob patterns to include/exclude files or folders
+--glob=!**/node_modules/*
+--glob=!package-lock.json
+--glob=!pnpm-lock.yaml
+--glob=!yarn.lock
+--glob=!Library/*
+--glob=!history*
+--glob=!cache/**
+--glob=!tmp/*
+--glob=!.git/*
+
+# Color theme
+--colors=line:fg:white
+--colors=path:fg:blue
+--colors=path:style:bold
+--colors=match:fg:black
+--colors=match:bg:yellow
+--colors=match:style:nobold
+
+# Because who cares about case!?
+--smart-case
+
+# report the count of lines
+#--count
+
+# Show the lines surrounding a match
+--context=1

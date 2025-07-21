@@ -4,21 +4,49 @@
 # FZF
 #
 
+# Ensure fzf is available, otherwise stop here.
+(( $+commands[fzf] )) || return 1
+
+# Guard against re-sourcing this file in nested shells.
+if [ -n "$_FZF_ZSH_CONFIGURED" ]; then
+    return
+fi
+export _FZF_ZSH_CONFIGURED=1
+
+
+# Auto-detect FZF installation path
 if [ -z "$FZF_PATH" ]; then
-  if [ -d "/opt/homebew/opt/fzf" ]; then
+  if [ -d "/opt/homebrew/opt/fzf" ]; then
     FZF_PATH="/opt/homebrew/opt/fzf"
   elif [ -d "$XDG_DATA_HOME/mise/shims" ]; then
     FZF_PATH="$XDG_DATA_HOME/mise/shims"
   fi
 fi
 
-#[ -z "$FZF_PATH" ] && { [ -d "/opt/homebew/opt/fzf" ] && FZF_PATH="/opt/homebew/opt/fzf" || [ -d "$XDG_DATA_HOME/mise/shims" ] && FZF_PATH="$XDG_DATA_HOME/mise/shims"; }
-
 #---------------------------------------------------------------------------
 
-export FZF_DEFAULT_OPTS='--exact --layout=reverse --info=inline --pointer="→" --header="CTRL-c or ESC to quit"'
+# FZF options
+# --exact:          Enable exact-match
+# --layout=reverse: Enclose in a box at the top of the screen
+# --info=inline:    Display finder info inline with the prompt
+# --pointer="→":    Set custom pointer
+# --header:         Add a header
+# --height:         Set height if not in TMUX
+# --color:          Set colors
+export FZF_DEFAULT_OPTS="
+--exact
+--layout=reverse
+--info=inline
+--pointer='→'
+--header='CTRL-c or ESC to quit'
+--color=fg:#d0d0d0,bg:#121212,hl:#5f87af
+--color=fg+:#d0d0d0,bg+:#262626,hl+:#5fd7ff
+--color=info:#afaf87,prompt:#d7005f,pointer:#af5fff
+--color=marker:#87ff00,spinner:#af5fff,header:#87afaf
+"
 
-if [[ -n ${TMUX} ]] && command -v fzf-tmux &>/dev/null; then
+# Use fzf-tmux wrapper if in a TMUX session
+if [[ -n "${TMUX}" ]] && (( $+commands[fzf-tmux] )); then
     fzf() {
         fzf-tmux -p -w 100% -h 80%
     }
@@ -26,57 +54,50 @@ else
     export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS} --height=50%"
 fi
 
-# Set the default command to use when input is tty - default is to set it to these in the order in which they"re found:
-# - `rg --files --hidden --glob "!.git/*"`
-# - `fd --type f --hidden --exclude .git`
-# - `ag -l --hidden -g "" --ignore .git`,
+# Set the default command for fzf to use fd.
+# --type file:      Find only files
+# --strip-cwd-prefix: Remove leading './' from paths
+# --hidden:         Include hidden files
+# --follow:         Follow symlinks
+# --exclude .git:   Exclude .git directories
 export FZF_DEFAULT_COMMAND='fd --type file --strip-cwd-prefix --hidden --follow --exclude ".git"'
 
-export FZF_DEFAULT_OPTS=${FZF_DEFAULT_OPTS}"
-  --color=fg:#d0d0d0,bg:#121212,hl:#5f87af
-  --color=fg+:#d0d0d0,bg+:#262626,hl+:#5fd7ff
-  --color=info:#afaf87,prompt:#d7005f,pointer:#af5fff
-  --color=marker:#87ff00,spinner:#af5fff,header:#87afaf"
-
-# To apply the command to CTRL-T as well
+# Use the same command for CTRL-T
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
-# Preview file content using bat (https://github.com/sharkdp/bat)
+# Options for CTRL-T
+# --walker-skip:    Skip directories during walk
+# --preview:        Use bat for preview
+# --bind:           Custom keybindings
 export FZF_CTRL_T_OPTS='--walker-skip .git,node_modules,target \
 --preview "bat -n --color=always {}" \
 --bind "ctrl-/:change-preview-window(down|hidden|)"'
 
-# CTRL-Y to copy the command into clipboard using pbcopy
-export FZF_CTRL_R_OPTS='--bind "ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort" \
+# Options for CTRL-R (history search)
+# --preview:        Show command in preview
+# --bind:           Copy to clipboard with CTRL-Y, toggle preview with ?
+# --header:         Informative header
+export FZF_CTRL_R_OPTS='--preview "echo {}" --preview-window down:3:hidden:wrap \
+--bind "?:toggle-preview" \
+--bind "ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort" \
 --color header:italic \
 --header "Press CTRL-Y to copy command into clipboard"'
 
-export FZF_CTRL_R_OPTS='\n--preview "echo {}" --preview-window down:3:hidden:wrap --bind "?:toggle-preview" --reverse --header "Press CTRL-Y to copy command into clipboard"'
 
-# Unset vars to prevent them from being appended to multiple times if bash
-# shells are nested and as a result .bashrc is sourced multiple times
-unset FZF_ALT_C_OPTS FZF_CTRL_R_OPTS FZF_DEFAULT_OPTS
-
-# If tree command is installed, show directory contents in preview pane when use Alt-C
+# Options for ALT-C (directory search)
+# --preview:        Use tree for preview if available
 if (( $+commands[tree] )); then
   export FZF_ALT_C_OPTS='--preview "tree -C {} | head -200"'
 fi
 
-# Use ~~ as the trigger sequence instead of the default **
+# Use ~~ as the trigger sequence for completion
 export FZF_COMPLETION_TRIGGER='~~'
 
-# Options to fzf command
+# Options for fzf completion
 export FZF_COMPLETION_OPTS='--border --info=inline'
 
-# Disable keybindings - default: no
-#export DISABLE_FZF_KEY_BINDINGS="true"
-#export DISABLE_FZF_AUTO_COMPLETION="true"
-
-(( $+commands[fzf] )) || return 1
-
 # Advanced customization of fzf options via _fzf_comprun function
-# - The first argument to the function is the name of the command.
-# - You should make sure to pass the rest of the arguments to fzf.
+# This function is called by fzf completion for specific commands.
 _fzf_comprun() {
   local command=$1
   shift
@@ -89,36 +110,46 @@ _fzf_comprun() {
   esac
 }
 
-# Use fd (https://github.com/sharkdp/fd) for listing path candidates.
-# - This function generates a list of file paths for fzf completion.
-# - The first argument to the function ($1) is the base path to start traversal.
-# - It uses fd to recursively search for files, including hidden ones, while excluding .git directories.
-# - The output is passed to fzf for interactive selection.
+# Use fd for listing path candidates for completion.
 _fzf_compgen_path() {
   fd --hidden --follow --exclude ".git" . "$1"
 }
 
-# Use fd to generate the list for directory completion
+# Use fd to generate the list for directory completion.
 _fzf_compgen_dir() {
   fd --type d --hidden --follow --exclude ".git" . "$1"
 }
 
+# Custom cd function to use fzf for directory selection.
 cd() {
+  # If arguments are provided, use the standard `cd`.
   if [[ "$#" != 0 ]]; then
     builtin cd "$@"
     return
   fi
+
+  # Loop to allow continuous directory selection until cancelled.
   while true; do
-    local lsd=$(echo ".." && ls -d -- */)
+    # List subdirectories and ".." for parent directory.
+    # `ls -d */` is used for portability (avoids GNU-specific `--`).
+    local lsd=$(echo ".." && ls -d */ 2>/dev/null)
+
+    # Use fzf to select a directory.
     local dir="$(printf '%s\n' "${lsd[@]}" |
       fzf --reverse --preview '
+            # Get the selected item.
             __cd_nxt="$(echo {})";
+            # Construct the full path for the preview.
             __cd_path="$(echo $(pwd)/${__cd_nxt} | sed "s;//;/;")";
-            echo $__cd_path;
+            echo "Preview of: ${__cd_path}";
             echo;
+            # Show the contents of the selected directory.
             ls -p --color=always "${__cd_path}";
     ')"
+
+    # If fzf was cancelled (empty selection), exit the loop.
     [[ ${#dir} != 0 ]] || return 0
+    # Change to the selected directory.
     builtin cd "$dir" &>/dev/null
   done
 }

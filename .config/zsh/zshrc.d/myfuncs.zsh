@@ -167,7 +167,7 @@ function echoerr {
 }
 
 ##? Pass thru for copy/paste markdown
-function $ { $@ }
+#function $ { $@ }
 
 ##? Check if a file can be autoloaded by trying to load it in a subshell.
 function is-autoloadable {
@@ -184,12 +184,7 @@ function is-true {
   [[ -n "$1" && "$1:l" == (1|y(es|)|t(rue|)|o(n|)) ]]
 }
 
-# OS checks.
-function is-macos  { [[ "$OSTYPE" == darwin* ]] }
-function is-linux  { [[ "$OSTYPE" == linux*  ]] }
-function is-bsd    { [[ "$OSTYPE" == *bsd*   ]] }
-function is-cygwin { [[ "$OSTYPE" == cygwin* ]] }
-function is-termux { [[ "$OSTYPE" == linux-android ]] }
+
 
 function mkdirvar {
   local dirvar
