@@ -30,11 +30,11 @@ github_api="https://api.github.com"
 videos_extensions=".mp4|.avi|.mov|.m4p|.m4v|.webm|.mpg|.mp2|.mpeg|.mpe|.mpv|.ogg|.wmv|.qt"
 images_extensions=".png|.jpeg|.jpg|.gif|.bmp|.tiff"
 
+
 # =============================================================================
-# Shared Utilities Script
+# Python & uv Specific Settings
 # =============================================================================
 
-# --- Python & uv Specific Settings ---
 # uv generally respects XDG variables for its cache and data directories.
 # However, you can explicitly guide it for maximum control.
 
@@ -74,7 +74,7 @@ export MISE_CACHE_DIR="${XDG_CACHE_HOME}/mise"
 # Optional: Disable mise version warnings if you're managing Python versions manually or externally
 export MISE_PYTHON_AUTO_INSTALL=0 # Example if you don't want mise to auto-install Python versions
 
-
+launchctl setenv OLLAMA_ORIGINS
 
 # =============================================================================
 # COLOR DEFINITIONS
