@@ -30,7 +30,7 @@ zstyle ':zephyr:plugin:*' use-xdg-basedirs 'yes'
 zstyle ':zephyr:plugin:*' color 'yes'
 
 # Skip all aliases
-zstyle ':zephyr:plugin:history:alias' 'skip' 'yes '
+zstyle ':zephyr:plugin:history:alias' skip 'yes'
 
 #
 # Editor

@@ -2,7 +2,7 @@
   "folders": [
     {
       "name": "🏠 dotfiles",
-      "path": "/Users/mh"
+      "path": "/Users/mh",
     },
   ],
   "settings": {
@@ -67,5 +67,6 @@
     "[yaml]": {
       "editor.defaultFormatter": "redhat.vscode-yaml",
     },
+    "gitdoc.enabled": true,
   },
 }

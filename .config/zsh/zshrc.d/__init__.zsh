@@ -65,6 +65,8 @@ export SCRIPTS='/Users/mh/Developer/repos/id774/scripts'
 # │ Python  │
 # ╰─────────╯
 
+export PYTHONWARNINGS="ignore::DeprecationWarning"
+
 # Hook to run after virtual environment activation
 _venv_post_hook() {
   # Change to project root directory (if applicable)

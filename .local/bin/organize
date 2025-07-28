@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Script: organize2.sh
+# Script: organize
 # Description: Organizes files from Downloads folder by extension type
-# Usage: ./organize2.sh
+# Usage: ./organize2
 # Returns: 0 on success, 1 on error
 
 set -euo pipefail
@@ -37,7 +37,7 @@ done
 # Extensions
 audio=("mp3" "ogg" "wav" "wma" "flac" "aac")
 video=("mp4" "mpg" "webm" "gif" "m4p" "m4v" "mov" "avi")
-document=("pdf" "doc" "docx" "xlxs" "odt" "tex" "pptx" "txt" "ott")
+document=("pdf" "doc" "docx" "key" "xlxs" "odt" "tex" "pptx" "txt" "ott")
 image=("jpg" "jpeg" "png" "svg" "webp" "xcf" "bmp")
 
 for ext in "${audio[@]}" "${video[@]}" "${document[@]}" "${image[@]}"; do

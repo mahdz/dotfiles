@@ -50,7 +50,7 @@ export UV_TOOL_DIR="${XDG_DATA_HOME}/uv/tools" # Explicitly set if default is no
 # uv tool binary directory (should default to XDG_DATA_HOME/bin or XDG_BIN_HOME)
 # uv usually places executables in XDG_DATA_HOME/bin, which we've added to PATH.
 # If you want to explicitly set it:
-export UV_TOOL_BIN_DIR="${XDG_DATA_HOME}/bin"
+export UV_TOOL_BIN_DIR="${XDG_BIN_HOME:-$HOME/.local/bin}"
 
 # Python specific variables for uv (mostly handled by uv itself)
 # PYTHONDONTWRITEBYTECODE: Prevents Python from writing .pyc files to source directories
