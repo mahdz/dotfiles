@@ -84,7 +84,7 @@ applyTo: "**"
 │   └── git/                  # Git config files
 │   └── homebrew/             # Homebrew config files
 │   └── mise/                 # Mise config files
-│   └── vscode/               # VS Code config files
+│   └── vscode/              # VS Code config files
 ├── .local/
 │   ├── share/                # User data (XDG_DATA_HOME)
 │   ├── bin/                  # Executables (XDG_BIN_HOME)
@@ -575,3 +575,17 @@ applyTo: "**"
   ```
 - You can run `uv venv` in any directory where you want to create a virtual environment.
 - **Best practice:** For project-specific dependencies, create a dedicated project folder, `cd` into it, and run `uv venv`.
+
+- If a file is currently tracked in your Git repository and you want to stop tracking it while keeping the local file, you should:
+  1. First remove it from Git's tracking (but keep the local file):
+     ```bash
+     git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" rm --cached <path_to_file>
+     ```
+  2. Then ensure it's properly ignored by adding it to your `.gitignore`:
+     ```
+     <path_to_file>
+     ```
+  3. Commit the changes:
+     ```bash
+     git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" commit -m "Stop tracking <path_to_file>"
+     ```

@@ -92,7 +92,7 @@ srijanshetty/zsh-suffix-alias # kind:defer
 marlonrichert/zsh-hist # kind:defer
 romkatv/zsh-no-ps2
 agkozak/zhooks
-
+LoganPederson/vibe
 
 # ------------------------------------------------------------------------------
 # FINAL PLUGINS (loaded last, no defer unless known-safe)

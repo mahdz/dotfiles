@@ -1,12 +1,12 @@
 # More details are at https://superfile.netlify.app/configure/superfile-config/
 # change your theme
-theme = 'tokyonight'
+theme = 'catppuccin'
 # 
 # The editor files will be opened with. (Leave blank to use the EDITOR environment variable).
 editor = 'micro'
 # 
 # The editor directories will be opened with. (Leave blank to use the default editors).
-dir_editor = 'code'
+dir_editor = ''
 # 
 # Auto check for update
 auto_check_update = false
@@ -44,6 +44,9 @@ shell_close_on_success = false
 # Whether to enable debug mode.
 debug = false
 # 
+# Whether to ignore warnings about missing fields in the config file.
+ignore_missing_fields = false
+# 
 # ================   Style =================
 # 
 #  If you don't have or don't want Nerdfont installed you can turn this off
@@ -56,26 +59,30 @@ transparent_background = true
 file_preview_width = 0
 # 
 # Whether to use the builtin syntax highlighting with chroma or use bat. Values: "" for builtin chroma, "bat" for bat
-code_previewer = ''
+code_previewer = "bat"
 # 
 # The length of the sidebar. If you don't want to display the sidebar, you can input 0 directly. If you want to display the value, please place it in the range of 3-20.
 sidebar_width = 20
 # 
 # Border style
-border_top = '─'
-border_bottom = '─'
-border_left = '│'
-border_right = '│'
-border_top_left = '╭'
-border_top_right = '╮'
-border_bottom_left = '╰'
-border_bottom_right = '╯'
-border_middle_left = '├'
-border_middle_right = '┤'
+border_top = '━'
+border_bottom = '━'
+border_left = '┃'
+border_right = '┃'
+border_top_left = '┏'
+border_top_right = '┓'
+border_bottom_left = '┗'
+border_bottom_right = '┛'
+border_middle_left = '┣'
+border_middle_right = '┫'
 # 
 # ==========PLUGINS========== #
+# Plugins means that you need to install some external dependencies to use them.
 # 
 # Show more detailed metadata, please install exiftool before enabling this plugin!
 metadata = true
 # Enable MD5 checksum generation for files
 enable_md5_checksum = false
+# Zoxide support for the fast navigation
+zoxide = true
+zoxide_support = true

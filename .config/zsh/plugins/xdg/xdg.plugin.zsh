@@ -24,7 +24,7 @@ unset _xdgdir
 
 # less
 export LESSKEY="${LESSKEY:-$XDG_CONFIG_HOME/less/lesskey}"
-export LESSHISTFILE="${LESSHISTFILE:-$XDG_CACHE_HOME/less/history}"
+export LESSHISTFILE="${LESSHISTFILE:-/dev/null}"  # Disabled for privacy
 
 # readline
 export INPUTRC="${INPUTRC:-$XDG_CONFIG_HOME/readline/inputrc}"

@@ -1,0 +1,22 @@
+# zsh autoload function body for `dot`
+# This file is executed as the function body when `dot` is first called.
+# Keep it side-effect free beyond printing to stdout/stderr.
+
+# --- Configuration ---
+readonly DOTFILES="$HOME/.dotfiles"
+readonly WORK_TREE="$HOME"
+
+# Ensure repo exists
+if [[ ! -d "$DOTFILES" ]]; then
+  printf "ERROR: Dotfiles directory not found at '%s'\n" "$DOTFILES" 1>&2
+  return 1
+fi
+
+# No-arg: show concise status. Avoid passing empty pathspecs.
+if [[ $# -eq 0 ]]; then
+  command git --git-dir="$DOTFILES" --work-tree="$WORK_TREE" status -sb --ignored=matching
+  return $?
+fi
+
+# Forward all args to git
+command git --git-dir="$DOTFILES" --work-tree="$WORK_TREE" "$@"

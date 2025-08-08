@@ -131,16 +131,7 @@ alias colormap='for i in {0..255}; do print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f
 
 : ${DOTFILES:=$HOME/.dotfiles}
 
-dot() {
-  command git --git-dir="${DOTFILES}" --work-tree="$HOME" "$@"
-}
 
-dotcode() {
-  emulate -L zsh
-  setopt LOCAL_OPTIONS PIPE_FAIL ERR_EXIT
-  # Launch VS Code with the workspace, passing GIT_WORK_TREE and GIT_DIR only for this process
-  GIT_WORK_TREE="$HOME" GIT_DIR="${DOTFILES}" code "$HOME/.config/vscode/dotfiles.code-workspace"
-}
 
 
 # =============================================================================

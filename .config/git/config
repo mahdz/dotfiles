@@ -67,15 +67,15 @@
   # Enable wrap when displaying text, e.g. with "git diff"
   # SOURCE: http://iamnearlythere.com/wrapping-lines-git-diff/
   # SOURCE: 03oct2021 https://stackoverflow.com/a/18781512
-  pager = less -FRXK
+  pager = bat --paging=always
 
 # GitHub CLI integration for credential management
 [credential "https://github.com"]
-  helper =
+  helper = 
   helper = !/opt/homebrew/bin/gh auth git-credential
 
 [credential "https://gist.github.com"]
-  helper =
+  helper = 
   helper = !/opt/homebrew/bin/gh auth git-credential
 
 [checkout]
@@ -158,7 +158,7 @@
   aa = add .
 
   # commit {{
-  wip = !git add -A && git commit -m "WIP"
+  wip = commit -am 'WIP: work in progress'
   checkpoint = !git add -A && git commit -m "Checkpoint $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
   # }}
 
@@ -189,9 +189,11 @@
 
   # Show recent commits with timestamp
   ll = log --pretty=format:'%C(yellow)%h%Creset %Cgreen%ad%Creset %s%C(bold blue)%d%Creset' --date=short
+  ld = !git diff --name-only --cached | xargs -r bat --diff
 
   # Stash interactively
   stash-i = !git stash push -p -m "interactive stash"
+  squash = rebase -i
 
 [filter "lfs"]
   clean = git-lfs clean -- %f

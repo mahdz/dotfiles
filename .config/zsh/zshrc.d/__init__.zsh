@@ -24,7 +24,7 @@ export VISUAL=${VISUAL:-$EDITOR}
 
 # Set pager and options
 export PAGER=less
-export LESS='-iRFXMx4'
+export LESS='-iRFXMx4 --incsearch --use-color --mouse'
 
 # The github username where the setup scripts are downloaded from
 export GH_USERNAME='mahdz'

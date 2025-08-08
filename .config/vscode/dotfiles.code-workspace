@@ -68,5 +68,9 @@
       "editor.defaultFormatter": "redhat.vscode-yaml",
     },
     "gitdoc.enabled": true,
+    "markdown.validate.enabled": false,
+    "[jsonc]": {
+      "editor.defaultFormatter": "vscode.json-language-features",
+    },
   },
 }
