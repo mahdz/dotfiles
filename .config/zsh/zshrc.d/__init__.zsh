@@ -118,8 +118,8 @@ zsh_uv_add_post_hook_on_deactivate '_venv_post_hook_deactivate'
 # │ Shell Utilities │
 # ╰─────────────────╯
 
-# tldr
-[[ $(command -v tldr) ]] && export TEALDEER_CONFIG_DIR="${XDG_CONFIG_HOME}/tldr"
+# tldr (tlrc)
+[[ $(command -v tldr) ]] && export TLRC_CONFIG="${XDG_CONFIG_HOME}/tlrc/config.toml"
 
 # bat
 [[ $(command -v bat) ]] && export MANPAGER="sh -c 'col -bx | bat -l man -p'"

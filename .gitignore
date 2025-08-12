@@ -199,3 +199,5 @@ megalinter-reports/
 age.txt
 *.secure
 !WARP.md
+!.config/tlrc/
+!.config/tlrc/config.toml
