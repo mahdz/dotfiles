@@ -1,0 +1,88 @@
+osx-ls-download-history() {
+    local limit="20" show_urls=false dbs=()
+
+    # Argument parsing
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -l|--limit)
+                if [[ "$2" =~ ^[0-9]+$ ]]; then
+                    limit="$2"
+                    shift 2
+                else
+                    echo "Error: Limit must be a positive integer" >&2
+                    return 1
+                fi
+                ;;
+            -u|--urls)
+                show_urls=true
+                shift
+                ;;
+            -h|--help)
+                echo "Usage: osx-ls-download-history [options]"
+                echo "Options:"
+                echo "  -l, --limit N    Show N most recent entries (default: 20)"
+                echo "  -u, --urls       Include URLs when available"
+                echo "  -h, --help       Show this help message"
+                return 0
+                ;;
+            *)
+                echo "Unknown option: $1" >&2
+                return 1
+                ;;
+        esac
+    done
+
+    # Collect readable DB paths
+    while IFS= read -r db; do
+        [[ -r "$db" ]] && dbs+=("$db")
+    done < <(find ~/Library/Preferences -maxdepth 1 -name "com.apple.LaunchServices.QuarantineEventsV*" 2>/dev/null)
+
+    [[ ${#dbs[@]} -eq 0 ]] && { echo "No quarantine databases found."; return 1; }
+
+    # Build the SQLite command dynamically
+    local attach_sql=""
+    local union_sql=""
+
+    local db_index=0
+    for db in "${dbs[@]}"; do
+        local alias="db$db_index"
+        attach_sql+="ATTACH DATABASE '$db' AS $alias;"
+        if [[ "$show_urls" == "true" ]]; then
+            union_sql+="SELECT datetime(LSQuarantineTimeStamp + 978307200, 'unixepoch', 'localtime') AS ts,
+                               COALESCE(LSQuarantineAgentName, 'Unknown') AS app,
+                               COALESCE(LSQuarantineSenderName, 'N/A') AS sender,
+                               COALESCE(NULLIF(LSQuarantineDataURLString, ''), NULLIF(LSQuarantineOriginURLString, ''), 'No URL') AS url
+                        FROM $alias.LSQuarantineEvent"
+        else
+            union_sql+="SELECT datetime(LSQuarantineTimeStamp + 978307200, 'unixepoch', 'localtime') AS ts,
+                               COALESCE(LSQuarantineAgentName, 'Unknown') AS app,
+                               COALESCE(LSQuarantineSenderName, 'N/A') AS sender
+                        FROM $alias.LSQuarantineEvent"
+        fi
+        ((db_index++))
+        [[ $db_index -lt ${#dbs[@]} ]] && union_sql+=" UNION ALL "
+    done
+
+    # Final query
+    local final_sql="$attach_sql
+                     $union_sql
+                     ORDER BY ts DESC
+                     LIMIT $limit;"
+
+    # Output
+    if [[ "$show_urls" == "true" ]]; then
+        printf "Date                │ Application     │ Sender     │ URL\n"
+        printf "───────────────────┼─────────────────┼────────────┼──────────────────────────────\n"
+        sqlite3 -separator "|" ":memory:" "$final_sql" |
+        while IFS='|' read -r ts app sender url; do
+            printf "%-19s │ %-15s │ %-10s │ %s\n" "$ts" "$app" "$sender" "$url"
+        done
+    else
+        printf "Date                │ Application     │ Sender\n"
+        printf "───────────────────┼─────────────────┼──────────────────────\n"
+        sqlite3 -separator "|" ":memory:" "$final_sql" |
+        while IFS='|' read -r ts app sender; do
+            printf "%-19s │ %-15s │ %s\n" "$ts" "$app" "$sender"
+        done
+    fi
+}
