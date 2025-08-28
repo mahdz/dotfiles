@@ -6,8 +6,8 @@ bun = "latest"
 
 [env]
 [env._]
-# Secure environment variables from external JSON file
-file = "/Users/mh/.local/share/secrets/env.json"
+# Secure environment variables from SOPS-encrypted file (generated on demand)
+file = "/tmp/mise-secrets.env"
 
 [settings]
 # Python integration
@@ -32,9 +32,12 @@ uvx = true
 show_env = false                 # Don't expose environment variables
 
 [hooks]
-# Secure logging hooks only
-preinstall = "echo '[MISE] Installing tools - $(date)' >> ~/.local/share/mise/install.log"
+# Generate encrypted environment variables on demand
+preinstall = "/Users/mh/.local/share/secrets/generate-env.sh >/dev/null; echo '[MISE] Installing tools - $(date)' >> ~/.local/share/mise/install.log"
 postinstall = "echo '[MISE] Install completed - $(date)' >> ~/.local/share/mise/install.log"
+
+# Generate env file when entering directory
+enter = "/Users/mh/.local/share/secrets/generate-env.sh >/dev/null"
 
 # Remove potentially verbose hooks
 # cd = ""
