@@ -4,10 +4,8 @@ node = "24.6.0"
 bun = "latest"
 "npm:prettier" = "latest"
 
-[env]
-[env._]
-# Secure environment variables from SOPS-encrypted file (generated on demand)
-file = "/tmp/mise-secrets.env"
+# Simplified: no automatic secrets loading
+# Use 'load-secrets' shell function when needed
 
 [settings]
 # Python integration
@@ -31,13 +29,8 @@ uvx = true
 # Minimal status display
 show_env = false                 # Don't expose environment variables
 
-[hooks]
-# Generate encrypted environment variables on demand
-preinstall = "/Users/mh/.local/share/secrets/generate-env.sh >/dev/null; echo '[MISE] Installing tools - $(date)' >> ~/.local/share/mise/install.log"
-postinstall = "echo '[MISE] Install completed - $(date)' >> ~/.local/share/mise/install.log"
-
-# Generate env file when entering directory
-enter = "/Users/mh/.local/share/secrets/generate-env.sh >/dev/null"
+# Simplified: removed complex hooks
+# Tools install without secrets management complexity
 
 # Remove potentially verbose hooks
 # cd = ""

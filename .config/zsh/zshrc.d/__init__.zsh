@@ -26,27 +26,27 @@ export VISUAL=${VISUAL:-$EDITOR}
 export PAGER=less
 export LESS='-iRFXMx4 --incsearch --use-color --mouse'
 
-# The github username where the setup scripts are downloaded from
-export GH_USERNAME='mahdz'
-
-export GIT_CONFIG_GLOBAL="${XDG_CONFIG_HOME}/git/config"
-
-# # This repo is cloned into this location
-export DOTFILES="${HOME}/.dotfiles"
-# Note: GIT_DIR and GIT_WORK_TREE are not set globally to avoid interfering with other Git operations
-# Use the 'dot' or 'dotgit' aliases for dotfiles management instead
-
-# # Branch name of the dotfiles repo that's to be used for testing PR changes before merging
-export DOTFILES_BRANCH='main'
-
-# # All development codebases are cloned into a subfolder of this folder
-export PROJECTS_BASE_DIR="${HOME}/Developer"
-
-export RIPGREP_CONFIG_PATH="${XDG_CONFIG_HOME}/ripgrep/config"
-
 export SCRIPTS='/Users/mh/Developer/repos/id774/scripts'
 
+# =============================================================================
+# SECRETS
+# =============================================================================
+
+export SOPS_EDITOR=nano
+export SECRETS_FILE="${SECRETS_FILE:-$HOME/.local/share/secrets/.env}"
+
+# Legacy secrets.zsh (will be removed after migration)
 [ -f ${XDG_DATA_HOME}/secrets/secrets.zsh ] && source ${XDG_DATA_HOME}/secrets/secrets.zsh
+
+# =============================================================================
+# GREP
+# =============================================================================
+
+# In your .zshrc
+#export GREP_OPTIONS="-R"  # Recursive search by default
+#export GREP_COMMAND="rg"  # Some tools respect this
+
+export RIPGREP_CONFIG_PATH="${XDG_CONFIG_HOME}/ripgrep/config"
 
 # -----------------------------------------------------
 # ╭─────────╮
@@ -59,59 +59,6 @@ export SCRIPTS='/Users/mh/Developer/repos/id774/scripts'
 # VSCODE_EXTENSIONS: Specifies custom extensions directory
 #  export VSCODE_EXTENSIONS="${XDG_DATA_HOME:-~/.local/share}/vscode/extensions"
 #fi
-
-# -----------------------------------------------------
-# ╭─────────╮
-# │ Python  │
-# ╰─────────╯
-
-export PYTHONWARNINGS="ignore::DeprecationWarning"
-
-# Hook to run after virtual environment activation
-_venv_post_hook() {
-  # Change to project root directory (if applicable)
-  # Example: cd to directory containing the virtualenv or a known project folder
-  if [[ -f "pyproject.toml" || -f "setup.py" ]]; then
-    echo "In project root"
-  else
-    echo "Warning: Not in project root"
-  fi
-
-  # Show active Python version and virtualenv path
-  echo "Python version: $(python --version)"
-  echo "Virtualenv: $VIRTUAL_ENV"
-
-  # Activate virtualenv-specific environment variables or aliases
-  #export FLASK_ENV=development
-  #export DJANGO_SETTINGS_MODULE=myproject.settings.local
-
-  # List installed packages (optional)
-  #pip list --format=columns | head -20
-
-  # Run any project-specific initialization scripts
-  # ./scripts/post_activate.sh
-}
-
-# Hook to run after virtual environment deactivation
-_venv_post_hook_deactivate() {
-  # Return to previous directory or project root if desired
-  # cd -
-
-  # Unset virtualenv-specific environment variables
-  #unset FLASK_ENV
-  #unset DJANGO_SETTINGS_MODULE
-
-  # Clean up any temporary files or caches related to the venv
-  rm -rf .pytest_cache
-
-  echo "Virtual environment deactivated."
-}
-
-
-# Register the hooks
-zsh_uv_add_post_hook_on_activate '_venv_post_hook'
-zsh_uv_add_post_hook_on_deactivate '_venv_post_hook_deactivate'
-
 
 # -----------------------------------------------------
 # ╭─────────────────╮
@@ -129,6 +76,8 @@ zsh_uv_add_post_hook_on_deactivate '_venv_post_hook_deactivate'
 
 # batpipe
 [[ $(command -v batpipe) ]] && eval "$(batpipe)"
+
+[[ $(command -v broot) ]] && source "${XDG_CONFIG_HOME}/broot/launcher/bash/br"
 
 # fastfetch
 #[[ $(command -v fastfetch) ]] && fastfetch --config $(printf "%s\n" examples/{12,13} | gshuf -n 1)
