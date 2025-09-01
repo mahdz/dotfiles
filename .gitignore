@@ -28,11 +28,6 @@
 # Exclude VSCode profiles
 .config/vscode/profiles/**
 
-#!.roo/
-#!.roo/**
-#!.roomodes
-#!.clinerules
-
 !.config/readline/
 !.config/readline/**
 
@@ -79,6 +74,9 @@
 !.config/mise/**
 .config/mise/age.txt
 
+!.config/ollama/
+!.config/ollama/**
+
 !.config/pw/
 !.config/pw/*.conf
 
@@ -88,8 +86,13 @@
 !.config/superfile/
 !.config/superfile/*.toml
 
+!.config/tlrc/
+!.config/tlrc/config.toml
+
 !.config/topgrade/
 !.config/topgrade/**
+
+!WARP.md
 
 !.config/wget/
 !.config/wget/**
@@ -100,7 +103,6 @@
 # Exclude specstory entirely
 .specstory/**
 
-# Shell and Environment
 # Bash
 !.bash_profile
 !.bashrc
@@ -126,10 +128,6 @@
 .config/zsh/ohmyzsh/
 .config/zsh/.oh-my-zsh/
 
-# Project Directories
-!memory-bank/
-!memory-bank/**
-
 # Re-ignore Local Files
 *.local
 local.*
@@ -137,6 +135,8 @@ local.*
 *.local.*
 
 # Scripts and Local Binaries
+!bin/
+!bin/*
 !.local/
 !.local/bin/
 !.local/bin/**
@@ -153,6 +153,7 @@ local.*
 !.local/bin/backup
 !.local/bin/brew-*
 !.local/bin/capsmap
+!.local/bin/code-extensions
 !.local/bin/cht.sh
 !.local/bin/clean*
 !.local/bin/clop
@@ -178,9 +179,6 @@ local.*
 !.local/bin/upup
 !.local/bin/whichos
 
-# Exclude local scripts
-.local/scripts/**
-
 !makefile
 !LICENSE
 !README.me
@@ -198,6 +196,6 @@ megalinter-reports/
 *.key
 age.txt
 *.secure
-!WARP.md
-!.config/tlrc/
-!.config/tlrc/config.toml
+
+# Added by the extension Better Context To AI
+FILE_CONTENT_MAP.md

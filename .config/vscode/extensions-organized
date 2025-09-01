@@ -1,0 +1,128 @@
+# VS Code Extensions - Organized by Category
+# 
+# This file contains all VS Code extensions organized by functionality.
+# Use the code-extensions script to install: ./code-extensions install
+#
+# Total: 95 extensions
+
+# === AI & Code Assistance ===
+continue.continue
+github.copilot
+github.copilot-chat
+google.gemini-cli-vscode-ide-companion
+google.geminicodeassist
+openai.chatgpt
+ragokan.vscode-ai-context-provider
+ronco-jhon.better-context-to-ai
+visualstudioexptteam.intellicode-api-usage-examples
+visualstudioexptteam.vscodeintellicode
+
+# === Shell & Scripting ===
+bmalehorn.shell-syntax
+foxundermoon.shell-format
+jeff-hykin.better-shellscript-syntax
+l13rary.l13-sh-snippets
+mads-hartmann.bash-ide-vscode
+mkhl.shfmt
+rpinski.shebang-snippets
+timonwong.shellcheck
+waseemakram.bashnsippets
+
+# === Git & Version Control ===
+donjayamanne.githistory
+eamodio.gitlens
+github.remotehub
+github.vscode-github-actions
+github.vscode-pull-request-github
+henriquebruno.github-repository-manager
+interactive-smartlog.interactive-smartlog
+shaharkazaz.git-merger
+sidneys1.gitconfig
+vrocky.git-scan-fix
+vsls-contrib.gitdoc
+yy0931.gitconfig-lsp
+
+# === Python Development ===
+ms-python.debugpy
+ms-python.python
+ms-python.vscode-pylance
+ms-python.vscode-python-envs
+the0807.uv-toolkit
+
+# === Markdown & Documentation ===
+davidanson.vscode-markdownlint
+shd101wyy.markdown-preview-enhanced
+specstory.specstory-vscode
+yzhang.markdown-all-in-one
+
+# === Remote Development ===
+ms-vscode-remote.remote-ssh
+ms-vscode-remote.remote-ssh-edit
+ms-vscode.remote-explorer
+ms-vscode.remote-repositories
+
+# === Configuration & Data Files ===
+editorconfig.editorconfig
+irongeek.vscode-env
+janisdd.vscode-edit-csv
+lonr.sort-settings-json
+remcohaszing.schemastore
+richie5um2.vscode-sort-json
+shellomo.enhanced-toml
+tamasfe.even-better-toml
+
+# === File Management & Navigation ===
+alefragnani.project-manager
+christian-kohler.path-intellisense
+oliverdantzer.file-structure-tree
+sleistner.vscode-fileutils
+stevebeauge.quick-toggle-hide-ignored-files
+
+# === Code Quality & Linting ===
+dbaeumer.vscode-eslint
+esbenp.prettier-vscode
+gitguardian-secret-security.gitguardian
+usernamehw.errorlens
+
+# === Themes & Visual ===
+miguelsolorio.symbols
+mxthevs.one-dark-pro-monokai-darker-reloaded
+oderwat.indent-rainbow
+
+# === Code Editing & Formatting ===
+chouzz.vscode-better-align
+edwinhuish.better-comments-next
+fabiospampinato.vscode-diff
+fralle.copy-code-context
+jmallien.replacewithnewline
+polymermallard.box-comment
+ryu1kn.partial-diff
+wenfangdu.snippet-generator
+yatki.vscode-surround
+
+# === Language Support ===
+edwinkofler.vscode-assorted-languages
+idleberg.applescript
+tkoresearch.applescript-support
+
+# === Utilities & Tools ===
+adguard.adblock
+aspel.github-sync-fork
+chrmarti.regex
+codezombiech.gitignore
+dennykorsukewitz.githubfilefetcher
+dorianmassoulier.repomix-runner
+guttih.sheller
+hverlin.mise-vscode
+kennylong.kubernetes-yaml-formatter
+kingleo.quickdraw
+ldez.ignore-files
+maciejdems.add-to-gitignore
+ms-vscode.vscode-commander
+ms-vscode.vscode-websearchforcopilot
+ms-windows-ai-studio.windows-ai-studio
+zokugun.cron-tasks
+zokugun.sync-settings
+
+# === Dotfiles & Development Environment ===
+dotiful.dotfiles-syntax-highlighting

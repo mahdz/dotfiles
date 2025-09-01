@@ -1,0 +1,212 @@
+#!/usr/bin/env bash
+
+### code-extensions.sh
+#
+# Manage VS Code extensions with organized categories.
+#
+# Usage:
+#     $ ./code-extensions install              # Install all extensions
+#     $ ./code-extensions dump                 # Export current extensions
+#     $ ./code-extensions update               # Force update all extensions
+#     $ ./code-extensions organize             # Check organized file status
+#     $ ./code-extensions install_category "AI & Code Assistance"
+#     $ ./code-extensions help                 # Show this help
+#
+###
+
+# Strict mode for better error handling and security
+#set -euo pipefail
+set -x
+
+# Environment variaibles and paths
+script_name="${BASH_SOURCE[0]}"
+config_dir="${HOME}/.config/vscode"
+VSCODE_PORTABLE="${VSCODE_PORTABLE:-${HOME}/.local/share/code-portable-data/user-data}"
+VSCODE_EXTENSIONS="${VSCODE_EXTENSIONS:-${HOME}/.local/share/code-portable-data/extensions}"
+
+# Get list of currently installed extensions
+extensions=$(code --list-extensions)
+extensions_file=${config_dir}/extensions
+organized_file=${config_dir}/extensions-organized
+
+# Function to install extensions from a file
+install() {
+  local source_file="$extensions_file"
+  
+  # Use organized file if it exists and is newer
+  if [[ -f "$organized_file" ]] && [[ "$organized_file" -nt "$extensions_file" ]]; then
+    source_file="$organized_file"
+    echo "Using organized extensions file: $organized_file"
+  fi
+
+  # Install extensions
+  if [[ ! -f "$source_file" ]]; then
+    echo "Error: Extension list file not found: $source_file" >&2
+    exit 1
+  fi
+
+  echo "Installing extensions from $source_file..."
+  local installed=0
+  while read -r ext; do
+    # Skip empty lines and comments
+    [[ -z "$ext" || "$ext" == \#* ]] && continue
+    echo "Installing: $ext"
+    code --install-extension "$ext"
+    ((installed++))
+  done <"$source_file"
+  echo "✔ Extension installation complete. Installed $installed extensions."
+
+  # add cron job to update extensions list once a day
+  crontab -l | sed '/code-extensions dump/d' > mycron
+  echo "0 0 * * * ~/.local/bin/code-extensions dump" > mycron
+  crontab mycron
+  rm mycron
+
+}
+
+# Function to dump currently installed extensions
+dump() {
+  echo "Saving current extensions to $extensions_file..."
+  echo "$extensions" | sort -u >"$extensions_file" || {
+    echo "Error: Failed to save extensions." >&2
+    exit 1
+  }
+  echo "✔ Extensions saved successfully."
+}
+
+# Function to create organized extensions file from current list
+organize() {
+  echo "Creating organized extensions file at $organized_file..."
+  if [[ ! -f "$organized_file" ]]; then
+    echo "Error: Organized template not found at $organized_file" >&2
+    echo "Run 'dump' first to create the basic list, then manually organize it." >&2
+    exit 1
+  fi
+  echo "✔ Organized extensions file already exists at $organized_file"
+  echo "Edit this file to organize your extensions by category."
+}
+
+# Function to install extensions from a specific category
+install_category() {
+  local category="$1"
+  if [[ -z "$category" ]]; then
+    echo "Usage: $0 install_category 'CATEGORY_NAME'" >&2
+    echo "Example: $0 install_category 'AI & Code Assistance'" >&2
+    exit 1
+  fi
+  
+  if [[ ! -f "$organized_file" ]]; then
+    echo "Error: Organized extensions file not found: $organized_file" >&2
+    exit 1
+  fi
+  
+  echo "Installing extensions from category: $category"
+  local in_category=false
+  local installed=0
+  
+  while read -r line; do
+    # Check if we're entering the target category
+    if [[ "$line" == *"=== $category ==="* ]]; then
+      in_category=true
+      continue
+    fi
+    
+    # Check if we're entering a new category
+    if [[ "$line" == *"=== "*" ===" ]] && [[ "$in_category" == true ]]; then
+      break
+    fi
+    
+    # Install extension if we're in the target category
+    if [[ "$in_category" == true ]] && [[ -n "$line" ]] && [[ "$line" != \#* ]]; then
+      echo "Installing: $line"
+      code --install-extension "$line"
+      ((installed++))
+    fi
+  done <"$organized_file"
+  
+  echo "✔ Installed $installed extensions from category '$category'"
+}
+
+# Function to show help
+help() {
+  echo "VS Code Extensions Manager"
+  echo ""
+  echo "Commands:"
+  echo "  install                    Install all extensions from list"
+  echo "  dump                      Export currently installed extensions"
+  echo "  update                    Force update all extensions"
+  echo "  organize                  Check organized file status"
+  echo "  install_category 'NAME'   Install extensions from specific category"
+  echo "  help                      Show this help"
+  echo ""
+  echo "Files:"
+  echo "  $extensions_file          Simple list (auto-generated)"
+  echo "  $organized_file    Categorized list (manually curated)"
+  echo ""
+  echo "Categories available:"
+  if [[ -f "$organized_file" ]]; then
+    grep "^# === " "$organized_file" | sed 's/^# === //g; s/ ===$//g'
+  else
+    echo "  (none - organized file not found)"
+  fi
+}
+
+# Function to update extensions
+update() {
+  # Print a message to indicate that the extension update process starts
+  printf "[INFO] start: updating installed extensions..."
+  sleep 0.5
+
+  # Print a message to indicate that the extension update process starts
+  printf "[INFO] start: vscode extension updating."
+  sleep 0.5
+
+  # Define a spinner animation
+  spiner_figs='-\\|/'
+  spiner_i=0
+
+  # Clear VSIX cache
+  if [ -d "${VSCODE_PORTABLE}/CachedExtensionVSIXs" ] && [ -n "$(ls -A ${VSCODE_PORTABLE}/CachedExtensionVSIXs)" ]; then
+    rm -rf "${VSCODE_PORTABLE}/CachedExtensionVSIXs"/*
+  fi
+
+  # Loop through provided extension names
+  for ext in $extensions; do
+    echo "[INFO] Removing extension: $ext "
+    find "${VSCODE_EXTENSIONS}" -maxdepth 1 -type d -name "${ext}*" -exec rm -rf {} \;
+
+    # Print a message to show an extension being updated
+    spiner_i=$(((spiner_i + 1) % 4))
+    printf "\33[2K\r"
+    printf "[INFO] (${spiner_figs:$spiner_i:1}) Reinstalling: ${ext} "
+
+    code --install-extension "$ext" --force
+  done
+
+  # Print a message to indicate that the extension update process has completed
+  printf "\33[2K\r"
+  echo "[INFO] ✔ vscode extension updating."
+}
+
+### ALT update code
+#
+# if [ -n "$(ls -A ${USERPROFILE}/AppData/Roaming/Code/CachedExtensionVSIXs)" ]; then
+#     echo "## Emptying VSIX cache"
+#     USERPROFILE_CLEAN=$(echo ${USERPROFILE} | sed 's|\\|/|g')
+#     rm ${USERPROFILE_CLEAN}/AppData/Roaming/Code/CachedExtensionVSIXs/*
+# else
+#     echo "## VSIX cache is empty"
+# fi
+
+# for ext in "$@"
+# do
+#     echo "## Removing extension ${ext}"
+#     find ${USERPROFILE}/.vscode/extensions -maxdepth 1 -type d -name "${ext}*" -exec rm -r "{}" \;
+#     echo "## Reinstalling extension for update"
+#     echo "$(code --install-extension "${ext}" --force)"
+# done
+#
+###
+
+# Allow function call from command line
+"$@"
