@@ -1,7 +1,9 @@
-# Dotfiles Management Context Rule for Warp AI
+# Dotfiles Management Rule for Warp Drive
+
+**MANUAL SETUP REQUIRED**: Copy the content below and add it as a rule in Warp Drive (brain icon in Warp).
 
 ## Overview
-I use a bare git repository setup for managing my dotfiles. This rule helps Warp understand when to suggest `dot` commands instead of regular `git` commands.
+I use a bare git repository setup for managing my dotfiles. When I'm in `/Users/mh`, `/Users/mh/.config`, or `/Users/mh/.local`, suggest `dot` commands instead of regular `git` commands.
 
 ## Key Commands
 
