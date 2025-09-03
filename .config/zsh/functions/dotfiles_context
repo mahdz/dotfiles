@@ -1,0 +1,22 @@
+#!/usr/bin/env zsh
+# Function: dotfiles_context()
+#
+# Description:
+#   Sets environment variables to help Warp understand when we're working
+#   with dotfiles vs regular git repositories. This provides context for
+#   AI suggestions and completions.
+#
+
+dotfiles_context() {
+  # Check if we're in a directory managed by dotfiles
+  if [[ "$PWD" == "$HOME" ]] || 
+     [[ "$PWD" == "$HOME/.config"* ]] || 
+     [[ "$PWD" == "$HOME/.local"* ]] ||
+     [[ "$PWD" == "$HOME/.dotfiles"* ]]; then
+    export WARP_GIT_CONTEXT="dotfiles"
+    export GIT_PREFER_DOT="true"
+  else
+    unset WARP_GIT_CONTEXT
+    unset GIT_PREFER_DOT
+  fi
+}

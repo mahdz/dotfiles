@@ -15,12 +15,16 @@
 # aliases - Zsh and bash aliases
 #
 
-# =============================================================================
-# Directory Navigation
-# =============================================================================
-# iwd - initial working directory
-: ${IWD:=$PWD}
-alias iwd="cd $IWD"
+# DUPLICATE! Copied over since we get an error if the .shellrc was not loaded
+type command_exists &> /dev/null 2>&1 || source "${XDG_CONFIG_HOME}/shell/shellrc"
+
+# add flags to existing aliases
+alias less="${aliases[less]:-less} -RF"
+alias cp="${aliases[cp]:-cp} -p"
+
+# eza already defines 'll' - so skip if that's present
+command_exists tree && alias tree="${aliases[tree]:-tree} -Ch"
+command_exists bat && alias cat='bat'
 
 alias zdot='cd "${ZDOTDIR:-$HOME/.config/zsh}"'
 
@@ -28,13 +32,13 @@ alias zdot='cd "${ZDOTDIR:-$HOME/.config/zsh}"'
 # Pipe and Redirection Aliases
 # ============================
 # zsh suffix aliases
-alias -g G='| grep -E'
+#alias -g G='| grep'
 #alias -g H='| head'
-alias -g L='| less'
-alias -g M='| more'
-alias -g S='| sort'
+#alias -g L='| less'
+#alias -g M='| more'
+#alias -g S='| sort'
 #alias -g T='| tail'
-alias -g Z='| fzf'
+#alias -g Z='| fzf'
 
 alias CA='2>&1 | cat -A'
 alias LL='2>&1 | less'
@@ -50,40 +54,19 @@ alias as='alias | command grep' # Search aliases
 alias ar='unalias'              # Remove given alias
 
 # ============================
-# Brew Aliases
-# ============================
-alias bbd='brew bundle dump --force --no-upgrade --all --file=$HOME/.config/homebrew/Brewfile'
-alias bc='bc -ql'
-alias bfc='brew file casklist && o Caskfile'
-alias brewg='brew graph --installed --highlight-leaves | fdp -T png -o graph.png && open graph.png'
-alias brewinfo='brew leaves | xargs brew desc --eval-all'
-alias brewup='brew cu --all --interactive --include-mas; brew outdated; brew upgrade;'
-
-# ============================
 # History and Search Aliases
 # ============================
-alias h=' history' # Shows full history
-#alias hist='fc -li'
-alias history='omz_history'
-alias history-stat='history 0 | awk ''{print $2}'' | sort | uniq -c | sort -n -r | head'
-alias h-search=' fc -El 0 | grep' # Searchses for a word in terminal history
-alias histrg=' history -500 | rg' # Rip grep search recent history
-alias hgrep='fc -El 0 | grep'
-
 # mask built-ins with better defaults
 alias ping='ping -c 5'
-(( $+commands[bat] )) && alias cat='bat'
-(( $+commands[br] )) && tree="${aliases[tree]:-tree} -Ch"
 alias type='type -a'
 
 # Verbosity and settings that you pretty much just always are going to want.
-alias cp="\${aliases[cp]:-cp} -p"
 alias mv='mv -iv'
 alias mkdir='mkdir -pv'
 alias ffmpeg='ffmpeg -hide_banner'
 
 # fix typos
-#alias get=git
+alias get=git
 alias quit='exit'
 alias cd..='cd ..'
 alias zz='exit'
@@ -93,7 +76,6 @@ ea() { ${EDITOR} "${ZDOTDIR:-$HOME}/zshrc.d/myaliases.zsh" & disown; }
 ez() { ${EDITOR} "${ZDOTDIR:-$HOME}/.zshrc" >/dev/null & disown; }
 
 # find#aliaenlinks='find . -type l | (while read FN ; do test -e "$FN" || ls -ld "$FN"; done)'
-#alias clea"logs='rm -r"v */log/*.log'
 if (( ${+commands[fd]} )); then
   alias killds="fd -HI -t f '.DS_Store' -X rm"
 else
@@ -101,10 +83,9 @@ else
 fi
 
 # misc
-alias zshrc='${EDITOR:-micro} "${ZDOTDIR:-$HOME/.config/zsh}"/.zshrc'
 alias zbench='for i in {1..10}; do /usr/bin/time zsh -lic exit; done'
 alias cls="clear && printf '\e[3J'"
-alias mise-upgrade='fix-mise-python-cache && mise upgrade'
+#alias mise-upgrade='fix-mise-python-cache && mise upgrade'
 alias keka='/Applications/Keka.app/Contents/MacOS/Keka --cli'
 
 # trash aliases
@@ -124,59 +105,74 @@ print-functions() { # exclude oh-my-zsh, Warp, zle, and other misc functions
 # color
 alias colormap='for i in {0..255}; do print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+"\n"}; done'
 
-
 # =============================================================================
 # Dotfiles
 # =============================================================================
 
 : ${DOTFILES:=$HOME/.dotfiles}
 
+# Always make "dot" call our function instead of brew's /opt/homebrew/bin/dot
+alias dot='dotgit'
 
+# Make sure this alias has priority over binaries in /opt/homebrew/bin
+alias -g dot='dotgit'
 
+# Dotfiles shortcuts for Warp AI suggestions
+alias ds='dot status'
+alias da='dot add'
+alias dan='dot add -n'  # dry-run first!
+alias dc='dot commit'
+alias dp='dot push'
+alias dl='dot pull'
+alias dd='dot diff'
 
 # =============================================================================
-# LLMs
+# Git run_all
 # =============================================================================
 
-ollama() {
-  # Ensure 'ollama' uses the specififed model path
-  OLLAMA_MODELS="${XDG_DATA_HOME:-$HOME/.local/share}/ollama/models" command ollama "$@"
+if command_exists 'run_all.sh'; then
+  # shortcuts to handle multiple git repos bypassing the omz auto-correct prompt for 'git'
+  alias rug='run_all.sh git'
+  alias all="FOLDER='${HOME}' MAXDEPTH=6 rug"
+fi
+
+# =============================================================================
+# macOS
+# =============================================================================
+
+_free_wifi() {
+  local interface="${1}"
+  (ifconfig "${interface}" | \grep ether) && \
+  (openssl rand -hex 6 | sed 's/\(..\)/\1:/g; s/.$//' | xargs sudo ifconfig "${interface}" ether) && \
+  (ifconfig "${interface}" | \grep ether)
 }
+if is_linux; then alias free-wifi='_free_wifi eth0'
+elif is_macos; then alias free-wifi='_free_wifi en0'
+  alias flush-dns="sudo killall -HUP mDNSResponder;sudo killall mDNSResponderHelper;sudo dscacheutil -flushcache;say MacOS DNS cache has been cleared"
+fi
 
-# =============================================================================
-# Secrets
-# =============================================================================
+if is_macos; then
+  # MacOS: Remove apps from quarantine
+  alias unquarantine='sudo xattr -rd com.apple.quarantine'
 
-alias secrets='cd "${XDG_CONFIG_HOME:-$HOME/.config}/secrets"'
-
-
-
-
-
-(( $+commands[bat] )) && alias -g -- -h='-h 2>&1 | bat --language=help --style=plain'
-(( $+commands[bat] )) && alias -g -- --help='--help 2>&1 | bat --language=help --style=plain'
+  # MacOS: Clean up LaunchServices to remove duplicates in the "Open With" menu
+  alias lscleanup='/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder'
+fi
 
 # =============================================================================
 # Basic Memory
 # =============================================================================
 
-alias note="basic-memory tools write-note"
-alias notemv="basic-memory tools move-note"
-alias search="basic-memory tools search-notes --query"
-alias recent="basic-memory tools recent-activity"
+alias note="basic-memory tool write-note"
+alias notemv="basic-memory tool move-note"
+alias search="basic-memory tool search-notes --query"
+alias recent="basic-memory tool recent-activity"
 
+# =============================================================================
+# Secrets
+# =============================================================================
 
-# If an alias for the command just run exists, then show tip
-preexec_alias-finder() {
-  tip=$(alias | grep -E "=$1$" | head -1)
-  if [ ! -z "$tip" ]; then
-    echo -e "\033[0;90m\e[3mAlias Tip: \e[4m$tip\033[0m"
-  fi
-}
+alias secrets="cd ${XDG_DATA_HOME}/secrets"
 
-# Load add-zsh-hook
-autoload -U add-zsh-hook
-
-# Call function after command
-# This allows the shell to display a tip if an alias exists for the command being run.
-add-zsh-hook preexec preexec_alias-finder
+(( $+commands[bat] )) && alias -g -- -h='-h 2>&1 | bat --language=help --style=plain'
+(( $+commands[bat] )) && alias -g -- --help='--help 2>&1 | bat --language=help --style=plain'

@@ -1,0 +1,28 @@
+---
+# Warp Workflows for Dotfiles Management
+# Access with: Cmd+Shift+R
+
+workflows:
+  - name: "Check Dotfiles Status"
+    command: "ds"
+    description: "Show current status of dotfiles"
+    
+  - name: "Safe Add Dotfile"  
+    command: "dan {{file}} && da {{file}}"
+    description: "Safely add a file to dotfiles (dry-run first)"
+    
+  - name: "Commit Dotfiles"
+    command: "dc -m \"{{message}}\""
+    description: "Commit dotfiles changes with message"
+    
+  - name: "Sync Dotfiles"
+    command: "ds && dp"
+    description: "Show status and push dotfiles to remote"
+    
+  - name: "Dotfiles Diff"
+    command: "dd"
+    description: "Show differences in dotfiles"
+    
+  - name: "Add Multiple Dotfiles"
+    command: "dan {{file1}} {{file2}} && da {{file1}} {{file2}}"
+    description: "Safely add multiple files to dotfiles"

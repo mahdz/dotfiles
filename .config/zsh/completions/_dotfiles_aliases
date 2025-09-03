@@ -1,0 +1,6 @@
+#compdef ds=git da=git dan=git dc=git dp=git dl=git dd=git
+# Completions for dotfiles aliases to use git completion system
+# This ensures that ds, da, dc, etc. get proper git-style completions
+
+# Enable git completions for dotfiles aliases
+compdef _git ds da dan dc dp dl dd

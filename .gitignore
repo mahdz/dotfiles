@@ -94,6 +94,10 @@
 
 !WARP.md
 
+# Warp terminal configuration
+!.warp/
+!.warp/**
+
 !.config/wget/
 !.config/wget/**
 
