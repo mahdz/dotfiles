@@ -111,20 +111,19 @@ alias colormap='for i in {0..255}; do print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f
 
 : ${DOTFILES:=$HOME/.dotfiles}
 
-# Always make "dot" call our function instead of brew's /opt/homebrew/bin/dot
-alias dot='dotgit'
-
 # Make sure this alias has priority over binaries in /opt/homebrew/bin
-alias -g dot='dotgit'
+alias -g dot='dots'
 
 # Dotfiles shortcuts for Warp AI suggestions
-alias ds='dot status'
-alias da='dot add'
-alias dan='dot add -n'  # dry-run first!
-alias dc='dot commit'
-alias dp='dot push'
-alias dl='dot pull'
-alias dd='dot diff'
+alias ds='dots status'
+alias da='dots add'
+alias dan='dots add -n'  # dry-run first!
+alias dc='dots commit'
+alias dp='dots push'
+alias dl='dots pull'
+alias dd='dots diff'
+
+alias vault='/Users/mh/Library/Mobile Documents/iCloud~md~obsidian/Documents/Vault'
 
 # =============================================================================
 # Git run_all
