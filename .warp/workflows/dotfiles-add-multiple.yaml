@@ -1,0 +1,7 @@
+---
+name: "Add Multiple Files"
+command: "dan {{files}} && da {{files}}"
+description: "Safely add multiple files to dotfiles (space-separated)"
+arguments:
+  - name: files
+    description: "Space-separated file paths to add"

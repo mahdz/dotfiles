@@ -1,0 +1,42 @@
+# Task Genius MCP Server Configuration
+# Wraps Task Genius Obsidian plugin HTTP endpoint as MCP tools
+
+# Server info
+server:
+  name: "Task Genius MCP"
+  description: "Obsidian Task Genius plugin integration via MCP"
+  version: "1.0.0"
+  
+# Authentication
+auth:
+  token_env_var: "TASK_GENIUS_API_KEY"  # Retrieved securely from keychain via pw
+
+# Tool definitions
+tools:
+  - name: "task-genius-call"
+    description: "Send commands to Task Genius Obsidian plugin"
+    endpoint: "http://127.0.0.1:7777/mcp"
+    method: "POST"
+    timeout: 10
+    template: |
+      {
+        "command": "{{command}}",
+        "params": {{params}}
+      }
+    parameters:
+      command:
+        type: "string"
+        description: "Task Genius command to execute (e.g., create_task, list_tasks, update_task)"
+        required: true
+      params:
+        type: "object"
+        description: "Command parameters as JSON object"
+        default: {}
+
+  # Additional tool for direct API testing
+  - name: "task-genius-ping"
+    description: "Health check for Task Genius plugin connectivity"
+    endpoint: "http://127.0.0.1:7777/health"
+    method: "GET"
+    timeout: 5
+    parameters: {}

@@ -1,0 +1,21 @@
+# Warp Launch Configuration
+#
+# This configuration has two windows,
+# the first window executes two commands on start,
+# the second window has a split pane that executes a command on start.
+
+---
+name: Dots
+windows:
+  - tabs:
+      - title: Developer
+        layout:
+          split_direction: vertical
+          panes:
+            - cwd: /Users/mh
+              commands:
+                - exec: ls
+                - exec: code ~/.config/vscode/dotfiles.code-workspace
+            - cwd: /Users/mh/Developer
+              commands: ls -la
+        color: blue

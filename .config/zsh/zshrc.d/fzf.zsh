@@ -14,44 +14,39 @@ fi
 export _FZF_ZSH_CONFIGURED=1
 
 
-# Auto-detect FZF installation path
-if [ -z "$FZF_PATH" ]; then
-  if [ -d "/opt/homebrew/opt/fzf" ]; then
-    FZF_PATH="/opt/homebrew/opt/fzf"
-  elif [ -d "$XDG_DATA_HOME/mise/shims" ]; then
-    FZF_PATH="$XDG_DATA_HOME/mise/shims"
-  fi
+# Auto-detect FZF installation path using array of potential locations
+if [[ -z "$FZF_PATH" ]]; then
+  local fzf_locations=("/opt/homebrew/opt/fzf" "$XDG_DATA_HOME/mise/shims")
+  for location in "${fzf_locations[@]}"; do
+    if [[ -d "$location" ]]; then
+      export FZF_PATH="$location"
+      break
+    fi
+  done
 fi
 
 #---------------------------------------------------------------------------
 
-# FZF options
-# --exact:          Enable exact-match
-# --layout=reverse: Enclose in a box at the top of the screen
-# --info=inline:    Display finder info inline with the prompt
-# --pointer="→":    Set custom pointer
-# --header:         Add a header
-# --height:         Set height if not in TMUX
-# --color:          Set colors
-export FZF_DEFAULT_OPTS="
---exact
---layout=reverse
---info=inline
---pointer='→'
---header='CTRL-c or ESC to quit'
---color=fg:#d0d0d0,bg:#121212,hl:#5f87af
---color=fg+:#d0d0d0,bg+:#262626,hl+:#5fd7ff
---color=info:#afaf87,prompt:#d7005f,pointer:#af5fff
---color=marker:#87ff00,spinner:#af5fff,header:#87afaf
-"
+# FZF default options - consolidated configuration
+# Basic options:
+#   --exact:          Enable exact-match
+#   --layout=reverse: Enclose in a box at the top of the screen
+#   --info=inline:    Display finder info inline with the prompt
+#   --pointer="→":    Set custom pointer
+#   --header:         Add a header
+# Color scheme: Custom dark theme with blue/purple accents
+local fzf_base_opts="--exact --layout=reverse --info=inline --pointer='→' --header='CTRL-c or ESC to quit'"
+local fzf_colors="--color=fg:#d0d0d0,bg:#121212,hl:#5f87af --color=fg+:#d0d0d0,bg+:#262626,hl+:#5fd7ff --color=info:#afaf87,prompt:#d7005f,pointer:#af5fff --color=marker:#87ff00,spinner:#af5fff,header:#87afaf"
 
-# Use fzf-tmux wrapper if in a TMUX session
+# Set height based on TMUX availability
 if [[ -n "${TMUX}" ]] && (( $+commands[fzf-tmux] )); then
+    export FZF_DEFAULT_OPTS="$fzf_base_opts $fzf_colors"
+    # Override fzf to use fzf-tmux wrapper
     fzf() {
-        fzf-tmux -p -w 100% -h 80%
+        fzf-tmux -p -w 100% -h 80% "$@"
     }
 else
-    export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS} --height=50%"
+    export FZF_DEFAULT_OPTS="$fzf_base_opts $fzf_colors --height=50%"
 fi
 
 # Set the default command for fzf to use fd.
@@ -120,36 +115,55 @@ _fzf_compgen_dir() {
   fd --type d --hidden --follow --exclude ".git" . "$1"
 }
 
-# Custom cd function to use fzf for directory selection.
+# Enhanced cd function with fzf directory selection
+# Provides interactive directory navigation when called without arguments
 cd() {
-  # If arguments are provided, use the standard `cd`.
+  # If arguments are provided, use the standard builtin cd
   if [[ "$#" != 0 ]]; then
     builtin cd "$@"
     return
   fi
 
-  # Loop to allow continuous directory selection until cancelled.
+  # Interactive directory selection loop
   while true; do
-    # List subdirectories and ".." for parent directory.
-    # `ls -d */` is used for portability (avoids GNU-specific `--`).
-    local lsd=$(echo ".." && ls -d */ 2>/dev/null)
+    # Build directory list: parent (..) + subdirectories
+    # Using fd if available for better performance, fallback to find
+    local dirs
+    if (( $+commands[fd] )); then
+      dirs=(".." $(fd --type d --max-depth 1 --exclude ".git" . 2>/dev/null))
+    else
+      # Portable fallback using find
+      dirs=(".." $(find . -maxdepth 1 -type d ! -name . ! -name ".git" -exec basename {} \; 2>/dev/null))
+    fi
 
-    # Use fzf to select a directory.
-    local dir="$(printf '%s\n' "${lsd[@]}" |
-      fzf --reverse --preview '
-            # Get the selected item.
-            __cd_nxt="$(echo {})";
-            # Construct the full path for the preview.
-            __cd_path="$(echo $(pwd)/${__cd_nxt} | sed "s;//;/;")";
-            echo "Preview of: ${__cd_path}";
-            echo;
-            # Show the contents of the selected directory.
-            ls -p --color=always "${__cd_path}";
-    ')"
+    # Use fzf for directory selection with enhanced preview
+    local selected_dir="$(printf '%s\n' "${dirs[@]}" | fzf \
+      --reverse \
+      --prompt='Select directory: ' \
+      --preview '
+        # Normalize the selected directory path
+        if [[ "{}" == ".." ]]; then
+          preview_path="$(dirname "$(pwd)")"
+        else
+          preview_path="$(pwd)/{}"
+        fi
+        
+        echo "Preview: $preview_path"
+        echo
+        
+        # Show directory contents with ls (portable options)
+        if [[ -d "$preview_path" ]]; then
+          ls -la "$preview_path" 2>/dev/null || echo "Cannot preview directory"
+        fi
+      ')"
 
-    # If fzf was cancelled (empty selection), exit the loop.
-    [[ ${#dir} != 0 ]] || return 0
-    # Change to the selected directory.
-    builtin cd "$dir" &>/dev/null
+    # Exit if selection was cancelled (empty result)
+    [[ -n "$selected_dir" ]] || return 0
+    
+    # Change to selected directory
+    if ! builtin cd "$selected_dir" 2>/dev/null; then
+      echo "Error: Cannot change to directory '$selected_dir'" >&2
+      return 1
+    fi
   done
 }

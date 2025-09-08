@@ -8,7 +8,7 @@ set -euo pipefail
 setopt nullglob 2>/dev/null || true
 
 # Default locations
-VAULT_TASKS="/Users/mh/Library/Mobile Documents/iCloud~md~obsidian/Documents/Vault/02-Projects/TaskManagement/tasks"
+VAULT_TASKS="$VAULT_PATH/02-Projects/TaskManagement/tasks"
 EDITOR="${EDITOR:-code}"
 
 # Detect task directory based on context

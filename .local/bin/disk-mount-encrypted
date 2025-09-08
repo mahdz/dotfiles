@@ -19,8 +19,12 @@ set -o pipefail # Ensure pipe failures are handled
 # Global variables
 keychain_service="ThiccBoi" # Keychain service name where the password is stored
 keychain_account="mh"  # Keychain account name
-volume_name="ThiccBoi"    # The name of the APFS volume to unlock
+# volume_name="ThiccBoi"    # The name of the APFS volume to unlock
 volume_uuid="DA4A825C-06AD-4A5A-92B6-8628685CDBB0"
+
+# Interactive password retrieval for frequently changing or interactive use
+# pass_ssd="$(pw -p ThiccBoi)"
+# pass_tf="$(pw -p Telegram)"
 
 # To find the UUID of a specific APFS volume, run the command: diskutil apfs list
 # Replace the value of 'volume_uuid' with the UUID of the desired volume.

@@ -1,3 +1,0 @@
-emulate -L zsh
-setopt LOCAL_OPTIONS PIPE_FAIL ERR_EXIT
-GIT_WORK_TREE="$HOME" GIT_DIR="${DOTFILES:-$HOME/.dotfiles}" code "$HOME/.config/vscode/dotfiles.code-workspace"

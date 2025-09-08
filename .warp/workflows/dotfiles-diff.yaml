@@ -1,0 +1,4 @@
+---
+name: "Dotfiles Diff"
+command: "dd"
+description: "Show differences in dotfiles"

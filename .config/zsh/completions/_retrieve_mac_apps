@@ -1,0 +1,131 @@
+#autoload
+
+### 2022-02-09 @varenc
+### This is a fixed version of the macOS zsh completion script for the `open` command.
+### See my response here for a description of the bug: 
+### https://stackoverflow.com/questions/59865427/zsh-hangs-on-open-application-tab-autocompletion#63097652
+###
+### tl;dr; The original completion script is provided by Apple and not-editable by the user without disabling SIP.
+### It has a bug in it and doesn't use the Spotlight index to list applications.  This makes auto-completion
+### for the command "open -a ..." very slow/impossible.
+###
+### TO INSTALL just place this is a directory on your $FPATH that precedes '/usr/share/zsh/5.7.1/functions'. Like this:
+###
+### $ wget https://gist.githubusercontent.com/varenc/d2c09c3ad5939774001c32fe5f7df41f/raw/_retrieve_mac_apps.sh -O /usr/local/share/zsh/site-functions/_retrieve_mac_apps  
+###
+### Or create a new directory for this script and prepend that dir to your $FPATH in your .zshrc.
+### NOTE: Remove the `.sh` extension from this file.  That was added just for github syntax highlighting.
+
+# Find paths of applications and preserve them into _mac_apps.
+# Used by _mac_applications and _mac_files_for_application.
+
+_mac_apps_caching_policy () {
+  # Rebuild if cache is more than a day old
+  local -a oldp
+  oldp=( "$1"(Nmw+1) )
+  (( $#oldp ))
+}
+
+
+# _mac_apps_*_retrieve
+# 
+# Get search applications from directories specified in app_dir_root.
+# Paths to applications are stored in _mac_apps.
+
+_mac_apps_spotlight_retrieve () {
+  typeset mdfind_query="kMDItemContentType == 'com.apple.application-*'"
+
+  for i in ${app_dir_root}; do
+    _mac_apps+=(${(f)"$(_call_program command \
+        mdfind -onlyin ${(q)i} ${(q)mdfind_query})"})
+  done
+}
+
+_mac_apps_old_retrieve () {
+  # Get directories which may contain applications
+  typeset -aU app_dir 
+  if [[ -z "$app_dir" ]] && \
+    ! zstyle -a ":completion:${curcontext}:commands" application-dir app_dir
+  then
+    typeset -a app_dir_stop_pattern
+    app_dir_stop_pattern=( "*.app" "contents#" "*data" "*plugins#" "*plug?ins#" "fonts#" "document[[:alpha:]]#" "*help" "resources#" "images#" "*configurations#" )
+    typeset app_dir_pattern
+    app_dir_pattern="(^(#i)(${(j/|/)app_dir_stop_pattern}))"
+    app_dir=( ${^app_dir_root}/(${~app_dir_pattern}/)#(N) )
+  fi
+
+  # Get application bundles
+  local -a app_result
+
+  if ! zstyle -t ":completion:${curcontext}:commands" ignore-bundle; then
+    app_result=( ${^app_dir}*/Contents/(MacOS|MacOSClassic)(N) )
+    _mac_apps+=( ${app_result[@]%/Contents/MacOS*} )
+  fi
+
+  # Get single file applications
+  if ! zstyle -t ":completion:${curcontext}:commands" ignore-single; then
+    autoload -Uz zargs
+    local app_cand nargs envvars
+    app_cand=( ${^app_dir}^*.[a-z]#/..namedfork/rsrc(.UrN,.RN^U) )
+    envvars="$(builtin typeset -x)"
+    nargs=$(( $(command sysctl -n kern.argmax) - $#envvars - 2048 ))
+    app_result="$(zargs --max-chars $nargs ${app_cand[@]} -- grep -l APPL)"
+    _mac_apps+=( ${${(f)app_result}%/..namedfork/rsrc} )
+  fi
+}
+
+
+_retrieve_mac_apps() {
+  local cache_policy
+  zstyle -s ":completion:*:*:$service:*" cache-policy cache_policy
+  if [[ -z "$cache_policy" ]]; then
+    zstyle ":completion:*:*:$service:*" cache-policy _mac_apps_caching_policy
+  fi
+
+  if ( (( ${#_mac_apps} == 0 )) || _cache_invalid Mac_applications ) \
+        && ! _retrieve_cache Mac_applications; then
+
+    # Get application search method
+    typeset retrieve
+    if ! zstyle -s ":completion:*:*:${service}:commands" search-method retrieve
+    then
+      ######################################################################
+      ## VARENC'S FIX IS HERE
+      ## Apple's original version of this script checked for "./Spotlight-V100" only to
+      ## determine if Spotlight indexing exists.  This not correct and hasn't
+      ## been updated. When it thinks an indexing doesn't exist it uses a very slow
+      ## way of fetching applications.  This is a fix to correct the path that
+      ## checks for Spotlight's index.  (though it'd also be safe to assume that
+      ## any modern mac is going to have a spotlight index)
+      ######################################################################
+      if [[ -d /System/Volumes/Data/.Spotlight-V100 || -d /.Spotlight-V100 ]] ; then
+        # / is indexed to use Spotlight
+        retrieve=_mac_apps_spotlight_retrieve
+      else
+        # Fall back to the old way
+        retrieve=_mac_apps_old_retrieve 
+      fi
+      zstyle ":completion:*:*:${service}:commands" search-method $retrieve
+    fi
+
+    # Get root directories to search applications
+    typeset -a app_dir_root
+    if ! zstyle -a ":completion:${curcontext}:" application-path app_dir_root
+    then
+      if [[ $retrieve = _mac_apps_old_retrieve ]]; then
+        app_dir_root=( {,/Developer,/Network,"$HOME"}/{Applications*(N),Desktop} )
+      else
+        app_dir_root=( / )
+      fi
+
+      zstyle ":completion:*" application-path $app_dir_root
+    fi
+
+    typeset -g -Ua _mac_apps
+    $retrieve
+
+    _store_cache Mac_applications _mac_apps
+  fi
+}
+
+_retrieve_mac_apps "$@"

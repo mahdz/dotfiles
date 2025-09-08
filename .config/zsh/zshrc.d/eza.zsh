@@ -6,7 +6,6 @@
 (( $+commands[eza] )) || return
 
 alias lt='eza --icons --tree'
-unalias l
 alias l='ls -l'
 alias la='ls -lAh'
 

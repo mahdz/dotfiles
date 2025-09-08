@@ -1,0 +1,44 @@
+#compdef security
+_arguments "1:Show all commands, or show usage for a command:(help)"\
+	"2:Display or manipulate the keychain search list:(list-keychains)"\
+	"3:Display or set the default keychain:(default-keychain)"\
+	"4:Display or set the login keychain:(login-keychain)"\
+	"5:Create keychains and add them to the search list:(create-keychain)"\
+	"6:Delete keychains and remove them from the search list:(delete-keychain)"\
+	"7:Lock the specified keychain:(lock-keychain)"\
+	"8:Unlock the specified keychain:(lock-keychain)"\
+	"9:Set settings for a keychain:(set-keychain-settings)"\
+	"10:Set password for a keychain:(set-keychain-password)"\
+	"11:Show the settings for keychain:(show-keychain-info)"\
+	"12:Dump the contents of one or more keychains:(dump-keychain)"\
+	"13:Create an asymmetric key pair:(create-keypair)"\
+	"14:Add a generic password item:(add-generic-password)"\
+	"15:Add an internet password item:(add-internet-password)"\
+	"16:Add certificates to a keychain:(add-certificates)"\
+	"17:Find a generic password item:(find-generic-password)"\
+	"18:Delete a generic password item:(delete-generic-password)"\
+	"19:Find an internet password item:(find-internet-password)"\
+	"20:Delete an internet password item:(delete-internet-password)"\
+	"21:Find a certificate item:(find-certificate)"\
+	"22:Find an identity certificate + private key:(find-identity)"\
+	"23:Delete a certificate from a keychain:(delete-certificate)"\
+	"24:Set the preferred identity to use for a service:(set-identity-preference)"\
+	"25:Get the preferred identity to use for a service:(get-identity-preference)"\
+	"26:Create a db using the DL:(create-db)"\
+	"27:Export items from a keychain:(export)"\
+	"28:Import items into a keychain:(import)"\
+	"29:Encode or decode CMS messages:(cms)"\
+	"30:MDS database:(install-mds)"\
+	"31:Add trusted certificate(s):(add-trusted-cert)"\
+	"32:Remove trusted certificate(s):(remove-trusted-cert)"\
+	"33:Display contents of trust settings:(dump-trust-settings)"\
+	"34:Display or manipulate user-level trust settings:(user-trust-settings-enable)"\
+	"35:Export trust settings:(trust-settings-export)"\
+	"36:Import trust settings:(trust-settings-import)"\
+	"37:Verify certific:te(s):(verify-cert)"\
+	"38:Perform authorization operations:(authorize)"\
+	"39:Make changes to the authorization policy database:(authorizationdb)"\
+	"40:Execute tool with privileges:(execute-with-privileges)"\
+	"41:Run /usr/bin/leaks on this process:(leaks)"\
+	"42:Display a descriptive message for the given error code(s):(error)"\
+	"43:Create a keychain containing a key pair for FileVault recovery use:(create-filevaultmaster-keychain)"

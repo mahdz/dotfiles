@@ -3,11 +3,6 @@ description: AI rules derived by SpecStory from the project AI interaction histo
 globs: *
 ---
 
----
-description: AI rules derived by SpecStory from the project AI interaction history
-applyTo: "**"
----
-
 ## PROJECT OVERVIEW
 
 - This repository configures macOS developer environments, targeting Apple Silicon and modern macOS versions.
@@ -589,3 +584,10 @@ applyTo: "**"
      ```bash
      git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" commit -m "Stop tracking <path_to_file>"
      ```
+
+- In Zsh, the function body must be terminated with a newline or semicolon before the closing brace. Example:
+    ````zsh
+    # ...existing code...
+    is-not-warpterm() { [[ $TERM_PROGRAM != "WarpTerminal" ]]; }
+    # ...existing code...
+    ````

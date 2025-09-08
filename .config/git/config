@@ -1,209 +1,190 @@
-# The MIT License (MIT)
-#
-# Copyright (c) 2012-2021 https://github.com/rbf
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+[user]
+	name = Manny H
+	email = 11878521+mahdz@users.noreply.github.com
+	signingkey = ~/.ssh/id_ed25519.pub
 
-# SOURCE:     https://github.com/rbf/dotfiles/blob/master/git
-# RAW:        https://raw.githubusercontent.com/rbf/dotfiles/master/git/.gitconfig
-# SHORTLINK:  http://rbf.li/gitconfig
+[gpg]
+	format = ssh
 
-# Git uses a series of configuration files to determine non-default behavior that
-# you may want. These config files can be stored in three different places:
-#
-#   1) /etc/gitconfig file: for every user on the system and all their repositories.
-#   2) ~/.gitconfig file: Specific to your user.
-#   3) .git/config a given repository: Specific to that single repository.
-#
-# Each level overwrites values in the previous level, so values in .git/config
-# trump those in /etc/gitconfig, for instance.
-#
-# (From: http://git-scm.com/book/en/Getting-Started-First-Time-Git-Setup
-#        http://git-scm.com/book/ch7-1.html)
-#
-# More info on git-config file and syntax:
-#   https://www.kernel.org/pub/software/scm/git/docs/git-config.html
-#
-# Run the following command to download and install this file for the current
-# user (while saving the current .gitconfig file as .gitconfig.local, if any):
-#
-#     [ -f ~/.gitconfig ] && cat ~/.gitconfig >> ~/.gitconfig.local; curl -#SL rbf.li/gitconfig -o ~/.gitconfig
-#
-# You can also find this simple installer on rbf.li/gitconfiginstall or shorter
-# at rbf.li/gci. If you trust the content of the link, that you can directly do:
-#
-#     bash <(curl -sSL rbf.li/gci)
-#
-# Please DO NOT MODIFY or customize this file because your changes will be lost
-# when you update it with 'git update-gitconfig'. Instead create a file named
-# '.gitconfig.local' in the same directory as the current '.gitconfig' and add
-# your customizations (including your username and email) in that file.
+[commit]
+	gpgsign = true
 
-# Configure user.name and user.email in the .gitconfig.local as exaplined above.
-# [user]
-#   name =
-#   email =
+[gpg "ssh"]
+	allowedSignersFile = ~/.config/git/allowed_signers
 
 [core]
-  editor = /usr/local/bin/code --wait
-  excludesfile = ~/.config/git/ignore
-  attributesfile = ~/.config/git/attributes
-  # Enable wrap when displaying text, e.g. with "git diff"
-  # SOURCE: http://iamnearlythere.com/wrapping-lines-git-diff/
-  # SOURCE: 03oct2021 https://stackoverflow.com/a/18781512
-  pager = bat --paging=always
+	editor = /usr/local/bin/code --wait
+	excludesfile = ~/.config/git/ignore
+	excludesfile = ~/.gitignore
+	attributesfile = ~/.config/git/attributes
+	# Enable wrap when displaying text, e.g. with "git diff"
+	# SOURCE: http://iamnearlythere.com/wrapping-lines-git-diff/
+	# SOURCE: 03oct2021 https://stackoverflow.com/a/18781512
+	pager = bat --paging=always
+	fsmonitor = true
 
 # GitHub CLI integration for credential management
 [credential "https://github.com"]
-  helper = 
-  helper = !/opt/homebrew/bin/gh auth git-credential
+	helper =
+	helper = !/opt/homebrew/bin/gh auth git-credential
 
 [credential "https://gist.github.com"]
-  helper = 
-  helper = !/opt/homebrew/bin/gh auth git-credential
-
-[checkout]
-  # Setting a default remote is useful only when several remotes are setup, e.g.
-  # 'origin' and 'upstream'. It allows to write:
-  #   - 'git checkout <branch>' instead of 'git checkout --track <remote>/<branch>'
-  #   - 'git worktree add <path> <branch>' instead of 'git worktree add --track -b <branch> <path> <remote>/<branch>'
-  # DOC: See 'checkout.defaultRemote' in 'git config --help'.
-  # DOC: See 'add' in 'git worktree --help'.
-  # DOC: See '--guess' in 'git checkout --help'.
-  # SOURCE: 21oct2021 https://stackoverflow.com/a/60724734
-  defaultRemote = origin
-
-[merge]
-  tool = code
-  ff = true
-
-[mergetool "code"]
-  cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
-
-[color]
-  ui = auto
-
-[color "branch"]
-  current = green bold
-  local = green
-  remote = cyan dim
-
-[color "diff"]
-  meta = yellow
-  frag = normal reverse
-  func = normal
-  context = normal dim
-  old = red
-  new = green
-  whitespace = blue
-
-[color "status"]
-  added = green
-  changed = yellow
-  untracked = red
-
-[log]
-  decorate = short
-  # Like the default, but designed to be shown alonside %{a,c}r and %{a,c}D:
-  # - does not show year and seconds
-  # - shows timezone
-  # - 0-padded days for column width consistency
-  date = format-local:%a %b %d %R %Z
-  # Like the default, but padding the days with a leading 0, for column width consistency.
-  # date = format-local:%a %b %d %T %Y
-
-[pretty]
-  original = %C(yellow)%h%C(green) %ad %C(reset)| %s%C(red)%d %C(blue)[%an]%C(reset)
-  graph = %C(yellow)%h %C(reset)%s %C(blue)[%an]%C(red bold)%d%C(reset)
-  hist = %C(yellow)%H%C(magenta)% (describe)%C(red bold)%d%n%s%n%C(green) %>(14)%ar | %>(31)%aD | %ad %C(white)| %C(blue)authored  by %an <%ae>%n%C(white dim) %>(14)%cr | %>(31)%cD | %cd % | committed by %cn <%ce> | signed %G?% GS%n%n%-b%n%n%-N%n%C(reset)
-
-[push]
-  autoSetupRemote = true
-
-[init]
-  defaultBranch = main
-
-[fetch]
-  prune = true
-  throttle-threshold-in-minutes = 60
+	helper =
+	helper = !/opt/homebrew/bin/gh auth git-credential
 
 [branch]
-  autoSetupRebase = always
+	autoSetupRebase = always
 
-[rebase]
-  autoSquash = true
-  missingCommitsCheck = warn
-  autoStash = true
-  updateRefs = true
+[checkout]
+	# Setting a default remote is useful only when several remotes are setup, e.g.
+	# 'origin' and 'upstream'. It allows to write:
+	#	 - 'git checkout <branch>' instead of 'git checkout --track <remote>/<branch>'
+	#	 - 'git worktree add <path> <branch>' instead of 'git worktree add --track -b <branch> <path> <remote>/<branch>'
+	# DOC: See 'checkout.defaultRemote' in 'git config --help'.
+	# DOC: See 'add' in 'git worktree --help'.
+	# DOC: See '--guess' in 'git checkout --help'.
+	# SOURCE: 21oct2021 https://stackoverflow.com/a/60724734
+	defaultRemote = origin
 
-# To understand the structure of this aliases see https://www.atlassian.com/blog/git/advanced-git-aliases
-[alias]
-  # Add/Commit
-  aa = add .
+[color]
+	ui = auto
 
-  # commit {{
-  wip = commit -am 'WIP: work in progress'
-  checkpoint = !git add -A && git commit -m "Checkpoint $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-  # }}
+[color "branch"]
+	current = green bold
+	local = green
+	remote = cyan dim
 
-  # Logging
-  lg = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)' --all
-  log1 = log --all --decorate --oneline --graph --author
+[color "diff"]
+	meta = yellow
+	frag = normal reverse
+	func = normal
+	context = normal dim
+	old = red
+	new = green
+	whitespace = blue
 
-  # Utility
-  stat = status -sb
+[color "status"]
+	added = green
+	changed = yellow
+	untracked = red
 
-  # Show all my git aliases
-  alias = !git config --get-regexp ^alias\\. | sort | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
+[diff "json"]
+    textconv = jq --color-output .
 
-  # config/users
-  whoami = !git config user.name && git config user.email
+[diff "yaml"]
+    textconv = yq -P
 
-  # Clone a repo but get only the current commit instead of the full history. Useful for installing tools.
-  shallow-clone = clone --depth=1
+[diff "toml"]
+    textconv = yq -P -o toml
 
-  # misc {{
-  revert = !git stash && git reset --hard
+[init]
+	defaultBranch = main
 
-  # Quickly unstage everything
-  unstage = reset HEAD --
+[fetch]
+	prune = true
+	throttle-threshold-in-minutes = 60
 
-  # Better diff with color
-  d = diff --color-words
+[log]
+	decorate = short
+	# Like the default, but designed to be shown alonside %{a,c}r and %{a,c}D:
+	# - does not show year and seconds
+	# - shows timezone
+	# - 0-padded days for column width consistency
+	date = format-local:%a %b %d %R %Z
+	# Like the default, but padding the days with a leading 0, for column width consistency.
+	# date = format-local:%a %b %d %T %Y
 
-  # Show recent commits with timestamp
-  ll = log --pretty=format:'%C(yellow)%h%Creset %Cgreen%ad%Creset %s%C(bold blue)%d%Creset' --date=short
-  ld = !git diff --name-only --cached | xargs -r bat --diff
-
-  # Stash interactively
-  stash-i = !git stash push -p -m "interactive stash"
-  squash = rebase -i
-
-[filter "lfs"]
-  clean = git-lfs clean -- %f
-  smudge = git-lfs smudge -- %f
-  process = git-lfs filter-process
-  required = true
+[pretty]
+	original = %C(yellow)%h%C(green) %ad %C(reset)| %s%C(red)%d %C(blue)[%an]%C(reset)
+	graph = %C(yellow)%h %C(reset)%s %C(blue)[%an]%C(red bold)%d%C(reset)
+	hist = %C(yellow)%H%C(magenta)% (describe)%C(red bold)%d%n%s%n%C(green) %>(14)%ar | %>(31)%aD | %ad %C(white)| %C(blue)authored by %an <%ae>%n%C(white dim) %>(14)%cr | %>(31)%cD | %cd % | committed by %cn <%ce> | signed %G?% GS%n%n%-b%n%n%-N%n%C(reset)
 
 [pull]
-  rebase = true
-  autoStash = true
+	rebase = true
+	autoStash = true
 
-[include]
-  path = /Users/mh/.config/git/config.local
+[push]
+	autoSetupRemote = true
+	default = current
+
+[merge]
+	tool = code
+	ff = true
+
+[mergetool "code"]
+	cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
+
+[rebase]
+	autoSquash = true
+	missingCommitsCheck = warn
+	autoStash = true
+	updateRefs = true
+
+[alias]
+	# Add/Commit
+	aa = add .
+
+	# commit {{
+	wip = commit -am 'WIP: work in progress'
+	checkpoint = !git add -A && git commit -m "Checkpoint $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+	# }}
+
+	# Most recent commit
+	last = log -1 HEAD
+
+	hist = log --pretty=format:'%C(yellow)%h%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+
+	# Logging
+	lg = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)' --all
+	log1 = log --all --decorate --oneline --graph --author
+
+	# Utility
+	stat = status -sb
+
+	# Show all my git aliases
+	alias = !git config --get-regexp ^alias\\. | sort | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
+
+	# config/users
+	whoami = !git config user.name && git config user.email
+
+	# Clone a repo but get only the current commit instead of the full history. Useful for installing tools.
+	shallow-clone = clone --depth=1
+
+	# misc {{
+	revert = !git stash && git reset --hard
+
+	# Quickly unstage everything
+	unstage = reset HEAD --
+
+	# Better diff with color
+	d = diff --color-words
+
+	# Show recent commits with timestamp
+	ll = log --pretty=format:'%C(yellow)%h%Creset %Cgreen%ad%Creset %s%C(bold blue)%d%Creset' --date=short
+	ld = !git diff --name-only --cached | xargs -r bat --diff
+
+	# Stash interactively
+	stash-i = !git stash push -p -m "interactive stash"
+	squash = rebase -i
+
+	# Undo last commit
+	undo = reset --soft HEAD~1
+
+	# Stash...
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+
+[mycustom]
+	repoPath = /Users/mh/Developer/repos
+	gitDomain = github.com
+	gitProtocol = ssh
+	gitUser = mahdz
+	cloneAddFlags = --depth=1
+	debug = true
+
+[includeIf "gitdir:~/.dotfiles/"]
+	path = ~/.dotfiles/config

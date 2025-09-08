@@ -4,33 +4,37 @@
 
 ## Core Commands
 
-**Main alias:**
-```bash
-alias dot="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
+**Main function:**
+
+```zsh
+dots() { git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" "$@"; }
 ```
 
 **Daily workflow:**
-```bash
-dot status                          # Check what changed
-dot add -n path                     # DRY RUN first - critical!
-dot add path                        # Stage after dry run passes
-dot commit -m "simple message"      # Commit changes
-dot push                            # Sync to GitHub
+
+```zsh
+dots status                          # Check what changed
+dots add -n path                     # DRY RUN first - critical!
+dots add path                        # Stage after dry run passes
+dots commit -m "simple message"      # Commit changes
+dots push                            # Sync to GitHub
 ```
 
 **Warp AI shortcuts:**
-```bash
-ds                                  # dot status
-dan filename                        # dot add -n (dry-run first!)
-da filename                         # dot add (after dry-run passes)
-dc -m "message"                     # dot commit
-dp                                  # dot push
-dl                                  # dot pull
-dd                                  # dot diff
+
+```zsh
+ds                                  # dots status
+dan filename                        # dots add -n (dry-run first!)
+da filename                         # dots add (after dry-run passes)
+dc -m "message"                     # dots commit
+dp                                  # dots push
+dl                                  # dots pull
+dd                                  # dots diff
 ```
 
 **Tool management:**
-```bash
+
+```zsh
 brew install tool                   # Try Homebrew first
 mise install tool@latest            # Dev tools via mise
 uv tool install python-tool        # Python tools via uv
@@ -40,13 +44,15 @@ mise reshim                         # Fix broken tool links
 ## Key Locations
 
 **Directories:**
+
 - `$HOME/.dotfiles` (git repo data)
 - `$HOME/.cache` (cache)
 - `$HOME/.config/` (your configs)
 - `$HOME/.local/bin/` (your scripts)
-- `~/.config/raycast/extensions/` (Raycast extensions)
+- `$HOME/.config/raycast/extensions/` (Raycast extensions)
 
 **Files:**
+
 - `$HOME/.gitignore` (deny-all strategy)
 - `$HOME/.config/zsh/` (ZDOTDIR - zsh configs)
 - This file: Essential commands reference
@@ -54,17 +60,20 @@ mise reshim                         # Fix broken tool links
 ## Safety Rules
 
 **ALWAYS test first:**
-- `dot add -n filename` before `dot add filename`
+
+- `dots add -n filename` before `dots add filename`
 - New gitignore patterns can break existing ones
 
 **NEVER track:**
-- UV symlinks in `~/.local/bin/` (change frequently)
+
+- UV symlinks in `$HOME/.local/bin/` (change frequently)
 - Cache files, logs, or temporary files
 - Secrets or sensitive data
 
 ## Gitignore Strategy
 
 **Deny-all approach:**
+
 ```gitignore
 # Block everything
 *
@@ -77,10 +86,11 @@ mise reshim                         # Fix broken tool links
 ```
 
 **Adding new files:**
+
 1. Edit the file, make sure it works
 2. Add pattern to `.gitignore`
-3. Test: `dot add -n path/to/file`
-4. If dry-run works: `dot add path/to/file .gitignore`
+3. Test: `dots add -n path/to/file`
+4. If dry-run works: `dots add path/to/file .gitignore`
 5. Commit and push
 
 ## New Machine Setup
@@ -89,40 +99,44 @@ mise reshim                         # Fix broken tool links
 # Clone dotfiles
 git clone --bare git@github.com:mahdz/dotfiles.git $HOME/.dotfiles
 
-# Set up alias
-alias dot="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
+# Set up function
+dots() { git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" "$@"; }
 
 # Backup conflicts
 mkdir -p ~/.dotfiles-backup
 # (handle any conflicting files)
 
 # Apply dotfiles
-dot checkout
-dot config --local status.showUntrackedFiles no
+dots checkout
+dots config --local status.showUntrackedFiles no
 ```
 
 ## Troubleshooting
 
 **Tool not found after install:**
+
 - Run `mise reshim`
 - Check `echo $PATH`
 
 **File not tracking despite gitignore:**
+
 - Check pattern order (later rules override earlier ones)
-- Test with `dot add -n filename`
+- Test with `dots add -n filename`
 
 **Something broke:**
-- `dot status` - what changed?
-- `dot diff` - see the changes
-- `dot checkout HEAD -- filename` - revert a file
+
+- `dots status` - what changed?
+- `dots diff` - see the changes
+- `dots checkout HEAD -- filename` - revert a file
 
 ## Documentation
 
 For setup guides and maintenance info:
 
-**Obsidian:** `/Users/mh/Library/Mobile Documents/iCloud~md~obsidian/Documents/Vault/02-Projects/Dotfiles/memory-bank/`
+**Obsidian:** `$VAULT_PATH/02-projects/dotfiles/`
 
 **Key notes:**
+
 - [[Dotfiles Setup Guide]] - How the system works
 - [[Simple Dotfiles Maintenance]] - When to update things
 - [[Simple Dotfiles Version Tracking]] - Basic git workflow

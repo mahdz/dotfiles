@@ -63,6 +63,10 @@ path_prepend "$HOME/bin"
 # OPTIONAL TOOLS
 # =============================================================================
 
+# Added by LM Studio CLI (lms)
+path_append "$HOME/.lmstudio/bin"
+# End of LM Studio CLI section
+
 # VS Code Scripts
 path_append "${XDG_CONFIG_HOME:-$HOME/.config}/vscode"
 

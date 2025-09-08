@@ -1,0 +1,4 @@
+---
+name: "Check Dotfiles Status"
+command: "ds"
+description: "Show current status of dotfiles"

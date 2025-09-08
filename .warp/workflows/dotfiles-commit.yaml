@@ -1,0 +1,7 @@
+---
+name: "Commit Dotfiles"
+command: "dc -m \"{{message}}\""
+description: "Commit dotfiles changes with message"
+arguments:
+  - name: message
+    description: "Commit message"

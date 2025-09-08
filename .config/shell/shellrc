@@ -37,10 +37,13 @@ export GIT_CONFIG_GLOBAL="${XDG_CONFIG_HOME}/git/config"
 export GH_USERNAME='mahdz'
 
 # This repo is cloned into this location
-export DOTFILES_DIR="${HOME}/.dotfiles"
+export DOTFILES="${HOME}/.dotfiles"
 
 # Branch name of the dotfiles repo that's to be used for testing PR changes before merging
 export DOTFILES_BRANCH='main'
+
+# VS Code Workspace
+export DOTFILES_WORKSPACE="${XDG_CONFIG_HOME:-$HOME/.config}/vscode/dotfiles.code-workspace"
 
 # All development codebases are cloned into a subfolder of this folder
 export PROJECTS_BASE_DIR="${HOME}/Developer"
@@ -48,49 +51,45 @@ export PROJECTS_BASE_DIR="${HOME}/Developer"
 # Executable scripts that are not shared as part of this public repo are present here
 export PERSONAL_BIN_DIR="${HOME}/.local/bin"
 
+# SSH Agent
+export SSH_AUTH_SOCK="$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh"
+
+# Used for input using the __checkSudo function
+# You can't output text to display in the Terminal while a subshell (with '$()') is waiting for the command output.
+# It will display only in the end, which isn't useful in the while condition I'm using.
+# See https://stackoverflow.com/a/64810239/895232
+sudo_needed=0
+
+videos_extensions=".mp4|.avi|.mov|.m4p|.m4v|.webm|.mpg|.mp2|.mpeg|.mpe|.mpv|.ogg|.wmv|.qt"
+images_extensions=".png|.jpeg|.jpg|.gif|.bmp|.tiff"
+
 # =============================================================================
 # Dev Tool Variables
 # =============================================================================
 
+# Obsidian Vault Path
+export VAULT_PATH="$HOME/Vault"
 
 # uv generally respects XDG variables for its cache and data directories.
 # However, you can explicitly guide it for maximum control.
 
-# uv cache directory (should default to XDG_CACHE_HOME/uv)
-export UV_CACHE_DIR="${XDG_CACHE_HOME}/uv" # Explicitly set if default is not desired
-
-# uv Python installations directory (should default to XDG_DATA_HOME/uv/python)
-export UV_PYTHON_INSTALL_DIR="${XDG_DATA_HOME}/uv/python" # Explicitly set if default is not desired
-
-# uv tool installations directory (should default to XDG_DATA_HOME/uv/tools)
-export UV_TOOL_DIR="${XDG_DATA_HOME}/uv/tools" # Explicitly set if default is not desired
-
 # uv tool binary directory (should default to XDG_DATA_HOME/bin or XDG_BIN_HOME)
 # uv usually places executables in XDG_DATA_HOME/bin, which we've added to PATH.
 # If you want to explicitly set it:
-export UV_TOOL_BIN_DIR="${XDG_BIN_HOME:-$HOME/.local/bin}"
+# export UV_TOOL_BIN_DIR="${XDG_BIN_HOME:-$HOME/.local/bin}"
 
 # Python specific variables for uv (mostly handled by uv itself)
 # PYTHONDONTWRITEBYTECODE: Prevents Python from writing .pyc files to source directories
 export PYTHONDONTWRITEBYTECODE=1
+export PYTHONWARNINGS=ignore
 
 # PYTHONSTARTUP: Path to a Python startup script (e.g., for common imports)
 # If you have one, place it in an XDG-compliant location.
 # export PYTHONSTARTUP="${XDG_CONFIG_HOME}/python/pythonrc.py"
 
-# --- Mise Specific Settings ---
-# mise is designed to be XDG-compliant by default for its configuration.
-# Its main configuration file is usually ~/.config/mise/config.toml (or $XDG_CONFIG_HOME/mise/config.toml).
-# Its cache and data directories should also follow XDG.
-
-# Explicitly ensure mise uses XDG paths if it somehow doesn't by default
-# This is generally not needed as mise is XDG-aware.
-export MISE_CONFIG_HOME="${XDG_CONFIG_HOME}/mise"
-export MISE_DATA_DIR="${XDG_DATA_HOME}/mise"
-export MISE_CACHE_DIR="${XDG_CACHE_HOME}/mise"
-
-# Optional: Disable mise version warnings if you're managing Python versions manually or externally
-export MISE_PYTHON_AUTO_INSTALL=0 # Example if you don't want mise to auto-install Python versions
+# =============================================================================
+# SECRETS CONFIGURATION
+# =============================================================================
 
 export PW_KEYCHAIN=~/Library/Keychains/Secrets.keychain-db
 export PW_RC=${XDG_CONFIG_HOME}/pw/config
@@ -112,19 +111,7 @@ export MANPAGER="less"
 # =============================================================================
 # LLM Variables
 # =============================================================================
-# SSH Agent
-export SSH_AUTH_SOCK="$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh"
 
-# Used for input using the __checkSudo function
-# You can't output text to display in the Terminal while a subshell (with '$()') is waiting for the command output.
-# It will display only in the end, which isn't useful in the while condition I'm using.
-# See https://stackoverflow.com/a/64810239/895232
-sudo_needed=0
-
-# Constants
-github_api="https://api.github.com"
-videos_extensions=".mp4|.avi|.mov|.m4p|.m4v|.webm|.mpg|.mp2|.mpeg|.mpe|.mpv|.ogg|.wmv|.qt"
-images_extensions=".png|.jpeg|.jpg|.gif|.bmp|.tiff"
 
 # =============================================================================
 # COLOR DEFINITIONS
@@ -518,4 +505,3 @@ validate_not_root() {
   fi
   return 0
 }
-

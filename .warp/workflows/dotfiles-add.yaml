@@ -1,0 +1,8 @@
+---
+name: "Safe Add Dotfile"
+command: "dan {{file}} && da {{file}}"
+description: "Safely add a file to dotfiles (dry-run first)"
+arguments:
+  - name: file
+    description: "File path to add to dotfiles"
+

@@ -6,7 +6,7 @@ command -v zoxide &> /dev/null || return
 
 eval "$(zoxide init zsh)"
 
-export _ZO_DATA_DIR=${XDG_DATA_HOME}/zoxide
+export _ZO_DATA_DIR="${XDG_DATA_HOME}/zoxide"
 export _ZO_ECHO=1
 export _ZO_RESOLVE_SYMLINKS=1
 

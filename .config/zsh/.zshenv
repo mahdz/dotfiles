@@ -5,6 +5,8 @@ export XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
 export XDG_STATE_HOME=${XDG_STATE_HOME:-$HOME/.local/state}
 mkdir -p $XDG_CONFIG_HOME $XDG_CACHE_HOME $XDG_DATA_HOME $XDG_STATE_HOME
 
+export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
+
 # Make Apple Terminal behave.
 if [[ "$OSTYPE" == darwin* ]]; then
   export SHELL_SESSIONS_DISABLE=${SHELL_SESSIONS_DISABLE:-1}

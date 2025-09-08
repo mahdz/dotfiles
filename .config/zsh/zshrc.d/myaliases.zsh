@@ -39,6 +39,8 @@ alias zdot='cd "${ZDOTDIR:-$HOME/.config/zsh}"'
 #alias -g S='| sort'
 #alias -g T='| tail'
 #alias -g Z='| fzf'
+(( $+commands[bat] )) && alias -g -- -h='-h 2>&1 | bat --language=help --style=plain'
+(( $+commands[bat] )) && alias -g -- --help='--help 2>&1 | bat --language=help --style=plain'
 
 alias CA='2>&1 | cat -A'
 alias LL='2>&1 | less'
@@ -68,12 +70,13 @@ alias ffmpeg='ffmpeg -hide_banner'
 # fix typos
 alias get=git
 alias quit='exit'
-alias cd..='cd ..'
 alias zz='exit'
 
 # edit quicker with functions
-ea() { ${EDITOR} "${ZDOTDIR:-$HOME}/zshrc.d/myaliases.zsh" & disown; }
-ez() { ${EDITOR} "${ZDOTDIR:-$HOME}/.zshrc" >/dev/null & disown; }
+ea() { ${EDITOR:-micro} "${ZSH_CUSTOM:-$ZDOTDIR/custom}/myaliases.zsh" & disown; }
+ez() { ${EDITOR:-micro} "${ZDOTDIR:-$HOME/.config/zsh}/.zshrc" >/dev/null & disown; }
+ep() { ${EDITOR:-micro} "${ZDOTDIR:-$HOME/.config/zsh}/.zsh_plugins.txt" >/dev/null & disown; }
+es() { ${EDITOR:-micro} "${ZDOTDIR:-$HOME/.config/zsh}/.zstyles" >/dev/null & disown; }
 
 # find#aliaenlinks='find . -type l | (while read FN ; do test -e "$FN" || ls -ld "$FN"; done)'
 if (( ${+commands[fd]} )); then
@@ -99,7 +102,7 @@ fi
 alias print-fpath='for fp in $fpath; do echo $fp; done; unset fp'
 alias print-path='echo $PATH | tr ":" "\n"'
 print-functions() { # exclude oh-my-zsh, Warp, zle, and other misc functions
-  print -l ${(k)functions[(I)[^_]*]} | grep -v -E '(omz|_prompt_|warp|zle|^\.)' | sort | fzf
+  print -l ${(k)functions[(I)[^_]*]} | command grep -v -E '(omz|_prompt_|warp|zle|^\.)' | sort | fzf
 }
 
 # color
@@ -123,8 +126,6 @@ alias dp='dots push'
 alias dl='dots pull'
 alias dd='dots diff'
 
-alias vault='/Users/mh/Library/Mobile Documents/iCloud~md~obsidian/Documents/Vault'
-
 # =============================================================================
 # Git run_all
 # =============================================================================
@@ -145,8 +146,7 @@ _free_wifi() {
   (openssl rand -hex 6 | sed 's/\(..\)/\1:/g; s/.$//' | xargs sudo ifconfig "${interface}" ether) && \
   (ifconfig "${interface}" | \grep ether)
 }
-if is_linux; then alias free-wifi='_free_wifi eth0'
-elif is_macos; then alias free-wifi='_free_wifi en0'
+if is_macos; then alias free-wifi='_free_wifi en0'
   alias flush-dns="sudo killall -HUP mDNSResponder;sudo killall mDNSResponderHelper;sudo dscacheutil -flushcache;say MacOS DNS cache has been cleared"
 fi
 
@@ -162,16 +162,7 @@ fi
 # Basic Memory
 # =============================================================================
 
-alias note="basic-memory tool write-note"
-alias notemv="basic-memory tool move-note"
-alias search="basic-memory tool search-notes --query"
-alias recent="basic-memory tool recent-activity"
-
-# =============================================================================
-# Secrets
-# =============================================================================
-
-alias secrets="cd ${XDG_DATA_HOME}/secrets"
-
-(( $+commands[bat] )) && alias -g -- -h='-h 2>&1 | bat --language=help --style=plain'
-(( $+commands[bat] )) && alias -g -- --help='--help 2>&1 | bat --language=help --style=plain'
+alias note-write="basic-memory tool write-note"
+alias note-move="basic-memory tool move-note"
+alias note-search="basic-memory tool search-notes --query"
+alias note-recent="basic-memory tool recent-activity"

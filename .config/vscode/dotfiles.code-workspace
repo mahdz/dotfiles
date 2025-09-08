@@ -1,76 +1,92 @@
 {
   "folders": [
     {
-      "name": "🏠 dotfiles",
-      "path": "/Users/mh",
+      "name": "🏠 Home",
+      "path": "/Users/mh"
     },
+    {
+      "name": "🗄️  .config",
+      "path": "/Users/mh/.config"
+    },
+    {
+      "name": "🏗  .local",
+      "path": "/Users/mh/.local"
+    },
+    {
+      "name": "🗂  .bin",
+      "path": "/Users/mh/.bin"
+    },
+    {
+      "name": "💾 .cache",
+      "path": "/Users/mh/.cache"
+    },
+    {
+      "name": "📄 Docs",
+      "path": "/Users/mh/Vault/02-projects/dotfiles"
+    }
   ],
   "settings": {
-    // Git: Work with the bare repo
     "git.enabled": true,
     "terminal.integrated.env.osx": {
       "GIT_DIR": "${env:HOME}/.dotfiles",
       "GIT_WORK_TREE": "${env:HOME}",
       "XDG_CONFIG_HOME": "${env:HOME}/.config",
       "XDG_DATA_HOME": "${env:HOME}/.local/share",
+      "PATH": "/opt/homebrew/bin:${env:HOME}/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
     },
-    // Exclude noisy home dirs from sidebar
     "files.exclude": {
-      "**/.git": true,
+      "**/.git": false,
+      "**/.git/**": true,
       "**/.DS_Store": true,
       "**/.Trash": true,
-      "**/Library": true,
-      "**/Music": true,
-      "**/Pictures": true,
+      "**/.cache/**": true,
+      "**/.npm": true,
+      "**/.ollama": true,
+      "**/.basic-memory": true,
+      "**/node_modules": true,
+      "**/bower_components": true,
+      "Applications": true,
+      "Desktop": true,
+      "Documents": true,
+      "Downloads": true,
+      "Library": true,
+      "Movies": true,
+      "Music": true,
+      "Pictures": true,
+      "Public": true
     },
-    "search.exclude": {
-      "**/.git": true,
-      "**/.DS_Store": true,
-    },
+    "search.exclude": {},
     "files.watcherExclude": {
       "**/.git/**": true,
       "**/.DS_Store": true,
-    },
-    // Editor defaults for config repo
-    "editor.tabSize": 2,
-    "editor.insertSpaces": true,
-    "editor.rulers": [80],
-    "editor.wordWrap": "on",
-    // Recommended extensions
-    "extensions.ignoreRecommendations": false,
-    "debug.javascript.defaultRuntimeExecutable": {
-      "pwa-node": "/Users/mh/.local/share/mise/shims/node",
+      "**/.cache/**": true,
+      "**/.npm/**": true,
+      "**/.basic-memory/**": true,
+      "**/node_modules/**": true,
+      "**/bower_components/**": true,
+      "**/Downloads/**": true,
+      "**/Movies/**": true,
+      "**/Music/**": true,
+      "**/Pictures/**": true,
+      "**/Library/**": true
     },
     "[gitconfig]": {
       "editor.defaultFormatter": "yy0931.gitconfig-lsp",
       "editor.wordWrap": "on",
-      "editor.formatOnPaste": true,
       "editor.formatOnSave": true,
-      "files.trimTrailingWhitespace": false,
+      "files.trimTrailingWhitespace": false
     },
-    "[json][jsonc]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[jsonc]": {
+      "editor.defaultFormatter": "vscode.json-language-features",
       "editor.formatOnSave": true,
-    },
-    "[markdown]": {
-      "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
-      "editor.formatOnPaste": true,
-      "editor.formatOnSave": true,
-    },
-    "[shellscript]": {
-      "editor.defaultFormatter": "foxundermoon.shell-format",
-      "editor.formatOnPaste": true,
-    },
-    "[toml]": {
-      "editor.defaultFormatter": "tamasfe.even-better-toml",
-    },
-    "[yaml]": {
-      "editor.defaultFormatter": "redhat.vscode-yaml",
+      "files.insertFinalNewline": true
     },
     "gitdoc.enabled": true,
     "markdown.validate.enabled": false,
-    "[jsonc]": {
-      "editor.defaultFormatter": "vscode.json-language-features",
-    },
-  },
+    "specstory.derivedRules.enabled": true,
+    "specstory.helpUsImprove": false,
+    "debug.javascript.defaultRuntimeExecutable": {
+      "pwa-node": "${env:HOME}/.local/share/mise/shims/node"
+    }
+  }
 }

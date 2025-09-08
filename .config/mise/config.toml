@@ -1,8 +1,10 @@
 [tools]
 # Essential tools only to avoid SOPS conflicts
-node = "24.6.0"
+node = "latest"
 bun = "latest"
 "npm:prettier" = "latest"
+"npm:npm-check" = "latest"
+"npm:npkill" = "latest"
 
 # Simplified: no automatic secrets loading
 # Use 'load-secrets' shell function when needed
@@ -19,7 +21,7 @@ always_keep_install = false
 verbose = false                  # Reduce information exposure
 http_timeout = "30s"
 jobs = 4
-experimental = false             # Use stable features only
+experimental = true
 cache_prune_age = "3d"
 
 [settings.pipx]

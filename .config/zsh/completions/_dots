@@ -1,0 +1,6 @@
+#compdef dots=git
+# Reuse git completion for the `dots` command (bare repo wrapper)
+# This file is autoloaded by zsh completion system via fpath.
+
+# Fallback in case compdef header is ignored
+(( $+functions[_git] )) && compdef _git dots

@@ -35,7 +35,7 @@ alias gitlog='git log --oneline --graph --decorate --color=always | less'
 alias gitlogfull='git log --graph --pretty=format:"%C(auto)%h%d %s %C(cyan)(%cr) %C(blue)<%an>%C(reset)" --color=always | less'
 
 # Search through command history and page results
-alias histgrep='history | grep -i'
+alias histgrep='history | command grep -i'
 alias histless='history | less'
 
 # Directory listing with less

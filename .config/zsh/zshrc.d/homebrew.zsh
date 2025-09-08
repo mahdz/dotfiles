@@ -11,10 +11,7 @@ command -v brew &> /dev/null || return
 # =============================================================================
 
 export HOMEBREW_NO_INSECURE_REDIRECT=1  # Prevent insecure redirects
-export HOMEBREW_CLEANUP_MAX_AGE_DAYS=3
-export HOMEBREW_CLEANUP_PERIODIC_FULL_DAYS=3
-export HOMEBREW_BAT=1
-export HOMEBREW_VERBOSE_USING_DOTS=1
+export HOMEBREW_CASK_OPTS="--appdir=/Applications --no-quarantine"
 export HOMEBREW_BUNDLE_FILE="${XDG_CONFIG_HOME}/homebrew/Brewfile"
 export HOMEBREW_BUNDLE_DUMP_DESCRIBE=1
 export HOMEBREW_BREWFILE="${XDG_CONFIG_HOME}/homebrew/Brewfile"
@@ -53,7 +50,7 @@ use_homebrew_installation_for "${HOMEBREW_PREFIX}/opt/sqlite"
 use_homebrew_installation_for "${HOMEBREW_PREFIX}/opt/gnu-tar"
 
 # override default openssl and use from homebrew installation
-openssl_dir="${HOMEBREW_PREFIX}/opt/openssl@3"
+local openssl_dir="${HOMEBREW_PREFIX}/opt/openssl@3"
 is_directory "${openssl_dir}" && use_homebrew_installation_for "${openssl_dir}" && export RUBY_CONFIGURE_OPTS="--with-openssl-dir=${openssl_dir}"
 unset openssl_dir
 
@@ -80,14 +77,15 @@ export PATH MANPATH
 # ALIAS & FUNCTIONS
 # =============================================================================
 
-alias brewup='brew cu --all --interactive --include-mas; brew outdated; brew upgrade;'
+alias brewup='brew cu --all --interactive --include-mas'
 alias bfc='brew file casklist && o Caskfile'
-alias brewg='brew graph --installed --highlight-leaves | fdp -T png -o graph.png && open graph.png'
-alias bbd="brew bundle dump --force --no-upgrade --all --file=${HOMEBREW_BUNDLE_FILE}"
+alias brewinfo='brew leaves | xargs brew desc --eval-all'
+alias brewg='brew graph --installed --highlight-leaves | fdp -T png -o ~/Desktop/graph.png && open ~/Desktop/graph.png'
+alias bbd="brew bundle dump --force --no-upgrade --all --file=$HOME/.config/homebrew/Brewfile"
 
 # Brew wrapper that updates Brewfile on each install/uninstall
-if [ -f ${HOMEBREW_PREFIX}/etc/brew-wrap ];then
-  source ${HOMEBREW_PREFIX}/etc/brew-wrap
+if [ -f "${HOMEBREW_PREFIX}/etc/brew-wrap" ];then
+  source "${HOMEBREW_PREFIX}/etc/brew-wrap"
 
   _post_brewfile_update () {
     echo "Brewfile was updated!"

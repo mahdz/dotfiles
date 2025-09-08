@@ -1,0 +1,4 @@
+---
+name: "Sync Dotfiles"
+command: "ds && dp"
+description: "Show status and push dotfiles to remote"

@@ -50,11 +50,6 @@ ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
 
 ZSH_COMPDUMP="$ZSH_CACHE_DIR/.zcompdump"
 ZSH_COMPCACHE="$__zsh_cache_dir/.zcompcache"
-#DISABLE_AUTO_UPDATE=true
-#DISABLE_UPDATE_PROMPT=true
-#DISABLE_LS_COLORS=true
-#DISABLE_AUTO_TITLE=true
-#ENABLE_CORRECTION=true
 
 # Create cache directories if they don't exist
 for _cache_dir in "${ZSH_COMPDUMP:h}" "$ZSH_COMPCACHE"; do
@@ -63,17 +58,11 @@ done
 unset _cache_dir
 
 # Add custom completions
-#fpath=("$ZSH_CACHE_DIR/completions" $fpath)
 fpath=(${ZDOTDIR:-$HOME/.config/zsh}/completions $fpath)
 
 # =============================================================================
 # ZSH PLUGINS [ANTIDOTE]
 # =============================================================================
-
-# Lazy-load (autoload) Zsh function files from a directory.
-# ZFUNCDIR=${ZDOTDIR:-$HOME/.config/zsh}/functions
-# fpath=($ZFUNCDIR $fpath)
-# autoload -Uz $ZFUNCDIR/*(.:t)
 
 # Set any zstyles you might use for configuration.
 [[ ! -f ${ZDOTDIR:-$HOME}/.zstyles ]] || source ${ZDOTDIR:-$HOME}/.zstyles

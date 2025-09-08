@@ -1,28 +1,62 @@
+
 [cache]
-dir = "~/Library/Caches/tlrc"
+# Override the cache directory ('~' will be expanded to your home directory).
+dir = "/Users/mh/Library/Caches/tlrc"
+# Override the base URL used for downloading tldr pages.
+# The mirror must provide files with the same names as the official tldr pages repository:
+# mirror/tldr.sha256sums            must point to the SHA256 checksums of all assets
+# mirror/tldr-pages.LANGUAGE.zip    must point to a zip archive that contains platform directories with pages in LANGUAGE
 mirror = "https://github.com/tldr-pages/tldr/releases/latest/download"
+# Automatically update the cache if it's older than max_age hours.
 auto_update = true
-max_age = 336
-languages = []
+max_age = 336 # 336 hours = 2 weeks
+# Specify a list of desired page languages. If it's empty, languages specified in
+# the LANG and LANGUAGE environment variables are downloaded.
+# English is implied and will always be downloaded.
+# You can see a list of language codes here: https://github.com/tldr-pages/tldr
+# Example: ["de", "pl"]
+# languages = []
 
 [output]
+# Show the title in the rendered page.
 show_title = true
+# Show the platform name ('common', 'linux', etc.) in the title.
 platform_title = false
-show_hyphens = false
+# Prefix descriptions of examples with hyphens.
+show_hyphens = true
+# Use a custom string instead of a hyphen.
 example_prefix = "- "
+# Set the max line length. 0 means to use the terminal width.
+# If a description is longer than this value, it will be split
+# into multiple lines.
 line_length = 0
+# Strip empty lines from output.
 compact = false
+# In option placeholders, show the specified option style.
+# Example: {{[-s|--long]}}
+# short  : -s
+# long   : --long
+# both   : [-s|--long]
 option_style = "long"
+# Print pages in raw markdown.
 raw_markdown = false
 
+# Number of spaces to put before each line of the page.
 [indent]
 title = 2
 description = 2
 bullet = 2
 example = 4
 
+# Style for the title of the page (command name).
 [style.title]
-color = "magenta"
+# Fixed colors:       "black", "red", "green", "yellow", "blue", "magenta", "cyan", "white", "default",
+#                     "bright_black", "bright_red", "bright_green", "bright_yellow", "bright_blue",
+#                     "bright_magenta", "bright_cyan", "bright_white"
+# 256color ANSI code: { color256 = 50 }
+# RGB:                { rgb = [0, 255, 255] }
+# Hex:                { hex = "#ffffff" }
+color = "default" # "magenta"
 background = "default"
 bold = true
 underline = false
@@ -30,8 +64,9 @@ italic = false
 dim = false
 strikethrough = false
 
+# Style for the description of the page.
 [style.description]
-color = "magenta"
+color = "default"  # "magenta"
 background = "default"
 bold = false
 underline = false
@@ -39,6 +74,7 @@ italic = false
 dim = false
 strikethrough = false
 
+# Style for descriptions of examples.
 [style.bullet]
 color = "green"
 background = "default"
@@ -48,8 +84,9 @@ italic = false
 dim = false
 strikethrough = false
 
+# Style for command examples.
 [style.example]
-color = "cyan"
+color = "red" # "cyan"
 background = "default"
 bold = false
 underline = false
@@ -57,6 +94,7 @@ italic = false
 dim = false
 strikethrough = false
 
+# Style for URLs inside the description.
 [style.url]
 color = "red"
 background = "default"
@@ -66,6 +104,7 @@ italic = true
 dim = false
 strikethrough = false
 
+# Style for text surrounded by backticks (`).
 [style.inline_code]
 color = "yellow"
 background = "default"
@@ -75,8 +114,9 @@ italic = true
 dim = false
 strikethrough = false
 
+# Style for placeholders inside command examples.
 [style.placeholder]
-color = "red"
+color = "default" # "red"
 background = "default"
 bold = false
 underline = false

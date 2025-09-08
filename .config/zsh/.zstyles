@@ -4,24 +4,17 @@
 #
 
 #
-# Antidote
-#
-
-: ${ANTIDOTE_HOME:=${XDG_CACHE_HOME:-$HOME/.cache}/repos}
-
-
-# Keep all 3 for different test scenarios.
-# antidote_repo=$ANTIDOTE_HOME/mattmc3/antidote
-# antidote_repo=~/Developer/repos/mattmc3/antidote
-antidote_repo=${HOMEBREW_PREFIX:=/opt/homebrew}/opt/antidote/share/antidote
-
-zstyle ':antidote:home' path $ANTIDOTE_HOME
-zstyle ':antidote:repo' path $antidote_repo
-zstyle ':antidote:bundle' use-friendly-names 'yes'
-
-#
 # Zephyr features
 #
+
+# Use caching.
+zstyle ':zephyr:plugin:*' 'use-cache' no
+
+#
+# Completions
+#
+# zstyle ':zsh_custom:plugin:*' 'use-cache' no
+# zstyle ':zsh_custom:plugin:completion' compstyle zshzoo
 
 # XDG
 zstyle ':zephyr:plugin:*' use-xdg-basedirs 'yes'
@@ -36,6 +29,17 @@ zstyle ':zephyr:plugin:history:alias' skip 'yes'
 # Editor
 #
 
+# Expand aliases to their actual command like Fish abbreviations.
+zstyle ':zephyr:plugin:editor' glob-alias 'yes'
+noexpand=(
+  ls
+  gpg
+  vi
+  z
+  0 1 2 3 4 5 6 7 8 9
+)
+zstyle ':zephyr:plugin:editor:glob-alias' noexpand "${noexpand[@]}"
+
 # Set the key mapping style to 'emacs' or 'vi'.
 zstyle ':zephyr:plugin:editor' key-bindings 'vi'
 
@@ -43,20 +47,7 @@ zstyle ':zephyr:plugin:editor' key-bindings 'vi'
 zstyle ':zephyr:plugin:editor' dot-expansion 'yes'
 
 # Use ^z to return background processes to foreground.
-zstyle ':zephyr:plugin:editor' symmetric-ctrl-z 'yes'
-
-# Expand aliases to their actual command like Fish abbreviations.
-zstyle ':zephyr:plugin:editor' glob-alias 'yes'
-noexpand=(
-  ls
-  grep
-  gpg
-  uv
-  vi
-  z
-  0 1 2 3 4 5 6 7 8 9
-)
-zstyle ':zephyr:plugin:editor:glob-alias' noexpand $noexpand
+# zstyle ':zephyr:plugin:editor' symmetric-ctrl-z 'yes'
 
 # Set the default (magic) command when hitting enter on an empty prompt.
 zstyle ':zephyr:plugin:editor' magic-enter 'yes'
@@ -74,15 +65,8 @@ zstyle -s ':zephyr:plugin:editor' key-bindings 'vi'
 zstyle ':zephyr:plugin:completion' 'disable-compfix' yes
 zstyle ':zephyr:plugin:completion' compstyle 'zephyr'
 
-#
-# Prompt
-#
-
-# Set prompt
-zstyle ':zephyr:plugin:prompt' theme starship
-
 # Prevent use-omz from trying to load themes since we use starship directly
-#zstyle ':omz:lib:theme-and-appearance' 'skip' 'yes'
+zstyle ':omz:lib:theme-and-appearance' 'skip' 'yes'
 
 #
 # Dotfiles
@@ -94,29 +78,45 @@ zstyle ':zsh_custom:plugin:dotfiles' bare 'yes'
 # Homebrew
 #
 
-#zstyle ':zephyr:plugin:homebrew' 'use-cache' yes
+zstyle ':zephyr:plugin:homebrew' 'use-cache' yes
 
 _kegonly=(curl ruby sqlite)
-zstyle ':zephyr:plugin:homebrew' 'keg-only-brews' $_kegonly
+zstyle ':zephyr:plugin:homebrew' 'keg-only-brews' "${_kegonly[@]}"
+unset _kegonly noexpand
 
 #
 # History
 #
 
 # Set the file to save the history in when an interactive shell exits.
-zstyle ':zephyr:plugin:history' histfile ${XDG_DATA_HOME:-$HOME/.local/share}/zsh/history
+zstyle ':zephyr:plugin:history' histfile "${XDG_DATA_HOME:-$HOME/.local/share}/zsh/history"
 
 # Set the maximum number of events stored in the internal history list.
-zstyle ':zephyr:plugin:history' histsize 100000
+zstyle ':zephyr:plugin:history' histsize 120000
 
 # Set the maximum number of history events to save in the history file.
 zstyle ':zephyr:plugin:history' savehist 100000
 
 #
-# GNU
+# OMZ
 #
+zstyle ':omz:update' mode disabled
 
-zstyle ':omz:lib:theme-and-appearance' gnu-ls 'no'
+# aliases
+# Skip all aliases, in lib files and enabled plugins
+zstyle ':omz:*' aliases no
+zstyle ':omz:lib:*' aliases yes
+zstyle ':omz:lib:directories' aliases no
+
+# Skip all plugin aliases
+zstyle ':omz:plugins:*' aliases no
+zstyle ':omz:plugins:git' aliases no
+
+# GNU
+zstyle ':omz:lib:theme-and-appearance' gnu-ls no
+
+# async
+zstyle ':omz:alpha:lib:git' async-prompt no
 
 # eza
 zstyle ':omz:plugins:eza' 'dirs-first' yes
@@ -126,27 +126,49 @@ zstyle ':omz:plugins:eza' 'size-prefix' binary
 zstyle ':omz:plugins:eza' 'hyperlink' yes
 
 # ssh-agent
-zstyle :omz:plugins:ssh-agent agent-forwarding yes
-zstyle :omz:plugins:ssh-agent quiet yes
+zstyle :omz:plugins:ssh-agent agent-forwarding on
+# zstyle :omz:plugins:ssh-agent quiet yes
 zstyle :omz:plugins:ssh-agent lazy yes
 zstyle :omz:plugins:ssh-agent ssh-add-args --apple-load-keychain
 
 # # Pre-set completion performance options that don't require compinit
-zstyle ':completion:*' accept-exact '*(N)'
-zstyle ':completion:*' use-perl on
+#zstyle ':completion:*' accept-exact '*(N)'
+#zstyle ':completion:*' use-perl on
 zstyle ':completion:*' menu select
 
 # # Completion system performance tweaks
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # Case insensitive matching
-zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' rehash true
 zstyle ':completion:*' special-dirs true
 zstyle ':completion:*' squeeze-slashes true
+if [[ -n ${LS_COLORS:-} ]]; then
+  zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+fi
 zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec)|prompt_*)'
 
 # # Group matches and describe
-#zstyle ':completion:*' group-name ''
-#zstyle ':completion:*:descriptions' format '%F{yellow}completing %B%d%b%f'
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*:descriptions' format '%F{yellow}completing %B%d%b%f'
 
 # # Speed up path completion by avoiding glob patterns
 #zstyle ':completion:*:paths' accept-exact-dirs true
+
+#
+# ZSH_CUSTOM features
+#
+
+# git
+zstyle ':zsh_custom:plugin:git' default-user mahdz
+
+# zshrc.d location
+zstyle ':zsh_custom:plugin:zshrcd' directory $ZDOTDIR/zshrc.d
+
+# zfunctions location
+zstyle ':zsh_custom:plugin:zfunctions' directory $ZDOTDIR/functions
+
+#
+# Prompt
+#
+
+# Set prompt
+zstyle ':zephyr:plugin:prompt' theme starship gruvbox-rainbow
