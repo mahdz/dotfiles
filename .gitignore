@@ -15,6 +15,7 @@
 !.editorconfig
 
 !.gitignore
+!.git
 !.github/
 !.github/**
 !.config/git/
@@ -79,6 +80,11 @@
 
 !.config/pw/
 !.config/pw/*.conf
+
+!.config/raycast/
+!.config/raycast/*
+!.config/raycast/ai-presets/*.json
+/.config/raycast/extensions
 
 !.config/ripgrep/
 !.config/ripgrep/*
