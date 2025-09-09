@@ -7,7 +7,8 @@
 **Main function:**
 
 ```zsh
-dots() { git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" "$@"; }
+# Located at: ~/.config/zsh/functions/dots
+command git --git-dir="${DOTFILES:-$HOME/.dotfiles}" --work-tree="$HOME" "$@"
 ```
 
 **Daily workflow:**
@@ -75,13 +76,16 @@ mise reshim                         # Fix broken tool links
 **Deny-all approach:**
 
 ```gitignore
-# Block everything
+# Ignore everything by default
 *
 
-# Allow specific files
+# Add back items as needed
+!.config/
+!.config/*
+!.editorconfig
 !.gitignore
-!.config/git/
-!.config/git/**
+!.github/
+!.github/**
 !WARP.md
 ```
 
@@ -133,10 +137,29 @@ dots config --local status.showUntrackedFiles no
 
 For setup guides and maintenance info:
 
-**Obsidian:** `$VAULT_PATH/02-projects/dotfiles/`
+**Obsidian:** `${VAULT_PATH:-$HOME/Vault}/02-projects/dotfiles/`
 
 **Key notes:**
 
 - [[Dotfiles Setup Guide]] - How the system works
 - [[Simple Dotfiles Maintenance]] - When to update things
 - [[Simple Dotfiles Version Tracking]] - Basic git workflow
+- [Task Management System README](02-projects/tasks/docs/readme) - Task integration
+
+## Additional Tools
+
+**Basic Memory (Obsidian integration):**
+
+```zsh
+note-write "content"                # Write new note
+note-search "query"                 # Search notes
+note-recent                         # Recent activity
+note-move "old" "new"               # Move/rename note
+```
+
+**Task management:**
+
+```zsh
+task                                # TaskWarrior CLI
+# Also integrates with Task Genius Obsidian plugin
+```
