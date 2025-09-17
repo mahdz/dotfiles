@@ -87,15 +87,8 @@ unset _kegonly noexpand
 #
 # History
 #
-
-# Set the file to save the history in when an interactive shell exits.
-zstyle ':zephyr:plugin:history' histfile "${XDG_DATA_HOME:-$HOME/.local/share}/zsh/history"
-
-# Set the maximum number of events stored in the internal history list.
-zstyle ':zephyr:plugin:history' histsize 120000
-
-# Set the maximum number of history events to save in the history file.
-zstyle ':zephyr:plugin:history' savehist 100000
+# History configuration is handled by Zephyr history plugin
+# Custom history features are in zshrc.d/history.zsh
 
 #
 # OMZ
@@ -132,8 +125,8 @@ zstyle :omz:plugins:ssh-agent lazy yes
 zstyle :omz:plugins:ssh-agent ssh-add-args --apple-load-keychain
 
 # # Pre-set completion performance options that don't require compinit
-#zstyle ':completion:*' accept-exact '*(N)'
-#zstyle ':completion:*' use-perl on
+zstyle ':completion:*' accept-exact '*(N)'
+zstyle ':completion:*' use-perl on
 zstyle ':completion:*' menu select
 
 # # Completion system performance tweaks
@@ -151,7 +144,7 @@ zstyle ':completion:*' group-name ''
 zstyle ':completion:*:descriptions' format '%F{yellow}completing %B%d%b%f'
 
 # # Speed up path completion by avoiding glob patterns
-#zstyle ':completion:*:paths' accept-exact-dirs true
+zstyle ':completion:*:paths' accept-exact-dirs true
 
 #
 # ZSH_CUSTOM features

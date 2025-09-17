@@ -1,37 +1,18 @@
-# history: Custom history configuration and ShellHistory.app integration
-# Loaded after Zephyr history plugin to provide overrides and additional functionality
+# history: Custom history features complementing Zephyr history plugin
+# Provides: aliases, ignore patterns, and ShellHistory.app integration
+# Note: Core history configuration is handled by Zephyr history plugin
 #
 
+# =============================================================================
+# History Configuration Notes
+# =============================================================================
+# HISTFILE is set by Zephyr to: ${XDG_DATA_HOME}/zsh/zsh_history
+# To check current value: echo $HISTFILE
 #
-# Variables
-#
-
-export HISTFILE=${XDG_DATA_HOME:-$HOME/.local/share}/zsh/zsh_history
-mkdir -p "${HISTFILE:h}" # ensure directory exists
-
-#
-# Options
-#
-
-setopt BANG_HIST               # Treat the '!' character specially during expansion.
-setopt EXTENDED_HISTORY        # Write the history file in the ':start:elapsed;command' format.
-setopt INC_APPEND_HISTORY      # Write to the history file immediately, not when the shell exits.
-setopt HIST_EXPIRE_DUPS_FIRST  # Expire a duplicate event first when trimming history.
-setopt HIST_IGNORE_ALL_DUPS    # Delete an old recorded event if a new event is a duplicate.
-setopt HIST_IGNORE_DUPS        # Do not record an event that was just recorded again.
-setopt HIST_IGNORE_SPACE       # Do not record an event starting with a space.
-setopt HIST_FIND_NO_DUPS       # Do not display a previously found event.
-#setopt HIST_REDUCE_BLANKS      # Remove extra blanks from commands added to the history list.
-setopt HIST_SAVE_NO_DUPS       # Do not write a duplicate event to the history file.
-setopt HIST_VERIFY             # Do not execute immediately upon history expansion.
-
-# Disable '!' history expansion in non-interactive shells (scripts)
-[[ ! -o interactive ]] && setopt NzO_BANG_HIST
-
-## History Size Overrides
-# Export them so subshells can see them
-HISTSIZE=120000    # Number of commands stored in memory during session
-SAVEHIST=100000    # Number of commands saved to HISTFILE
+# Zephyr defaults: HISTSIZE=20000, SAVEHIST=100000
+# We override them here for more history:
+export HISTSIZE=120000    # Number of commands stored in memory during session
+export SAVEHIST=100000    # Number of commands saved to HISTFILE
 
 # =============================================================================
 # History and Search Aliases
