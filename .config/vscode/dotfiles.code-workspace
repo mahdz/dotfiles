@@ -5,16 +5,16 @@
       "path": "/Users/mh"
     },
     {
-      "name": "🗄️  .config",
+      "name": "🗄️ .config",
       "path": "/Users/mh/.config"
     },
     {
-      "name": "🏗  .local",
+      "name": "🏗 .local",
       "path": "/Users/mh/.local"
     },
     {
-      "name": "🗂  .bin",
-      "path": "/Users/mh/.bin"
+      "name": "🗂 bin",
+      "path": "/Users/mh/.local/bin"
     },
     {
       "name": "💾 .cache",
@@ -28,11 +28,9 @@
   "settings": {
     "git.enabled": true,
     "terminal.integrated.env.osx": {
-      "GIT_DIR": "${env:HOME}/.dotfiles",
-      "GIT_WORK_TREE": "${env:HOME}",
-      "XDG_CONFIG_HOME": "${env:HOME}/.config",
-      "XDG_DATA_HOME": "${env:HOME}/.local/share",
-      "PATH": "/opt/homebrew/bin:${env:HOME}/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+      "XDG_CONFIG_HOME": "/Users/mh/.config",
+      "XDG_DATA_HOME": "/Users/mh/.local/share",
+      "PATH": "/Users/mh/.local/bin:/Users/mh/bin:/Users/mh/.local/share/mise/shims:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
     },
     "files.exclude": {
       "**/.git": false,
@@ -55,7 +53,6 @@
       "Pictures": true,
       "Public": true
     },
-    "search.exclude": {},
     "files.watcherExclude": {
       "**/.git/**": true,
       "**/.DS_Store": true,
@@ -77,16 +74,27 @@
       "files.trimTrailingWhitespace": false
     },
     "[jsonc]": {
-      "editor.defaultFormatter": "vscode.json-language-features",
-      "editor.formatOnSave": true,
+      "editor.formatOnSave": false,
       "files.insertFinalNewline": true
     },
     "gitdoc.enabled": true,
     "markdown.validate.enabled": false,
     "specstory.derivedRules.enabled": true,
     "specstory.helpUsImprove": false,
+    "python.defaultInterpreterPath": "/Users/mh/.local/share/venvs",
     "debug.javascript.defaultRuntimeExecutable": {
-      "pwa-node": "${env:HOME}/.local/share/mise/shims/node"
+      "pwa-node": "${workspaceFolder}/.vscode/mise-tools/node"
     }
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "echo",
+        "type": "shell",
+        "command": "echo Hello",
+        "problemMatcher": []
+      }
+    ]
   }
 }

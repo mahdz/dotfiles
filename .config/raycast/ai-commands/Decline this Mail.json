@@ -1,0 +1,10 @@
+[
+  {
+    "creativity" : "low",
+    "highlightEdits" : false,
+    "icon" : "envelope",
+    "model" : "openai-gpt-3.5-turbo",
+    "prompt" : "Write a polite and friendly email to decline the following email. The email should be written in a way that it can be sent to the recipient.\n\nEmail: {selection}\n\nDeclined email:",
+    "title" : "Decline this Mail"
+  }
+]

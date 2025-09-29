@@ -3,7 +3,7 @@
 "workspace:toggle_navigation_palette": shift-cmd-P
 "pane_group:navigate_prev": "cmd-["
 "terminal:open_block_list_context_menu_via_keybinding": ctrl-m
-"editor_view:move_to_buffer_end": shift-meta-&gt;
+"editor_view:move_to_buffer_end": shift-meta->
 "editor_view:end": cmd-right
 "workspace:activate_sixth_tab": cmd-6
 "workspace:activate_second_tab": cmd-2
@@ -34,7 +34,7 @@
 "editor:delete_word_right": alt-delete
 "terminal:find": cmd-f
 "editor_view:cmd_down": cmd-down
-"editor_view:move_to_buffer_start": shift-meta-&lt;
+"editor_view:move_to_buffer_start": shift-meta-<
 "workspace:increase_font_size": cmd-=
 "workspace:activate_fourth_tab": cmd-4
 "terminal:expand_block_selection_above": shift-up

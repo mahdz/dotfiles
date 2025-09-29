@@ -11,7 +11,7 @@
 
 # Enable this to use italic text on the terminal. This is not supported on all
 # terminal emulators (like tmux, by default):
-#--italic-text=always
+--italic-text=always
 
 # Show color always
 # TODO: causes error while loading the shell if turned on
@@ -23,7 +23,14 @@
 # Uncomment the following line if you are using less version >= 551 and want to
 # enable mouse scrolling support in `bat` when running inside tmux. This might
 # disable text selection, unless you press shift.
-#--pager="less --RAW-CONTROL-CHARS --quit-if-one-screen --mouse"
+# --pager="less --RAW-CONTROL-CHARS --quit-if-one-screen --mouse"
+# export LESS="-iRFXMx4 --incsearch --use-color --mouse --quit-if-one-screen --no-init --status-column"
+
+# Use less as pager with all desired options
+--pager="less -i -R -X --incsearch --use-color --mouse --quit-if-one-screen -x4 --status-column --wheel-lines=3"
+
+# Export LESS with the same options (drop the old -M flag and --no-init)
+export LESS="-iR -X --incsearch --use-color --mouse --quit-if-one-screen -x4 --status-column --wheel-lines=3"
 
 # Syntax mappings: map a certain filename pattern to a language.
 #   Example 1: use the C++ syntax for .ino files

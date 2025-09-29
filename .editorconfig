@@ -2,7 +2,7 @@
 # This serves as a fallback when no project-specific .editorconfig exists
 root = true
 
-# Universal defaults for all files
+# Universal defaults for all files (aligns with many Google standards)
 [*]
 charset = utf-8
 end_of_line = lf
@@ -10,13 +10,35 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 indent_style = space
 indent_size = 2
-max_line_length = 120
+max_line_length = 120 # General default, overridden for specific languages below
 
-# Python
+# Shell scripts (Google Shell Style Guide recommends 2 spaces)
+[*.sh]
+indent_style = space
+indent_size = 2
+
+# Shell-specific extended options (retain your previous flags)
+shell_variant      = posix
+simplify           = true
+binary_next_line   = true
+switch_case_indent = true
+space_redirects    = true
+keep_padding       = true
+function_next_line = true
+minify             = true
+
+# Python — keep 4 spaces (PEP 8 and Google Python Style Guide)
 [*.{py,pyw}]
+indent_style = space
 indent_size = 4
 max_line_length = 80
 
+# Dotfiles / common config formats — use 2 spaces (aligns with Google practice)
+[*.{yml,yaml,json,toml,env,ini,conf,rc,gitignore,gitconfig}]
+indent_style = space
+indent_size = 4 
+
+# JSON files — ensure no final newline (common practice, or true if preferred for source)
 [*.json]
 insert_final_newline = false
 
@@ -25,14 +47,25 @@ insert_final_newline = false
 trim_trailing_whitespace = false
 max_line_length = off
 
-[*.toml]
-indent_style = space
-indent_size = 4
-
-[{*.sh,.mise/tasks/**/*,e2e/**/*,*.pkl}]
+# JavaScript, TypeScript (Google JavaScript Style Guide recommends 2 spaces, 100 char limit)
+[*.{js,jsx,ts,tsx,mjs,cjs}]
 indent_style = space
 indent_size = 2
+max_line_length = 100
 
-# shfmt
-switch_case_indent = true
-simplify = true
+# HTML (Google HTML/CSS Style Guide recommends 2 spaces)
+[*.html]
+indent_style = space
+indent_size = 2
+max_line_length = 80
+
+# CSS, SCSS, Less (Google HTML/CSS Style Guide recommends 2 spaces)
+[*.{css,scss,less}]
+indent_style = space
+indent_size = 2
+max_line_length = 80
+
+# Makefiles (tabs for indentation is traditional, include if applicable)
+[Makefile]
+indent_style = tab
+indent_size = 4

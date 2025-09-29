@@ -1,0 +1,10 @@
+[
+  {
+    "creativity" : "medium",
+    "highlightEdits" : false,
+    "icon" : "x-mark-circle",
+    "model" : "raycast-ray1",
+    "prompt" : "@messages{id=f872e5ef-af26-4086-8b11-261e5c6f6c93} politely decline the party invitation",
+    "title" : "Decline Message"
+  }
+]

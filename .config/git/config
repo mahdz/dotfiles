@@ -1,39 +1,37 @@
 [user]
-	name = Manny H
-	email = 11878521+mahdz@users.noreply.github.com
-	signingkey = ~/.ssh/id_ed25519.pub
+  name = Manny H
+  email = 11878521+mahdz@users.noreply.github.com
+  signingkey = ~/.ssh/id_ed25519.pub
 
 [gpg]
-	format = ssh
+  format = ssh
 
 [commit]
-	gpgsign = true
+  gpgsign = true
 
 [gpg "ssh"]
-	allowedSignersFile = ~/.config/git/allowed_signers
+  allowedSignersFile = ~/.config/git/allowed_signers
 
 [core]
-	editor = /usr/local/bin/code --wait
-	excludesfile = ~/.config/git/ignore
-	excludesfile = ~/.gitignore
-	attributesfile = ~/.config/git/attributes
+  editor = /usr/local/bin/code --wait
+  excludesfile = ~/.config/git/ignore
+  excludesfile = ~/.gitignore
+  attributesfile = ~/.config/git/attributes
 	# Enable wrap when displaying text, e.g. with "git diff"
 	# SOURCE: http://iamnearlythere.com/wrapping-lines-git-diff/
 	# SOURCE: 03oct2021 https://stackoverflow.com/a/18781512
-	pager = bat --paging=always
-	fsmonitor = true
 
 # GitHub CLI integration for credential management
 [credential "https://github.com"]
-	helper =
-	helper = !/opt/homebrew/bin/gh auth git-credential
+  helper =
+  helper = !/opt/homebrew/bin/gh auth git-credential
 
 [credential "https://gist.github.com"]
-	helper =
-	helper = !/opt/homebrew/bin/gh auth git-credential
+  helper =
+  helper = !/opt/homebrew/bin/gh auth git-credential
 
 [branch]
-	autoSetupRebase = always
+  autoSetupRebase = always
 
 [checkout]
 	# Setting a default remote is useful only when several remotes are setup, e.g.
@@ -44,147 +42,147 @@
 	# DOC: See 'add' in 'git worktree --help'.
 	# DOC: See '--guess' in 'git checkout --help'.
 	# SOURCE: 21oct2021 https://stackoverflow.com/a/60724734
-	defaultRemote = origin
+  defaultRemote = origin
 
 [color]
-	ui = auto
+  ui = auto
 
 [color "branch"]
-	current = green bold
-	local = green
-	remote = cyan dim
+  current = green bold
+  local = green
+  remote = cyan dim
 
 [color "diff"]
-	meta = yellow
-	frag = normal reverse
-	func = normal
-	context = normal dim
-	old = red
-	new = green
-	whitespace = blue
+  meta = yellow
+  frag = normal reverse
+  func = normal
+  context = normal dim
+  old = red
+  new = green
+  whitespace = blue
 
 [color "status"]
-	added = green
-	changed = yellow
-	untracked = red
+  added = green
+  changed = yellow
+  untracked = red
 
 [diff "json"]
-    textconv = jq --color-output .
+  textconv = sh -c 'jq --color-output . "$1" 2>/dev/null || cat "$1"' --
 
 [diff "yaml"]
-    textconv = yq -P
+  textconv = yq -P
 
 [diff "toml"]
-    textconv = yq -P -o toml
+  textconv = sh -c 'yq -P "$1" 2>/dev/null || cat "$1"' --
 
 [init]
-	defaultBranch = main
+  defaultBranch = main
 
 [fetch]
-	prune = true
-	throttle-threshold-in-minutes = 60
+  prune = true
+  throttle-threshold-in-minutes = 60
 
 [log]
-	decorate = short
+  decorate = short
 	# Like the default, but designed to be shown alonside %{a,c}r and %{a,c}D:
 	# - does not show year and seconds
 	# - shows timezone
 	# - 0-padded days for column width consistency
-	date = format-local:%a %b %d %R %Z
+  date = format-local:%a %b %d %R %Z
 	# Like the default, but padding the days with a leading 0, for column width consistency.
 	# date = format-local:%a %b %d %T %Y
 
 [pretty]
-	original = %C(yellow)%h%C(green) %ad %C(reset)| %s%C(red)%d %C(blue)[%an]%C(reset)
-	graph = %C(yellow)%h %C(reset)%s %C(blue)[%an]%C(red bold)%d%C(reset)
-	hist = %C(yellow)%H%C(magenta)% (describe)%C(red bold)%d%n%s%n%C(green) %>(14)%ar | %>(31)%aD | %ad %C(white)| %C(blue)authored by %an <%ae>%n%C(white dim) %>(14)%cr | %>(31)%cD | %cd % | committed by %cn <%ce> | signed %G?% GS%n%n%-b%n%n%-N%n%C(reset)
+  original = %C(yellow)%h%C(green) %ad %C(reset)| %s%C(red)%d %C(blue)[%an]%C(reset)
+  graph = %C(yellow)%h %C(reset)%s %C(blue)[%an]%C(red bold)%d%C(reset)
+  hist = %C(yellow)%H%C(magenta)% (describe)%C(red bold)%d%n%s%n%C(green) %>(14)%ar | %>(31)%aD | %ad %C(white)| %C(blue)authored by %an <%ae>%n%C(white dim) %>(14)%cr | %>(31)%cD | %cd % | committed by %cn <%ce> | signed %G?% GS%n%n%-b%n%n%-N%n%C(reset)
 
 [pull]
-	rebase = true
-	autoStash = true
+  rebase = true
+  autoStash = true
 
 [push]
-	autoSetupRemote = true
-	default = current
+  autoSetupRemote = true
+  default = current
 
 [merge]
-	tool = code
-	ff = true
+  tool = code
+  ff = true
 
 [mergetool "code"]
-	cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
+  cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
 
 [rebase]
-	autoSquash = true
-	missingCommitsCheck = warn
-	autoStash = true
-	updateRefs = true
+  autoSquash = true
+  missingCommitsCheck = warn
+  autoStash = true
+  updateRefs = true
 
 [alias]
 	# Add/Commit
-	aa = add .
+  aa = add .
 
 	# commit {{
-	wip = commit -am 'WIP: work in progress'
-	checkpoint = !git add -A && git commit -m "Checkpoint $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+  wip = commit -am 'WIP: work in progress'
+  checkpoint = !git add -A && git commit -m "Checkpoint $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
 	# }}
 
 	# Most recent commit
-	last = log -1 HEAD
+  last = log -1 HEAD
 
-	hist = log --pretty=format:'%C(yellow)%h%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+  hist = log --pretty=format:'%C(yellow)%h%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
 
 	# Logging
-	lg = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)' --all
-	log1 = log --all --decorate --oneline --graph --author
+  lg = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)' --all
+  log1 = log --all --decorate --oneline --graph --author
 
 	# Utility
-	stat = status -sb
+  stat = status -sb
 
 	# Show all my git aliases
-	alias = !git config --get-regexp ^alias\\. | sort | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
+  alias = !git config --get-regexp ^alias\\. | sort | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
 
 	# config/users
-	whoami = !git config user.name && git config user.email
+  whoami = !git config user.name && git config user.email
 
 	# Clone a repo but get only the current commit instead of the full history. Useful for installing tools.
-	shallow-clone = clone --depth=1
+  shallow-clone = clone --depth=1
 
 	# misc {{
-	revert = !git stash && git reset --hard
+  revert = !git stash && git reset --hard
 
 	# Quickly unstage everything
-	unstage = reset HEAD --
+  unstage = reset HEAD --
 
 	# Better diff with color
-	d = diff --color-words
+  d = diff --color-words
 
 	# Show recent commits with timestamp
-	ll = log --pretty=format:'%C(yellow)%h%Creset %Cgreen%ad%Creset %s%C(bold blue)%d%Creset' --date=short
-	ld = !git diff --name-only --cached | xargs -r bat --diff
+  ll = log --pretty=format:'%C(yellow)%h%Creset %Cgreen%ad%Creset %s%C(bold blue)%d%Creset' --date=short
+  ld = !git diff --name-only --cached | xargs -r bat --diff
 
 	# Stash interactively
-	stash-i = !git stash push -p -m "interactive stash"
-	squash = rebase -i
+  stash-i = !git stash push -p -m "interactive stash"
+  squash = rebase -i
 
 	# Undo last commit
-	undo = reset --soft HEAD~1
+  undo = reset --soft HEAD~1
 
 	# Stash...
 
 [filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
 
 [mycustom]
-	repoPath = /Users/mh/Developer/repos
-	gitDomain = github.com
-	gitProtocol = ssh
-	gitUser = mahdz
-	cloneAddFlags = --depth=1
-	debug = true
+  repoPath = /Users/mh/Developer/repos
+  gitDomain = github.com
+  gitProtocol = ssh
+  gitUser = mahdz
+  cloneAddFlags = --depth=1
+  debug = true
 
 [includeIf "gitdir:~/.dotfiles/"]
-	path = ~/.dotfiles/config
+  path = ~/.dotfiles/config

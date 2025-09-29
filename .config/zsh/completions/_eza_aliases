@@ -1,0 +1,6 @@
+#compdef l=eza la=eza ll=eza lt=eza exa=eza
+# Reuse eza completion for common aliases and exa compatibility
+# This file is autoloaded by zsh completion system via fpath.
+
+# Enable eza completions for these commands/aliases
+compdef _eza eza l la ll lt exa

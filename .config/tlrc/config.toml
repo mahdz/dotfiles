@@ -21,7 +21,7 @@ max_age = 336 # 336 hours = 2 weeks
 # Show the title in the rendered page.
 show_title = true
 # Show the platform name ('common', 'linux', etc.) in the title.
-platform_title = false
+platform_title = true
 # Prefix descriptions of examples with hyphens.
 show_hyphens = true
 # Use a custom string instead of a hyphen.

@@ -6,7 +6,7 @@
 *.backup
 *.bak_20[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]
 *.gho
-*.ori[]
+*.ori
 *.orig
 *.tmp
 
@@ -268,9 +268,6 @@ zsdoc/data
 # End of https://www.toptal.com/developers/gitignore/api/archives,backup,gpg,images,zsh,macos,node,video,visualstudiocode
 
 .vscode/
-
-*.zwc
-*.zwc.old
 
 # test things
 foo

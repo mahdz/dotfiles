@@ -1,0 +1,10 @@
+[
+  {
+    "creativity" : "high",
+    "highlightEdits" : false,
+    "icon" : "shuffle",
+    "model" : "openai-gpt-4o-mini",
+    "prompt" : "Brainstorm 5 project ideas based on the text. Make sure the ideas are distinct from one another.\n\nText: {selection}\n\nIdeas:",
+    "title" : "Project Ideas"
+  }
+]

@@ -20,9 +20,15 @@ alias zprofrc="ZPROFRC=1 zsh"
 # Security and privacy settings
 #umask 022                               # Set default file permissions
 
-# Ensure mise shim directory is at the front of PATH
-if [[ -d "$HOME/.local/share/mise/shims" && ":$PATH:" != *":$HOME/.local/share/mise/shims:"* ]]; then
-  export PATH="$HOME/.local/share/mise/shims:$PATH"
+# Initialize mise for full functionality (shell hooks, auto-switching, etc.)
+# This supersedes the shim-only approach and enables advanced features
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh)"
+else
+  # Fallback to shims if mise command not found
+  if [[ -d "$HOME/.local/share/mise/shims" && ":$PATH:" != *":$HOME/.local/share/mise/shims:"* ]]; then
+    export PATH="$HOME/.local/share/mise/shims:$PATH"
+  fi
 fi
 
 # =============================================================================
@@ -41,15 +47,16 @@ done
 unset zdir
 
 # Path to your Oh My Zsh installation.
-ZSH_CUSTOM=${ZDOTDIR:-$HOME/.config/zsh}/custom
-ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+export ZSH_CUSTOM=${ZDOTDIR:-$HOME/.config/zsh}/custom
+export ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+DISABLE_AUTO_TITLE=true
 
 # =============================================================================
 # COMPLETIONS
 # =============================================================================
 
-ZSH_COMPDUMP="$ZSH_CACHE_DIR/.zcompdump"
-ZSH_COMPCACHE="$__zsh_cache_dir/.zcompcache"
+export ZSH_COMPDUMP="$ZSH_CACHE_DIR/.zcompdump"
+export ZSH_COMPCACHE="$__zsh_cache_dir/.zcompcache"
 
 # Create cache directories if they don't exist
 for _cache_dir in "${ZSH_COMPDUMP:h}" "$ZSH_COMPCACHE"; do
@@ -83,7 +90,7 @@ unset zlib
 # Disable fancy prompts for VSCode
 if [[ "$TERM_PROGRAM" == "vscode" ]]; then
     export TERM=xterm-256color
-    export PAGER=cat
+    export PAGER="/bin/cat"
     PS1="%n@%m %1~ %# "
 fi
 

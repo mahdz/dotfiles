@@ -19,8 +19,8 @@
 type command_exists &> /dev/null 2>&1 || source "${XDG_CONFIG_HOME}/shell/shellrc"
 
 # add flags to existing aliases
-alias less="${aliases[less]:-less} -RF"
-alias cp="${aliases[cp]:-cp} -p"
+# alias less="${aliases[less]:-less} -RF"
+# alias cp="${aliases[cp]:-cp} -p"
 
 # eza already defines 'll' - so skip if that's present
 command_exists tree && alias tree="${aliases[tree]:-tree} -Ch"
@@ -34,7 +34,7 @@ alias zdot='cd "${ZDOTDIR:-$HOME/.config/zsh}"'
 # zsh suffix aliases
 #alias -g G='| grep'
 #alias -g H='| head'
-#alias -g L='| less'
+#alias -g L='| less'  
 #alias -g M='| more'
 #alias -g S='| sort'
 #alias -g T='| tail'

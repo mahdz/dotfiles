@@ -1,40 +1,68 @@
+# ~/.config/mise/config.toml
+# Global mise configuration
+# Assumes: Homebrew-installed uv, zsh shell, and SOPS-managed secrets
+
+[env]
+# Path configurations
+SECRETS_DIR = "$HOME/.local/share/secrets"
+VENV_CACHE = "${XDG_DATA_HOME:-$HOME/.local/share}/venvs"
+# Default package lists
+MISE_PYTHON_DEFAULT_PACKAGES_FILE = "~/.config/mise/.default-python-packages"
+MISE_NODE_DEFAULT_PACKAGES_FILE   = "~/.config/mise/.default-npm-packages"
+MISE_GO_DEFAULT_PACKAGES_FILE     = "~/.config/mise/.default-go-packages"
+
+# Load multiple secret files, redacted in logs
+_.file = [
+    { path = "$SECRETS_DIR/.env.json", redact = true },
+    { path = "$SECRETS_DIR/.env.dev", redact = true }
+]
+
+[hooks.enter]
+shell = "zsh"
+# Autoloaded function; only runs if the file exists
+script = "[ -f $SECRETS_DIR/.env ] && load-secrets"
+
 [tools]
-# Essential tools only to avoid SOPS conflicts
-node = "latest"
+# Node.js & npm ecosystem
+node = { version = "latest", postinstall = "corepack enable" }
 bun = "latest"
-"npm:prettier" = "latest"
+"npm:markdownlint-cli" = "latest"
 "npm:npm-check" = "latest"
 "npm:npkill" = "latest"
+"npm:prettier" = "3"
 
-# Simplified: no automatic secrets loading
-# Use 'load-secrets' shell function when needed
+# Python
+python = { version = "latest", virtualenv = "/Users/mh/.local/share/venvs" }
+
+# Linters & utilities
+pre-commit = "latest"
+ripgrep = "latest"
+shellcheck = "latest"
+"npm:@motesoftware/nanocoder" = "latest"
+gemini-cli = "latest"
+"npm:@pimzino/agentic-tools-mcp" = "latest"
 
 [settings]
-# Python integration
-python.uv_venv_auto = true
-
-# Download management
+# Core settings
+experimental = true
 always_keep_download = false
 always_keep_install = false
-
-# Performance and security settings
-verbose = false                  # Reduce information exposure
-http_timeout = "30s"
+verbose = false           # Set to true only for debugging
+http_timeout = "60s"      # Increase if network is slow
 jobs = 4
-experimental = true
 cache_prune_age = "3d"
+activate_aggressive = true
+gix = false
+python_compile = false
+legacy_version_file = true
+plugin_autoupdate_last_check_duration = "7d"
 
 [settings.pipx]
 uvx = true
 
+[settings.python]
+uv_venv_auto = true
+uv_venv_create_args = ["--seed"]
+
 [settings.status]
-# Minimal status display
-show_env = false                 # Don't expose environment variables
-
-# Simplified: removed complex hooks
-# Tools install without secrets management complexity
-
-# Remove potentially verbose hooks
-# cd = ""
-# enter = ""
-# leave = ""
+show_env = false

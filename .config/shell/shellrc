@@ -1,8 +1,4 @@
-#!/usr/bin/env zsh
-# shellcheck disable=SC2034
-
-# vim:filetype=zsh syntax=zsh tabstop=2 shiftwidth=2 softtabstop=2 expandtab autoindent fileencoding=utf-8
-
+#!/usr/bin/env bash
 ################################################################################
 # This file is sourced only for login shells. It is used to define the bare
 # minimum shell functions and env vars that are needed during bootstrap of a
@@ -54,15 +50,6 @@ export PERSONAL_BIN_DIR="${HOME}/.local/bin"
 # SSH Agent
 export SSH_AUTH_SOCK="$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh"
 
-# Used for input using the __checkSudo function
-# You can't output text to display in the Terminal while a subshell (with '$()') is waiting for the command output.
-# It will display only in the end, which isn't useful in the while condition I'm using.
-# See https://stackoverflow.com/a/64810239/895232
-sudo_needed=0
-
-videos_extensions=".mp4|.avi|.mov|.m4p|.m4v|.webm|.mpg|.mp2|.mpeg|.mpe|.mpv|.ogg|.wmv|.qt"
-images_extensions=".png|.jpeg|.jpg|.gif|.bmp|.tiff"
-
 # =============================================================================
 # Dev Tool Variables
 # =============================================================================
@@ -72,16 +59,26 @@ export VAULT_PATH="$HOME/Vault"
 
 # uv generally respects XDG variables for its cache and data directories.
 # However, you can explicitly guide it for maximum control.
+export UV_PYTHON_DOWNLOADS=auto
+export UV_MANAGED_PYTHON=1
+
+# uv cache directory (should default to XDG_CACHE_HOME/uv)
+export UV_CACHE_DIR="${XDG_CACHE_HOME}/uv"
+
+# uv Python installations directory (should default to XDG_DATA_HOME/uv/python)
+export UV_PYTHON_INSTALL_DIR="${XDG_DATA_HOME}/uv/python" # Explicitly set if default is not desired
+
+# uv tool installations directory (should default to XDG_DATA_HOME/uv/tools)
+export UV_TOOL_DIR="${XDG_DATA_HOME}/uv/tools" # Explicitly set if default is not desired
 
 # uv tool binary directory (should default to XDG_DATA_HOME/bin or XDG_BIN_HOME)
 # uv usually places executables in XDG_DATA_HOME/bin, which we've added to PATH.
 # If you want to explicitly set it:
-# export UV_TOOL_BIN_DIR="${XDG_BIN_HOME:-$HOME/.local/bin}"
+export UV_TOOL_BIN_DIR="${XDG_BIN_HOME:-$HOME/.local/bin}"
 
 # Python specific variables for uv (mostly handled by uv itself)
 # PYTHONDONTWRITEBYTECODE: Prevents Python from writing .pyc files to source directories
 export PYTHONDONTWRITEBYTECODE=1
-export PYTHONWARNINGS=ignore
 
 # PYTHONSTARTUP: Path to a Python startup script (e.g., for common imports)
 # If you have one, place it in an XDG-compliant location.
@@ -97,21 +94,21 @@ export PW_RC=${XDG_CONFIG_HOME}/pw/config
 # =============================================================================
 # PAGER CONFIGURATION
 # =============================================================================
-
 # Optimized less pager settings for terminal use
-export LESS="-iRFXMx4 --incsearch --use-color --mouse --quit-if-one-screen --no-init --status-column"
-export LESSHISTFILE="-"  # Disable less history file for privacy
-export LESSKEY="${XDG_CONFIG_HOME}/less/lesskey"  # Custom key bindings
-export PAGER="less"
-export MANPAGER="less"
 
-# Load less color configuration
-[[ -f "${XDG_CONFIG_HOME}/less/termcap" ]] && source "${XDG_CONFIG_HOME}/less/termcap"
-
-# =============================================================================
-# LLM Variables
-# =============================================================================
-
+# -i: Ignore case for searches.
+# -R: Handle "raw" control characters for colorized text.
+# -X: Don't clear screen on exit.
+# -S: Chop long lines, don't wrap.
+# --mouse: Enable mouse wheel scrolling.
+# --incsearch: Incremental searches.
+# -x4: Sets tab stops to 4 spaces.
+# --status-column: Show status column.
+LESS_FLAGS="-i -R -X --incsearch --use-color --mouse --quit-if-one-screen -x4 --status-column --wheel-lines=3"
+export LESS="$LESS_FLAGS"
+# Some tools expect LESSFLAGS instead; exporting both is harmless
+export LESSFLAGS="$LESS_FLAGS"
+# export LESSHISTFILE="-"  # Disable less history file for privacy
 
 # =============================================================================
 # COLOR DEFINITIONS
@@ -192,7 +189,7 @@ warn() {
 }
 
 info() {
-   printf "%b\\n" "${BOLD}${GREEN}[INFO]${NORMAL} $*"
+  printf "%b\\n" "${BOLD}${GREEN}[INFO]${NORMAL} $*"
 }
 
 debug() {
@@ -279,7 +276,7 @@ if is_zsh; then
   # This is likely intended for manual use or specific bootstrap scenarios after config changes.
   # Note: This is kind of equivalent to 'omz reload', but that doesn't seem to work when installing on a vanilla OS
   load_zsh_configs() {
-    local file_list=('.zshenv' '.zshrc' '.zlogin')
+    local file_list=('.zshenv' '.zshrc')
     for file in "${file_list[@]}"; do
       load_file_if_exists "${ZDOTDIR}/${file}"
     done
@@ -297,9 +294,7 @@ append_to_fpath_if_dir_exists() {
 }
 
 prepend_to_path_if_dir_exists() {
-  if is_directory "${1}"; then
-    path=("${1}" $path)
-  fi
+  is_directory "${1}" && export PATH="${1}:${PATH+:${PATH}}"
 }
 
 prepend_to_manpath_if_dir_exists() {
@@ -322,17 +317,12 @@ is_macos() {
   [[ "${OSTYPE}" =~ 'darwin' ]]
 }
 
-is_linux() {
-  [[ "${OSTYPE}" =~ 'Linux' ]]
+is-not-warpterm() {
+  [[ $TERM_PROGRAM != WarpTerminal ]]
 }
-
-is_windows() {
-  [[ "${OSTYPE}" =~ 'MINGW' ]]
+is-theme-starship() {
+  [[ $ZSH_THEME == starship* ]]
 }
-
-is-not-warpterm()   { [[ "$TERM_PROGRAM" != "WarpTerminal" ]] }
-is-theme-p10k()     { [[ "$ZSH_THEME" == (p10k|powerlevel10k)* ]] }
-is-theme-starship() { [[ "$ZSH_THEME" == starship* ]] }
 
 # =============================================================================
 # Ask for the administrator password upfront and keep it alive until this script has finished #
@@ -416,20 +406,16 @@ export HOMEBREW_BUNDLE_FILE="${HOME}/Brewfile"
 
 confirm() {
   local prompt="${1:-Are you sure?} [y/N] "
-  # -q = single char y/n
+  # -n 1 = read one character only
   # -r = raw input (no backslash escapes)
-  # -k 1 = read one character only
-  vared -p "$prompt" -c reply -r -k 1
+  # -p = display prompt
+  read -p "$prompt" -n 1 -r reply
   echo   # new line after keypress
 
   case "$reply" in
     y|Y) return 0 ;;   # success (yes)
     *)   echo "Cancelled."; return 1 ;;
   esac
-}
-
-say() {
-  gum style --foreground 93 "$1"
 }
 
 section() {

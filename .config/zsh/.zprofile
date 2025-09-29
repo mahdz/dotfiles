@@ -45,9 +45,10 @@ fi
 
 # User-specific development tools (highest priority)
 # Ensure mise shim directory is at the front of PATH
-path_prepend "${XDG_DATA_HOME:-$HOME/.local/share}/mise/shims"
+# path_prepend "${XDG_DATA_HOME:-$HOME/.local/share}/mise/shims"
 
-# npm global bin directory
+# npm global bin directory (for mise integration)
+path_prepend "$HOME/.local/share/npm-global/bin"
 path_prepend "${XDG_DATA_HOME:-$HOME/.local/share}/npm/bin"
 
 # User-installed tools (high priority)
@@ -62,6 +63,10 @@ path_prepend "$HOME/bin"
 # =============================================================================
 # OPTIONAL TOOLS
 # =============================================================================
+
+# ShellHistory.app
+path_append "${PATH}:/Applications/ShellHistory.app/Contents/Helpers"
+
 
 # Added by LM Studio CLI (lms)
 path_append "$HOME/.lmstudio/bin"

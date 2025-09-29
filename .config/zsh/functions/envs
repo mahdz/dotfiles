@@ -1,0 +1,37 @@
+# function envs() {
+    # envs — secure, paged environment viewer
+    # Usage:
+    #   envs               # show all vars, secrets redacted, paged
+    #   envs 'OPENAI_*'    # filter by name (zsh glob)
+    #   envv               # alias to envs
+    #   # Notes:
+    # - Uses $PAGER (defaults to less) with options to avoid expanding scrollback
+    # - Redacts common secret-like variables by name pattern (case-insensitive)
+    local -a SENSITIVE_PATTERNS=('*TOKEN*' '*API_KEY*' '*KEY*' '*SECRET*' '*PASSWORD*' '*PASS*' '*AUTH*' '*SESSION*' '*COOKIE*' '*CREDENTIAL*')
+    local filter="${1:-}"
+    local pager="${PAGER:-less}"
+    local is_sensitive
+    is_sensitive () {
+        local name_uc="${1:u}" p
+        for p in "${SENSITIVE_PATTERNS[@]}"
+        do
+            if [[ "$name_uc" == ${~p} ]]
+            then
+                return 0
+            fi
+        done
+        return 1
+    }
+    {
+        env | LC_ALL=C sort | while IFS='=' read -r name value
+        do
+            [[ -n "$filter" && "$name" != ${~filter} ]] && continue
+            if is_sensitive "$name"
+            then
+                printf "%s=%s\n" "$name" "[redacted]"
+            else
+                printf "%s=%s\n" "$name" "$value"
+            fi
+        done
+    } | "${pager}" -FRSX
+# }

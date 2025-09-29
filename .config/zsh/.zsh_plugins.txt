@@ -53,7 +53,6 @@ ohmyzsh/ohmyzsh path:lib/vcs_info.zsh
 
 ohmyzsh/ohmyzsh path:plugins/git
 $ZSH_CUSTOM/plugins/python
-matthiasha/zsh-uv-env
 $ZSH_CUSTOM/plugins/ruby
 
 

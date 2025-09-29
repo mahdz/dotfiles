@@ -9,6 +9,9 @@
 # HISTFILE is set by Zephyr to: ${XDG_DATA_HOME}/zsh/zsh_history
 # To check current value: echo $HISTFILE
 #
+
+unsetopt HIST_REDUCE_BLANKS
+
 # Zephyr defaults: HISTSIZE=20000, SAVEHIST=100000
 # We override them here for more history:
 export HISTSIZE=120000    # Number of commands stored in memory during session
@@ -17,8 +20,10 @@ export SAVEHIST=100000    # Number of commands saved to HISTFILE
 # =============================================================================
 # History and Search Aliases
 # =============================================================================
-alias h=' hist' # Shows full history
-alias h-search=' fc -El 0 | grep' # Searchses for a word in terminal history
+#unalias hist 2>/dev/null    # Remove any existing hist alias to avoid conflicts
+alias h=' hist'             # Lists recent history (Zephyr history plugin)
+alias hf=' hist fix -1'     # Fixes last history entry (Zephyr history plugin)
+alias h-search=' fc -El 0 | grep' # Searches for a word in terminal history
 alias histrg=' history -500 | rg' # Rip grep search recent history
 alias hgrep=' fc -El 0 | grep'
 
@@ -103,7 +108,7 @@ add-zsh-hook zshaddhistory _history-ignore
 # TODO: Investigate ShellHistory.app version compatibility
 # =============================================================================
 
-[[ -d "/Applications/ShellHistory.app/Contents/Helpers" ]] || return
+# [[ -d "/Applications/ShellHistory.app/Contents/Helpers" ]] || return
 
 # Add shhist to PATH
 PATH="${PATH}:/Applications/ShellHistory.app/Contents/Helpers"
@@ -125,4 +130,4 @@ __shhist_prompt() {
 }
 
 # integrating prompt function in prompt
-precmd_functions=(__shhist_prompt $precmd_functions)
+# precmd_functions=(__shhist_prompt $precmd_functions)

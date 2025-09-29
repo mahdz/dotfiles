@@ -1,0 +1,10 @@
+[
+  {
+    "creativity" : "high",
+    "highlightEdits" : false,
+    "icon" : "speech-bubble",
+    "model" : "openai-gpt-4o-mini",
+    "prompt" : "Use the following instructions to rewrite the text\n\nGive me 5 words that most accurarely fill in the blank in a sentence.\n\nThe blank is represented by a few underscores, such as ___, or ______.\n\nSo for example: \"I'm super ___ to announce my new product\".\n\n1. I'm super happy to announce my new product\n2. I'm super excited to announce my new product\n3. I'm super pumped to announce my new product\n4. I'm super proud to announce my new product\n5. I'm super nervous to announce my new product\n\nNow do the same for this sentece:\n\nText: {selection}\n\nRewritten text:",
+    "title" : "Fill in the gap"
+  }
+]

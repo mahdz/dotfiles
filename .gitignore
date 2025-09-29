@@ -25,7 +25,8 @@
 # Core Tools
 
 !.config/vscode/
-!.config/vscode/**
+!.config/vscode/settings.json
+!.config/vscode/extensions.json
 # Exclude VSCode profiles
 .config/vscode/profiles/**
 
@@ -82,8 +83,8 @@
 !.config/pw/*.conf
 
 !.config/raycast/
-!.config/raycast/*
-!.config/raycast/ai-presets/*.json
+!.config/raycast/ai-*/
+!.config/raycast/ai-*/*.json
 /.config/raycast/extensions
 
 !.config/ripgrep/
@@ -98,7 +99,8 @@
 !.config/topgrade/
 !.config/topgrade/**
 
-!WARP.md
+
+!AGENTS.md
 
 # Warp terminal configuration
 !.warp/
@@ -149,7 +151,7 @@ local.*
 !bin/*
 !.local/
 !.local/bin/
-!.local/bin/**
+!.local/bin/*
 .local/bin/wip
 
 # Exclude UV-managed tool symlinks
@@ -209,3 +211,4 @@ age.txt
 
 # Added by the extension Better Context To AI
 FILE_CONTENT_MAP.md
+*.bak.*

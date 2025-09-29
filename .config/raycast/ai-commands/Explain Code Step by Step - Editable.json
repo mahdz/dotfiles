@@ -1,0 +1,10 @@
+[
+  {
+    "creativity" : "medium",
+    "highlightEdits" : false,
+    "icon" : "raycast-logo-neg",
+    "model" : "openai-gpt-4o-mini",
+    "prompt" : "Act as a software engineer with deep understanding of any programming language and it's documentation. Explain how the code works step by step in a list. Be concise with a casual tone of voice and write it as documentation for others.\n\nCode:\n```\nfunction GoToPreviousPageAction() {\n  const [page, setPage] = useGlobalState(\"page\");\n  return (\n    <Action\n      icon={Icon.ArrowLeftCircle}\n      title=\"Go to Previous Page\"\n      shortcut={{ modifiers: [\"cmd\"], key: \"[\" }}\n      onAction={() => setPage(Math.max(page - 1, 0))}\n    \/>\n  );\n}\n```\n\nExplanation:\nThe code is a React component that goes to the previous page.\n1. The component renders an 'Action' component with an icon, title, and shortcut.\n3. The 'useGlobalState' hook is used to get the current page number from the global state.\n4. The 'onAction' prop is used to set the page number to one less than the current page number.\n5. This will cause the page to go back one page when the action is taken.\n6. The page is capped at 0 so that the page is never negative.\n\nCode: {selection}\n\nExplanation:",
+    "title" : "Explain Code Step by Step - Editable"
+  }
+]

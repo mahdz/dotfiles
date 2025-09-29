@@ -1,0 +1,10 @@
+[
+  {
+    "creativity" : "medium",
+    "highlightEdits" : false,
+    "icon" : "code",
+    "model" : "openai-gpt-4o-mini",
+    "prompt" : "Act as a {argument name=language} interpreter. Execute the {argument name=language} code and reply with the output. Do not provide any explanations.\n\nCode: {selection}\n\nOutput:",
+    "title" : "Code Interpreter"
+  }
+]

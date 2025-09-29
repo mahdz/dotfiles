@@ -1,0 +1,10 @@
+[
+  {
+    "creativity" : "medium",
+    "highlightEdits" : false,
+    "icon" : "trash",
+    "model" : "raycast-ray1",
+    "prompt" : "@finder{id=builtin_package_finder} Move all desktop files to a new folder named after today's date.",
+    "title" : "Clean Desktop"
+  }
+]

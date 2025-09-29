@@ -165,6 +165,11 @@ globs: *
   - Use tabs consistently for indentation.
   - Ensure all sections and keys are properly aligned.
 - When launching VS Code with a workspace file, pass `GIT_WORK_TREE` and `GIT_DIR` inline to ensure VS Code and its Git integration use the correct environment for the bare repo. This prevents global Git settings from being affected. Example: `GIT_WORK_TREE="$HOME" GIT_DIR="$HOME/.dotfiles" code "$HOME/.config/vscode/dotfiles.code-workspace"`
+- When configuring tools, prefer using environment variables for API keys and secrets instead of hardcoding them directly in configuration files.
+  - Store secrets in encrypted environment variables (e.g., using SOPS and age) and reference them in your configurations.
+  - For dynamic secrets, use a tool like `pw` (password/secret retrieval tool) to fetch secrets from your keychain or other secure storage.
+- When using environment variables, ensure they are properly set in your shell environment or VS Code's terminal settings.
+- When modifying configurations, ensure that the changes maintain the functionality while improving security and integration with your existing secret management structure.
 
 ## WORKFLOW & RELEASE RULES
 
@@ -240,6 +245,7 @@ globs: *
   2. Make sure you have run the build command in the extension's root directory.
   3. Verify that the `./dist/extension` file (or folder) exists after building.
   4. Ensure that the `main` field in the extension's `package.json` correctly points to the main Javascript file of the extension (e.g., `"main": "./dist/extension.js"`).
+- When Source Control isn't opening the dotfiles repo in VS Code, ensure that `git.ignoredRepositories` in `dotfiles.code-workspace` does not include the path to your dotfiles repository (e.g., `"/Users/mh/.dotfiles"`).
 
 ## FINAL DOs AND DON'Ts
 - **DO**: Use the provided memory bank for context and documentation.
@@ -337,6 +343,7 @@ globs: *
     }
     ```
   - If you use Mise to manage Prettier globally, you usually don’t need to enable the `prettier.resolveGlobalModules` setting in VS Code. In fact, enabling it can sometimes cause confusion or conflicts, because Mise installs global npm packages in its own isolated environment, not in the system or Homebrew global npm space.
+- Setting `GIT_DIR` and `GIT_WORK_TREE` in `terminal.integrated.env.osx` affects all terminals in VS Code, which would break Git functionality for any other repositories. Instead, create a specific script or alias (like the existing `dots` function) for managing dotfiles.
 
 ## SHELL SCRIPTING BEST PRACTICES
 
@@ -452,6 +459,9 @@ globs: *
 }
 ````
 - Include relevant servers and an expanded set of trigger words for each category to improve tool activation.
+- When configuring tools, prefer using environment variables for API keys and secrets instead of hardcoding them directly in configuration files.
+  - Store secrets in encrypted environment variables (e.g., using SOPS and age) and reference them in your configurations.
+  - For dynamic secrets, use a tool like `pw` (password/secret retrieval tool) to fetch secrets from your keychain or other secure storage.
 
 ## SHELL DEBUGGING
 
@@ -591,3 +601,12 @@ globs: *
     is-not-warpterm() { [[ $TERM_PROGRAM != "WarpTerminal" ]]; }
     # ...existing code...
     ````
+
+- To securely manage API keys and secrets, use environment variables and integrate with tools like SOPS and `pw`.
+  - Store static secrets in encrypted environment variables (e.g., using SOPS and age) within files like `~/.local/share/secrets/env-static.json`.
+  - For dynamic secrets, use a tool like `pw` (password/secret retrieval tool) to fetch secrets from your keychain or other secure storage.
+  - Reference these environment variables in your configurations. For example, instead of hardcoding an API key, use `${SMITHERY_API_KEY}`.
+
+## VS CODE SPECIFIC DEBUGGING
+
+- When Source Control isn't opening the dotfiles repo in VS Code, ensure that `git.ignoredRepositories` in `dotfiles.code-workspace` does not include the path to your dotfiles repository (e.g., `"/Users/mh/.dotfiles"`).

@@ -1,0 +1,10 @@
+[
+  {
+    "creativity" : "high",
+    "highlightEdits" : false,
+    "icon" : "music",
+    "model" : "openai-gpt-4o-mini",
+    "prompt" : "Act as a song recommender. Based on the given song, create a playlist of 10 similar songs. Provide a name and description for the playlist. Do not choose songs that are the same name or artist. Do not include the original song in the playlist.\n\nSong: {selection}\n\nPlaylist:",
+    "title" : "Playlist Maker"
+  }
+]

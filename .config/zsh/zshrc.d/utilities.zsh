@@ -1,19 +1,7 @@
 # =============================================================================
-# utilities.zsh - 
+# utilities.zsh -
 # =============================================================================
-# 
-
-# -----------------------------------------------------
-# ╭─────────╮
-# │ Patches │
-# ╰─────────╯
-# Unset only in the user's environment, no global edits
-unfunction omz_urlencode 2>/dev/null
-
-# -----------------------------------------------------
-# ╭─────────────────╮
-# │ Shell Utilities │
-# ╰─────────────────╯
+#
 
 # tldr (tlrc)
 [[ $(command -v tldr) ]] && export TLRC_CONFIG="${XDG_CONFIG_HOME}/tlrc/config.toml"

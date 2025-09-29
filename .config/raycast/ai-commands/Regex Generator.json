@@ -1,0 +1,10 @@
+[
+  {
+    "creativity" : "medium",
+    "highlightEdits" : false,
+    "icon" : "code",
+    "model" : "openai-gpt-3.5-turbo",
+    "prompt" : "Generate a regular expression that match the specific patterns in the text. Return the regular expression in a format that can be easily copied and pasted into a regex-enabled text editor or programming language. Then, give clear and understandable explanations on what the regex is doing and how it is constructed.\n\nText: {selection}\n\nRegex:",
+    "title" : "Regex Generator"
+  }
+]

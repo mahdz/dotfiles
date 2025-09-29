@@ -1,0 +1,10 @@
+[
+  {
+    "creativity" : "low",
+    "highlightEdits" : false,
+    "icon" : "speech-bubble",
+    "model" : "openai-gpt-4o-mini",
+    "prompt" : "Please summarize and omit the following. Then express your empathy.\n\nText: {selection}\n\nSympathy:",
+    "title" : "Summarize and sympathize text"
+  }
+]

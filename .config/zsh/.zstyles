@@ -22,9 +22,6 @@ zstyle ':zephyr:plugin:*' use-xdg-basedirs 'yes'
 # Always show color
 zstyle ':zephyr:plugin:*' color 'yes'
 
-# Skip all aliases
-zstyle ':zephyr:plugin:history:alias' skip 'yes'
-
 #
 # Editor
 #
@@ -65,30 +62,20 @@ zstyle -s ':zephyr:plugin:editor' key-bindings 'vi'
 zstyle ':zephyr:plugin:completion' 'disable-compfix' yes
 zstyle ':zephyr:plugin:completion' compstyle 'zephyr'
 
-# Prevent use-omz from trying to load themes since we use starship directly
-zstyle ':omz:lib:theme-and-appearance' 'skip' 'yes'
-
-#
 # Dotfiles
-#
-
 zstyle ':zsh_custom:plugin:dotfiles' bare 'yes'
 
-#
-# Homebrew
-#
+# History
+zstyle ':zephyr:plugin:history:alias' skip 'yes'
+zstyle ':hist:*' expand-aliases yes
+zstyle ':hist:*' auto-format yes
 
+# Homebrew
 zstyle ':zephyr:plugin:homebrew' 'use-cache' yes
 
 _kegonly=(curl ruby sqlite)
 zstyle ':zephyr:plugin:homebrew' 'keg-only-brews' "${_kegonly[@]}"
 unset _kegonly noexpand
-
-#
-# History
-#
-# History configuration is handled by Zephyr history plugin
-# Custom history features are in zshrc.d/history.zsh
 
 #
 # OMZ
@@ -107,6 +94,8 @@ zstyle ':omz:plugins:git' aliases no
 
 # GNU
 zstyle ':omz:lib:theme-and-appearance' gnu-ls no
+# Prevent use-omz from trying to load themes since we use starship directly
+zstyle ':omz:lib:theme-and-appearance' 'skip' 'yes'
 
 # async
 zstyle ':omz:alpha:lib:git' async-prompt no

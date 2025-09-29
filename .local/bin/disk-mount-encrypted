@@ -1,11 +1,11 @@
 #!/bin/bash
 # Required parameters:
 # @raycast.schemaVersion 1
-# @raycast.title Mount ThiccBoi
+# @raycast.title Mount Drive
 # @raycast.mode compact
 
 # Optional parameters:
-# @raycast.icon 
+# @raycast.icon 💾
 # @raycast.packageName System
 
 # Documentation: This script unlocks an encrypted APFS volume using a password retrieved from the macOS Keychain. It aims to follow best practices for security and maintainability, including secure handling of temporary files.
