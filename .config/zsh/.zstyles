@@ -83,13 +83,14 @@ unset _kegonly noexpand
 zstyle ':omz:update' mode disabled
 
 # aliases
-# Skip all aliases, in lib files and enabled plugins
-zstyle ':omz:*' aliases no
+# Enable all aliases in lib and plugins broadly
 zstyle ':omz:lib:*' aliases yes
+zstyle ':omz:plugins:*' aliases yes
+
+# Disable directories aliases from lib
 zstyle ':omz:lib:directories' aliases no
 
-# Skip all plugin aliases
-zstyle ':omz:plugins:*' aliases no
+# Disable git plugin aliases
 zstyle ':omz:plugins:git' aliases no
 
 # GNU

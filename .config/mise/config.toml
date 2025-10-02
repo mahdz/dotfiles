@@ -8,13 +8,13 @@ SECRETS_DIR = "$HOME/.local/share/secrets"
 VENV_CACHE = "${XDG_DATA_HOME:-$HOME/.local/share}/venvs"
 # Default package lists
 MISE_PYTHON_DEFAULT_PACKAGES_FILE = "~/.config/mise/.default-python-packages"
-MISE_NODE_DEFAULT_PACKAGES_FILE   = "~/.config/mise/.default-npm-packages"
-MISE_GO_DEFAULT_PACKAGES_FILE     = "~/.config/mise/.default-go-packages"
+MISE_NODE_DEFAULT_PACKAGES_FILE = "~/.config/mise/.default-npm-packages"
+MISE_GO_DEFAULT_PACKAGES_FILE = "~/.config/mise/.default-go-packages"
 
 # Load multiple secret files, redacted in logs
 _.file = [
-    { path = "$SECRETS_DIR/.env.json", redact = true },
-    { path = "$SECRETS_DIR/.env.dev", redact = true }
+  { path = "$SECRETS_DIR/.env.json", redact = true },
+  { path = "$SECRETS_DIR/.env.dev", redact = true },
 ]
 
 [hooks.enter]
@@ -47,8 +47,8 @@ gemini-cli = "latest"
 experimental = true
 always_keep_download = false
 always_keep_install = false
-verbose = false           # Set to true only for debugging
-http_timeout = "60s"      # Increase if network is slow
+verbose = false                              # Set to true only for debugging
+http_timeout = "60s"                         # Increase if network is slow
 jobs = 4
 cache_prune_age = "3d"
 activate_aggressive = true
