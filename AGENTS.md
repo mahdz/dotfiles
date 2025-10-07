@@ -1,5 +1,7 @@
 # AGENTS.md - Project Overview and Management
 
+*Last updated: 2025-10-03*
+
 This directory (`/Users/mh/`) serves as the user's personal home directory, meticulously managed as a dotfiles repository using a bare Git setup. It centralizes configurations, personal scripts, and development environment settings, ensuring consistency and easy synchronization across different machines.
 
 ## Directory Overview
@@ -7,7 +9,7 @@ This directory (`/Users/mh/`) serves as the user's personal home directory, meti
 This directory is the root of the user's personal environment. It contains:
 
 * **Dotfiles:** Critical configuration files (e.g., `.zshenv`, `.editorconfig`) and directories (`.config/`, `.dotfiles/`) that define the user's shell, editor, and application behaviors.
-* **Personal Scripts:** The `bin/` directory houses custom scripts for various tasks.
+* **Personal Scripts:** Both `bin/` directory (3 scripts) and `.local/bin/` directory (54+ tools and scripts) house custom scripts and UV-managed tool symlinks.
 * **Documentation:** This `AGENTS.md` provides essential commands and guidelines for managing this dotfiles setup.
 * **Application Configurations:** The `.config/` directory contains configurations for numerous applications, including `git`, `zsh`, `raycast`, `mise`, `uv`, and more.
 
@@ -18,13 +20,12 @@ This directory is the root of the user's personal environment. It contains:
 * **`AGENTS.md`**: This document is a comprehensive guide to managing the dotfiles, including Git commands, safety rules, and key locations.
 * **`.config/`**: Contains the bulk of application-specific configurations, organized according to the XDG Base Directory Specification.
 * **`.dotfiles/`**: The bare Git repository that tracks all managed dotfiles.
-* **`bin/`**: A collection of personal executable scripts.
-* **`$HOME/.dotfiles`**: (git repo data)
-* **`$HOME/.cache`**: (cache)
-* **`$HOME/.local/bin/`**: (your scripts)
-* **`$HOME/.config/raycast/extensions/`**: (Raycast extensions)
-* **`$HOME/.gitignore`**: (deny-all strategy)
-* **`$HOME/.config/zsh/`**: (ZDOTDIR - zsh configs)
+* **`bin/`**: A small collection of personal executable scripts (migrate-tasks, task, unquarantine_apps.sh).
+* **`$HOME/.cache`**: Application cache directory.
+* **`$HOME/.local/bin/`**: Primary scripts directory (54+ tools including UV-managed Python tools).
+* **`$HOME/.config/raycast/extensions/`**: Raycast extensions directory (249+ extensions).
+* **`$HOME/.gitignore`**: Comprehensive deny-all strategy (200+ lines with detailed patterns).
+* **`$HOME/.config/zsh/`**: ZDOTDIR - ZSH configurations and custom plugins.
 
 ## Usage and Management
 
@@ -35,8 +36,14 @@ This directory is managed as a bare Git repository, allowing for version control
 **Main function:**
 
 ```zsh
-# Located at: ~/.config/zsh/functions/dots
-command git --git-dir="${DOTFILES:-$HOME/.dotfiles}" --work-tree="$HOME" "$@"
+# Located at: ~/.config/zsh/custom/plugins/dotfiles/dotfiles.plugin.zsh
+# Enhanced dots function with usage help, explicit git mode, and implicit command detection
+dots() {
+    # Shows usage if no arguments provided
+    # Supports both 'dots status' and 'dots git status' syntax
+    # Includes comprehensive git command recognition
+    command git --git-dir="${DOTFILES:-$HOME/.dotfiles}" --work-tree="$HOME" "$@"
+}
 ```
 
 **Daily workflow:**
@@ -85,21 +92,23 @@ mise reshim                         # Fix broken tool links
 
 ## Gitignore Strategy
 
-**Deny-all approach:**
+**Deny-all approach (200+ lines):**
+
+The `.gitignore` file uses a comprehensive deny-all strategy with detailed patterns for:
+- Core configuration files (`.editorconfig`, `.zshenv`, etc.)
+- Application-specific configs (VSCode, Raycast, mise, uv, etc.)
+- Tool configurations (bat, eza, gh, glow, karabiner, ollama, etc.)
+- Complex UV tool symlink handling in `.local/bin/`
+- ZSH configurations with selective exclusions
+- Script directories with specific inclusions
 
 ```gitignore
-# Ignore everything by default
-*
-
-# Add back items as needed
-!.config/
-!.config/*
-!.editorconfig
-!.gitignore
-!.github/
-!.github/**
-!.config/git/
-!.config/git/*
+# Basic structure (simplified - actual file is much more detailed)
+*                    # Ignore everything by default
+!.config/           # Add back config directory
+!.editorconfig      # Essential files
+!AGENTS.md          # This documentation
+# ... 200+ more specific patterns
 ```
 
 **Adding new files:**

@@ -2,6 +2,15 @@
 # LESS ALIASES AND FUNCTIONS
 # =============================================================================
 
+# Less environment variables - remove -X to allow alternate screen buffer
+export LESS="-iR --incsearch --use-color --mouse"
+export LESSFLAGS="-iR --incsearch --use-color --mouse"
+
+# Configure bat to not leave output on screen
+if command -v bat >/dev/null 2>&1; then
+    export BAT_PAGER="less -R"
+fi
+
 # Useful less aliases
 alias -g L='| less'                    # Pipe to less
 alias -g LL='2>&1 | less'             # Pipe stdout and stderr to less

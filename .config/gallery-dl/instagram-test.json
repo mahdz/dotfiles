@@ -1,0 +1,16 @@
+{
+	"extractor": {
+		"instagram": {
+			"cookies-from-browser": "chrome",
+			"api": "web",
+			"user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+			"sleep-request": [2.0, 4.0],
+			"base-directory": "~/Downloads/gallery-dl",
+			"directory": ["instagram", "{owner[username]}"],
+			"filename": "{sidecar_media_id}_{media_id}.{extension}",
+			"video": true,
+			"videos": true,
+			"metadata": true
+		}
+	}
+}

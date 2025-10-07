@@ -1,21 +1,36 @@
-# Warp Launch Configuration
-#
-# This configuration has two windows,
-# the first window executes two commands on start,
-# the second window has a split pane that executes a command on start.
 ---
-name: Dots
+name: "Dotfiles"
 windows:
-- tabs:
-  - title: Developer
-    layout:
-      split_direction: horizontal
-      panes:
-      - cwd: /Users/mh
-        commands:
-        - exec: ls
-        - exec: code ~/.config/vscode/dotfiles.code-workspace
-      - cwd: /Users/mh/Developer
-        commands:
-        - exec: ls -la
-    color: blue
+  - tabs:
+      - title: "Status & Changes"
+        layout:
+          split_direction: horizontal
+          panes:
+            - cwd: "/Users/mh"
+              commands:
+                - exec: "lDD && echo '=== Dotfiles Status ===' && ds"
+                - exec: "echo '[ 💡 TIP ] Use dan <file> to dry-run before da'"
+            - cwd: "/Users/mh"
+              commands:
+                - exec: "echo '=== Recent Changes ===' && dd"
+                - exec: "echo '[ 📦 TIP ] Use dp to push changes'"
+      - title: "Config & Scripts"
+        layout:
+          split_direction: vertical
+          panes:
+            - cwd: "/Users/mh/.config"
+              commands:
+                - exec: "lDD && echo '=== Config Files ==='"
+            - cwd: "/Users/mh/bin"
+              commands:
+                - exec: "lDD && echo '=== Scripts ==='"
+      - title: "Projects"
+        layout:
+          split_direction: horizontal
+          panes:
+            - cwd: "/Users/mh/Developer"
+              commands:
+                - exec: "lDD && echo '=== Development ==='"
+            - cwd: "/Users/mh/Vault/02-projects"
+              commands:
+                - exec: "lDD && echo '=== Documentation ==='"

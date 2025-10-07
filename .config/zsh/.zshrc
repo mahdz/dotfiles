@@ -49,7 +49,7 @@ unset zdir
 # Path to your Oh My Zsh installation.
 export ZSH_CUSTOM=${ZDOTDIR:-$HOME/.config/zsh}/custom
 export ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
-DISABLE_AUTO_TITLE=true
+export DISABLE_AUTO_TITLE=true
 
 # =============================================================================
 # COMPLETIONS

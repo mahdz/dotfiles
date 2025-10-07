@@ -3,6 +3,7 @@
 	{
 		"skip": true,
 		"sleep": 0,
+		"cookies-from-browser": "chrome",
       "pixiv":
 		{
 			"base-directory": "~/Downloads/.tmp/gallery-dl",
@@ -14,6 +15,33 @@
 			"tags": "original",
 			"skip": "abort:10",
 			"postprocessors": ["metadata-pixiv"]
+		},
+
+		"instagram":
+		{
+			"base-directory": "~/Downloads/.tmp/gallery-dl",
+			"directory": ["instagram", "{owner[username]}", "{date:%Y-%m}"],
+			"archive": "~/Downloads/.tmp/gallery-dl/archive.db",
+			"filename": "{date:%Y%m%d}_{shortcode}_{sidecar_media_id}.{extension}",
+			"cookies": "~/.config/gallery-dl/cookies.txt",
+			"browser": "chrome",
+			"user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+			"sleep-request": [2.0, 4.0],
+			"api": "web",
+			"video": true,
+			"videos": true,
+			"highlights": true,
+			"stories": true,
+			"tagged": true,
+			"metadata": true,
+			"comments": false,
+			"include": "video",
+			"video-format": "mp4",
+			"reels": true,
+			"igtv": true,
+			"skip": false,
+			"postprocessors": ["metadata-instagram", "caption-instagram"],
+			"write-info-json": true
 		},
 
 		 "ytdl":
@@ -105,6 +133,25 @@
 			"event": "post",
 			"filename": "{id}.json"
 		},
+
+		"metadata-instagram":
+		{
+			"name": "metadata",
+			"mode": "json",
+			"event": "post",
+			"filename": "{date:%Y%m%d}_{shortcode}_metadata.json"
+		},
+
+		"caption-instagram":
+		{
+			"name": "metadata",
+			"mode": "custom",
+			"event": "post",
+			"filename": "{date:%Y%m%d}_{shortcode}_caption.txt",
+			"content-format": "=== INSTAGRAM POST METADATA ===\nURL: {post_url}\nSHORTCODE: {shortcode}\nDATE: {date:%Y-%m-%d %H:%M:%S}\nUSER: @{username} ({fullname})\nLIKES: {likes:>d} | TYPE: {type}\nLOCATION: {location_slug} (ID: {location_id})\nDESCRIPTION/CAPTION:\n{description}\n",
+			"extension": "txt"
+		},
+
 		"#": "various ugoira post processor configurations to create different file formats",
         "ugoira-webm":
         {

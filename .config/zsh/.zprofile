@@ -49,7 +49,7 @@ fi
 
 # npm global bin directory (for mise integration)
 path_prepend "$HOME/.local/share/npm-global/bin"
-path_prepend "${XDG_DATA_HOME:-$HOME/.local/share}/npm/bin"
+# path_prepend "${XDG_DATA_HOME:-$HOME/.local/share}/npm/bin"
 
 # User-installed tools (high priority)
 path_prepend "/usr/local/bin"
@@ -66,7 +66,6 @@ path_prepend "$HOME/bin"
 
 # ShellHistory.app
 path_append "${PATH}:/Applications/ShellHistory.app/Contents/Helpers"
-
 
 # Added by LM Studio CLI (lms)
 path_append "$HOME/.lmstudio/bin"
