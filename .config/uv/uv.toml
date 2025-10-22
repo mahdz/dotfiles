@@ -1,0 +1,13 @@
+# UV configuration optimized for mise integration
+python-preference = "system"
+python-downloads = "automatic"
+
+# Performance optimizations
+concurrent-downloads = 4
+concurrent-builds = 4
+
+# Cache settings
+# cache-dir = "~/.cache/uv"
+
+# Security settings
+keyring-provider = "subprocess"

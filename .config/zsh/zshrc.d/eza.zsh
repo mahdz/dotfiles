@@ -5,9 +5,10 @@
 # Load eza aliases if available.
 (( $+commands[eza] )) || return
 
+alias ls='eza -ghb --group-directories-first --icons=auto --hyperlink'
 alias lt='eza --icons --tree'
-alias l='ls -l'
-alias la='ls -lAh'
+alias l='eza -ghbl --group-directories-first --icons=auto --hyperlink'
+alias la='eza -ghbla --group-directories-first --icons=auto --hyperlink'
 
 
 alias ll="eza -lahF --icons"                                                                         # Show details

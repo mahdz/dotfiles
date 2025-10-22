@@ -23,24 +23,46 @@ shell = "zsh"
 script = "[ -f $SECRETS_DIR/.env ] && load-secrets"
 
 [tools]
-# Node.js & npm ecosystem
+# npm MUST be first to prioritize standalone version over Node's bundled npm
+npm = "11.6.2"
+
+# Core runtimes (dependency order matters after npm)
 node = { version = "latest", postinstall = "corepack enable" }
+python = "latest"
 bun = "latest"
-"npm:markdownlint-cli" = "latest"
-"npm:npm-check" = "latest"
-"npm:npkill" = "latest"
-"npm:prettier" = "3"
 
-# Python
-python = { version = "latest", virtualenv = "/Users/mh/.local/share/venvs" }
-
-# Linters & utilities
-pre-commit = "latest"
+# System utilities (fast, independent tools)
 ripgrep = "latest"
 shellcheck = "latest"
-"npm:@motesoftware/nanocoder" = "latest"
 gemini-cli = "latest"
+pre-commit = "latest"
+
+# Node.js packages (grouped by function)
+# Code formatting & linting
+"npm:prettier" = "3"
+"npm:markdownlint-cli" = "latest"
+
+# Node.js utilities
+"npm:npm-check" = "latest"
+"npm:npkill" = "latest"
+
+# AI/MCP tools (may have longer install times)
+"npm:@motesoftware/nanocoder" = "latest"
 "npm:@pimzino/agentic-tools-mcp" = "latest"
+
+# Python CLI tools (managed via pipx backend with uvx=true)
+# "pipx:aider-chat" = "latest"  # TODO: Waiting for tiktoken PyO3 Python 3.14 support
+"pipx:basic-memory" = "latest"
+"pipx:psf/black" = "latest"
+"pipx:gallery-dl" = "latest"
+"pipx:khard" = "latest"
+"pipx:mac-cleanup" = "latest"
+# "pipx:markitdown-mcp" = "latest"  # TODO: Waiting for onnxruntime Python 3.14 wheels
+"pipx:osxmetadata" = "latest"
+"pipx:rich-cli" = "latest"
+"pipx:ruff" = "latest"
+"pipx:speedtest-cli" = "latest"
+"pipx:yt-dlp" = "latest"
 
 [settings]
 # Core settings

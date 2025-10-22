@@ -102,11 +102,6 @@ zstyle ':omz:lib:theme-and-appearance' 'skip' 'yes'
 zstyle ':omz:alpha:lib:git' async-prompt no
 
 # eza
-zstyle ':omz:plugins:eza' 'dirs-first' yes
-zstyle ':omz:plugins:eza' 'header' yes
-zstyle ':omz:plugins:eza' 'icons' yes
-zstyle ':omz:plugins:eza' 'size-prefix' binary
-zstyle ':omz:plugins:eza' 'hyperlink' yes
 
 # ssh-agent
 zstyle :omz:plugins:ssh-agent agent-forwarding on

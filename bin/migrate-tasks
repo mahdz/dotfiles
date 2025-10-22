@@ -1,8 +1,49 @@
 #!/usr/bin/env zsh
-# Migration script for unified task management system
-# Converts existing tasks from various formats to the new unified system
+# Task Migration Script for Unified Task Management System
+#
+# PURPOSE:
+#   Migrates tasks from legacy FinFixer project structure to unified Obsidian Vault format
+#   Preserves task content, status, and metadata during migration process
+#
+# WHAT IT DOES:
+#   1. Creates timestamped backup of existing tasks
+#   2. Converts FinFixer tasks to TASK-XXX-slug.md format
+#   3. Preserves original content and adds migration metadata
+#   4. Updates .gitignore to track new unified task structure
+#   5. Regenerates task index for CLI integration
+#
+# SOURCE LOCATIONS:
+#   - FinFixer tasks: /Users/mh/Developer/python/FinFixer/docs/tasks/
+#     - active/ (maps to status: Active)
+#     - completed/ (maps to status: Completed)
+#     - backlog/ (maps to status: Planned)
+#
+# TARGET LOCATION:
+#   - Unified tasks: $VAULT_PATH/02-Projects/TaskManager/tasks/
+#
+# USAGE:
+#   ./migrate-tasks
+#   (No arguments needed - script handles detection and migration automatically)
+#
+# SAFETY FEATURES:
+#   - Creates timestamped backup before any changes
+#   - Preserves original files (read-only operation on sources)
+#   - Generates migration metadata and audit trail
+#   - Dry-run capability built into backup creation
+#
+# INTEGRATION:
+#   - Works with ~/bin/task CLI tool for unified task management
+#   - Maintains global task ID sequence across all projects
+#   - Compatible with Obsidian task management plugins
+#
+# STATUS CHECK:
+#   Run 'ls -la /Users/mh/Developer/python/FinFixer/docs/tasks' to see pending tasks
+#   Run 'find $VAULT_PATH/02-projects/tasks -name "*.md" | grep -i finfixer' for migrated tasks
 
 set -euo pipefail
+
+# Enable nullglob to handle empty glob patterns gracefully
+setopt nullglob 2>/dev/null || true
 
 VAULT_TASKS="$VAULT_PATH/02-Projects/TaskManager/tasks"
 BACKUP_DIR="$HOME/tasks-backup-$(date +%Y%m%d-%H%M%S)"
@@ -34,17 +75,31 @@ create_backup() {
     success "Backup created successfully"
 }
 
-# Get next available task ID
+# Get next available task ID using temp counter file
 get_next_task_id() {
+    local counter_file="/tmp/task_migration_counter_$$"
     local max_id=0
     
-    for file in "$VAULT_TASKS"/TASK-*.md; do
-        [[ -f "$file" ]] || continue
-        local id=$(basename "$file" | sed -n 's/TASK-\([0-9]\+\)-.*/\1/p')
-        [[ -n "$id" ]] && ((id > max_id)) && max_id=$id
-    done
+    # Check if tasks directory exists and has TASK files
+    if [[ -d "$VAULT_TASKS" ]]; then
+        for file in "$VAULT_TASKS"/TASK-*.md; do
+            # Skip if no matching files found (glob didn't expand)
+            [[ -f "$file" ]] || continue
+            local id=$(basename "$file" | sed -n 's/TASK-\([0-9]\+\)-.*/\1/p')
+            [[ -n "$id" ]] && ((id > max_id)) && max_id=$id
+        done
+    fi
     
-    printf "%03d" $((max_id + 1))
+    # Initialize or read from counter file
+    if [[ -f "$counter_file" ]]; then
+        local counter=$(cat "$counter_file")
+        max_id=$((counter > max_id ? counter : max_id))
+    fi
+    
+    local next_id=$((max_id + 1))
+    echo "$next_id" > "$counter_file"
+    
+    printf "%03d" $next_id
 }
 
 # Convert FinFixer task to unified format
@@ -52,19 +107,25 @@ convert_finfixer_task() {
     local source_file="$1"
     local source_dir="$2"  # active, completed, backlog
     local filename=$(basename "$source_file" .md)
-    local task_id="TASK-$(get_next_task_id)"
+    local next_id=$(get_next_task_id)
+    local task_id="TASK-$next_id"
     local date=$(date +%Y-%m-%d)
     
     # Determine status from directory
-    local status="Planned"
+    local task_status="Planned"
     case "$source_dir" in
-        "active") status="Active" ;;
-        "completed") status="Completed" ;;
-        "backlog") status="Planned" ;;
+        "active") task_status="Active" ;;
+        "completed") task_status="Completed" ;;
+        "backlog") task_status="Planned" ;;
     esac
     
-    # Extract title from filename (remove prefixes)
-    local title=$(echo "$filename" | sed 's/^[a-z-]*-//' | tr '-' ' ' | sed 's/\b\w/\U&/g')
+    # Extract title from filename or use original title if available
+    local title
+    if [[ -f "$source_file" ]] && title=$(grep -m1 '^# ' "$source_file" | sed 's/^# //' 2>/dev/null); then
+        title="$title"
+    else
+        title=$(echo "$filename" | sed 's/^[a-z-]*-//' | tr '-' ' ' | sed 's/\b\w/\U&/g')
+    fi
     
     # Create new task file
     local target_file="$VAULT_TASKS/$task_id-$filename.md"
@@ -73,7 +134,7 @@ convert_finfixer_task() {
 ---
 id: $task_id
 title: "$title"
-status: $status
+status: $task_status
 priority: Medium
 created: $date
 updated: $date
@@ -84,15 +145,15 @@ project: "FinFixer"
 # $task_id - $title
 
 ## Description
-Migrated from FinFixer task system.
-
-$(grep -A 999 "^## Description" "$source_file" 2>/dev/null || echo "Original task content:")
+Migrated from FinFixer task system - see original content below for full details.
 
 ## Acceptance Criteria
-$(grep -A 999 "^## Acceptance Criteria" "$source_file" 2>/dev/null | grep -B 999 "^## " | head -n -1 || echo "- [ ] Complete migration verification")
+- [ ] Review and update task requirements
+- [ ] Verify migration accuracy
+- [ ] Update task status as needed
 
 ## Progress Tracking
-**Status**: $status - $([ "$status" = "Completed" ] && echo "100%" || echo "0%")
+**Status**: $task_status - $([ "$task_status" = "Completed" ] && echo "100%" || echo "0%")
 
 ## Context
 - **Original file**: $source_file
@@ -197,6 +258,9 @@ main() {
     
     # Generate summary
     generate_summary
+    
+    # Cleanup temp files
+    rm -f "/tmp/task_migration_counter_$$"
 }
 
 main "$@"

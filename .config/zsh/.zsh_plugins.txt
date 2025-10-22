@@ -77,7 +77,6 @@ mattmc3/zephyr path:plugins/macos
 # ------------------------------------------------------------------------------
 
 ohmyzsh/ohmyzsh path:plugins/ssh-agent
-ohmyzsh/ohmyzsh path:plugins/eza
 ohmyzsh/ohmyzsh path:plugins/zoxide
 #ohmyzsh/ohmyzsh path:plugins/copypath
 ohmyzsh/ohmyzsh path:plugins/common-aliases
