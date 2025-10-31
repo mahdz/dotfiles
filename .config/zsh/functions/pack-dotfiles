@@ -75,6 +75,17 @@ __pack-dotfiles() {
     for file in "${zsh_files[@]}"; do
       _pack_append_file "$file"
     done
+    
+    if [[ -d "$zdotdir/custom" ]]; then
+      zsh_plugins+=("$zdotdir/custom/plugins/"*(N))
+    else
+      warn "directory not found at $zdotdir/custom"
+    fi
+
+    for file in "${zsh_plugins[@]}"; do
+      _pack_append_file "$file"
+    done
+    
   } > "$output_file"
 
   success "Configuration summary created at $output_file"

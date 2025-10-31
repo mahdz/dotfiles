@@ -18,7 +18,7 @@ local dotcmd=(git --git-dir="$HOME/.dotfiles" --work-tree="$HOME")
 local meta="Generated: $(date -u +'%Y-%m-%dT%H:%M:%SZ') | Host: $(hostname) | Shell: $SHELL | ZDOTDIR: $zdotdir | SHA: $(${dotcmd[@]} rev-parse --short HEAD 2>/dev/null || print 'N/A')"
 local md_out="${1:-$HOME/Desktop/dotfiles-export.md}"
 local json_out="${2:-$HOME/Desktop/dotfiles-export.json}"
-repomix --include "${(j:,:)includes}" --ignore "${(j:,:)excludes}" --remove-comments --remove-empty-lines --compress --output "$md_out" --style markdown --output "$json_out" --style json --header-text "$meta"
+npx repomix --include "${(j:,:)includes}" --ignore "${(j:,:)excludes}" --remove-comments --remove-empty-lines --compress --verbose --output "$md_out" --style markdown --output "$json_out" --style json --header-text "$meta"
 echo "Exported dotfiles to:"
 echo "  - $md_out"
 echo "  - $json_out"

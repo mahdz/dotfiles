@@ -401,9 +401,22 @@ clean_emergency() {
   echo "Clearing bash..."
 
   # ZSH History [ HISTFILE=${XDG_DATA_HOME:-$HOME/.local/share}/zsh/zsh_history ]
-  if test -f "$HISTFILE"; then
+  # SAFETY: Added checks and backup on 2025-10-28 to prevent accidental deletion
+  if [[ -n "$HISTFILE" ]] && test -f "$HISTFILE"; then
+    echo "WARNING: About to delete shell history at $HISTFILE"
+    local backup_file="${HISTFILE}.backup.$(date +%Y%m%d-%H%M%S)"
+    echo "Creating backup at $backup_file"
+    cp "$HISTFILE" "$backup_file" || {
+      echo "ERROR: Failed to create backup. Aborting history deletion for safety."
+      return 1
+    }
     echo "Removing $HISTFILE.."
     /bin/rm -f "$HISTFILE"
+    echo "✓ History deleted. Backup saved at $backup_file"
+  elif [[ -z "$HISTFILE" ]]; then
+    echo "SKIP: \$HISTFILE not set, cannot delete history"
+  else
+    echo "SKIP: History file does not exist at $HISTFILE"
   fi
 
   FILE=~/.bash_profile

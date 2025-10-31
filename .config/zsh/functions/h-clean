@@ -1,13 +1,13 @@
 #!/usr/bin/env sh
 
-# Function: hist-fix()
+# Function: h-clean()
 #
 # Description:
 #   Fixes the history file by removing any bad characters
 #
 # shellcheck disable=SC2168
 
-#hist_fix(){
+#h-clean(){
     local tmp_histfile="${~HISTFILE}"_bad
     mv -iv $HISTFILE $tmp_histfile
     strings $tmp_histfile > $HISTFILE

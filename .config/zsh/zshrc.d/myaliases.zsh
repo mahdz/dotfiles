@@ -157,12 +157,3 @@ if is_macos; then
   # MacOS: Clean up LaunchServices to remove duplicates in the "Open With" menu
   alias lscleanup='/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder'
 fi
-
-# =============================================================================
-# Basic Memory
-# =============================================================================
-
-alias note-write="basic-memory tool write-note"
-alias note-move="basic-memory tool move-note"
-alias note-search="basic-memory tool search-notes --query"
-alias note-recent="basic-memory tool recent-activity"

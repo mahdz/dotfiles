@@ -1,19 +1,19 @@
-#\!/bin/zsh
+#!/bin/zsh
 #function env_trace {
     local var_name="$1"
     echo "=== Tracing $var_name ==="
-    
+
     # Check current value
     echo "Current: ${(P)var_name}"
-    
+
     # Check all possible sources
-    for file in /etc/zshenv ~/.zshenv /etc/zprofile $ZSDOTDIR/.zprofile /etc/zshrc $ZDOTDIR/.zshrc; do
+    for file in /etc/zshenv ~/.zshenv /etc/zprofile /etc/zshrc ~/.config/zsh/.zshrc; do
         if [[ -f "$file" ]] && grep -q "$var_name" "$file"; then
             echo "Found in: $file"
             grep -n "$var_name" "$file"
         fi
     done
-    
+
     # Check process parent
     echo "Parent PID: $PPID"
     ps -p $PPID -o command= | head -1

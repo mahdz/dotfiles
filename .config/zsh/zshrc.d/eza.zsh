@@ -5,18 +5,23 @@
 # Load eza aliases if available.
 (( $+commands[eza] )) || return
 
-alias ls='eza -ghb --group-directories-first --icons=auto --hyperlink'
-alias lt='eza --icons --tree'
-alias l='eza -ghbl --group-directories-first --icons=auto --hyperlink'
-alias la='eza -ghbla --group-directories-first --icons=auto --hyperlink'
+# Disable icons/hyperlinks over SSH or when TERM is dumb
+if [[ -n $SSH_CONNECTION ]] || [[ -z ${TERM:-} ]] || [[ $TERM = dumb ]]; then
+    EZA_ICONS_FLAG="--icons=never"
+    EZA_HYPERLINK_FLAG=""
+else
+    EZA_ICONS_FLAG="--icons=auto"
+    EZA_HYPERLINK_FLAG="--hyperlink"
+fi
 
+# Core replacement
+alias ls="eza -ghabG --header --group-directories-first $EZA_ICONS_FLAG $EZA_HYPERLINK_FLAG --color=auto"
 
-alias ll="eza -lahF --icons"                                                                         # Show details
-alias lm="eza -lbGd --header --git --sort=modified --color=always --group-directories-first --icons" # Recent
-alias lb="eza -lahr --color-scale --icons -s=size"                                                   # Largest / size
-# File listing options
-alias lh="eza -dl .* --group-directories-first"
-alias lr="ls -R"                              # List files in sub-directories, recursivley
-alias lf="eza -lF --color=always | command grep -v /" # Use grep to find files
-alias lc="find . -type f | wc -l"             # Shows number of files
-alias ld="eza -lD"                            # List directories only
+# Most-used shortcuts
+alias l="eza -lahbG --header --group-directories-first $EZA_ICONS_FLAG $EZA_HYPERLINK_FLAG --color=auto"  # long, all, human, git, header
+alias ll="eza -laFh --group-directories-first $EZA_ICONS_FLAG $EZA_HYPERLINK_FLAG --color=auto"             # detailed long
+alias la="eza -la --group-directories-first $EZA_ICONS_FLAG $EZA_HYPERLINK_FLAG --color=auto"                # show dotfiles
+
+# Handy utilities
+alias lt="eza -lah --sort=newest --group-directories-first $EZA_ICONS_FLAG $EZA_HYPERLINK_FLAG --color=auto"  # newest first
+alias lb="eza -lahr --sort=size --color-scale --group-directories-first $EZA_ICONS_FLAG $EZA_HYPERLINK_FLAG"  # largest files

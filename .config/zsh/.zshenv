@@ -5,6 +5,11 @@ export XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
 export XDG_STATE_HOME=${XDG_STATE_HOME:-$HOME/.local/state}
 /bin/mkdir -p $XDG_CONFIG_HOME $XDG_CACHE_HOME $XDG_DATA_HOME $XDG_STATE_HOME
 
+# CRITICAL: Set HISTFILE early to prevent deletion by plugins or scripts
+# This MUST be set before .zshrc loads to ensure all shells know where history lives
+# Fixed 2025-10-28: History was being deleted because HISTFILE wasn't set early enough
+export HISTFILE="${XDG_DATA_HOME}/zsh/zsh_history"
+
 export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
 
 # Make Apple Terminal behave.

@@ -1,14 +1,21 @@
 # path-optimization.zsh - Comprehensive PATH management
-# Based on ZSH Shell Fix notebook recommendations
+# Ensures mise shims and user tools take priority over system paths
+# Features: auto-optimization, caching, verification, and debugging
 
-# Function to optimize PATH with proper ordering and deduplication
+# ============================================================================
+# PATH OPTIMIZATION FUNCTION
+# ============================================================================
+
+# Optimize PATH with proper ordering and deduplication
+# Runs on every shell startup to ensure consistent priority
 optimize_path() {
     # Define the desired PATH order (highest priority first)
+    # This ensures mise shims and user tools are found before system paths
     local desired_paths=(
         # User tools (highest priority)
         "$HOME/.local/bin"
         
-        # Mise version manager shims
+        # Mise version manager shims - must come early
         "$HOME/.local/share/mise/shims"
         
         # Homebrew paths (Apple Silicon)
@@ -27,7 +34,7 @@ optimize_path() {
         "$HOME/bin"
         "$HOME/.config/vscode"
         
-        # System paths (lower priority but still important)
+        # System paths (lower priority)
         "/usr/local/bin"
         "/System/Cryptexes/App/usr/bin"
         "/usr/bin"
@@ -47,107 +54,174 @@ optimize_path() {
         "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin"
     )
     
-    # Build new PATH by checking each directory exists
-    local new_path=""
-    local dir
+    local new_path="" dir
     
+    # Add desired paths that exist and aren't duplicates
     for dir in "${desired_paths[@]}"; do
-        if [[ -d "$dir" ]]; then
-            # Add to new_path if not already present
-            if [[ ":$new_path:" != *":$dir:"* ]]; then
-                new_path="${new_path:+$new_path:}$dir"
-            fi
-        fi
+        [[ -d "$dir" && ":$new_path:" != *":$dir:"* ]] && new_path="${new_path:+$new_path:}$dir"
     done
     
-    # Add any remaining directories from current PATH that we missed
-    local current_dir
-    IFS=':' read -A current_path_array <<< "$PATH"
-    for current_dir in "${current_path_array[@]}"; do
-        if [[ -d "$current_dir" && ":$new_path:" != *":$current_dir:"* ]]; then
-            new_path="${new_path:+$new_path:}$current_dir"
-        fi
+    # Add any remaining paths from current PATH that weren't in desired list
+    # This preserves any custom paths added by other tools
+    IFS=':' read -A current_paths <<< "$PATH"
+    for dir in "${current_paths[@]}"; do
+        [[ -d "$dir" && ":$new_path:" != *":$dir:"* ]] && new_path="${new_path:+$new_path:}$dir"
     done
     
     # Export the optimized PATH
     export PATH="$new_path"
-    
-    # Use Zsh's typeset -U to deduplicate (belt and suspenders approach)
-    typeset -gU path
 }
 
-# Function to display PATH analysis
-path_analysis() {
-    echo "🛤️  PATH Analysis:"
-    echo "   Total entries: $(echo $PATH | tr ':' '\n' | wc -l | xargs)"
+# ============================================================================
+# PATH CACHING (Optional optimization to skip recalculation)
+# ============================================================================
+
+# Cache file location for PATH optimization
+_PATH_CACHE_FILE="$HOME/.cache/zsh/path_cache"
+
+# Check if PATH has changed since last optimization
+# Uses simple file comparison instead of hashing for reliability
+_should_optimize_path() {
+    local cached_path
     
-    echo -e "\n   📊 Path breakdown:"
-    printf '%s\n' ${PATH//:/$'\n'} | nl | while read -r num dir; do
-        if [[ -d "$dir" ]]; then
-            printf "   %2d. ✅ %s\n" "$num" "$dir"
-        else
-            printf "   %2d. ❌ %s (missing)\n" "$num" "$dir"
-        fi
-    done
-    
-    # Check for duplicates
-    local duplicates=$(printf '%s\n' ${PATH//:/$'\n'} | sort | uniq -d | wc -l | xargs)
-    if [[ $duplicates -eq 0 ]]; then
-        echo -e "\n   ✅ No duplicates found"
-    else
-        echo -e "\n   ⚠️  $duplicates duplicates found:"
-        printf '%s\n' ${PATH//:/$'\n'} | sort | uniq -d | sed 's/^/      /'
+    # Check if cache exists and matches current PATH
+    if [[ -f "$_PATH_CACHE_FILE" ]]; then
+        cached_path=$(cat "$_PATH_CACHE_FILE" 2>/dev/null)
+        [[ "$PATH" == "$cached_path" ]] && return 1  # No need to optimize
     fi
+    
+    return 0  # Need to optimize
 }
 
-# Function to benchmark PATH lookup performance
-path_benchmark() {
-    echo "⚡ PATH Performance Benchmark:"
+# Update PATH cache after optimization
+# Stores the current PATH for comparison on next startup
+_update_path_cache() {
+    local cache_dir="${_PATH_CACHE_FILE%/*}"
+    mkdir -p "$cache_dir" 2>/dev/null
+    echo "$PATH" > "$_PATH_CACHE_FILE" 2>/dev/null
+}
+
+# ============================================================================
+# UTILITY FUNCTIONS
+# ============================================================================
+
+# Display comprehensive PATH analysis with statistics
+# Shows entry count, missing directories, and duplicates
+path_analysis() {
+    local total=0 missing=0 dupes=0 dir
+    local -a path_array
     
-    local test_commands=("python" "node" "git" "brew" "mise" "zsh")
-    local cmd
+    # Count entries and missing directories
+    IFS=':' read -A path_array <<< "$PATH"
+    total=${#path_array[@]}
     
-    for cmd in "${test_commands[@]}"; do
-        if command -v "$cmd" >/dev/null 2>&1; then
-            local timing=$(time (for i in {1..100}; do which "$cmd" >/dev/null 2>&1; done) 2>&1 | grep real | awk '{print $2}')
-            printf "   %s: %s (100 lookups)\n" "$cmd" "${timing:-N/A}"
-        else
-            printf "   %s: not found\n" "$cmd"
-        fi
+    for dir in "${path_array[@]}"; do
+        [[ ! -d "$dir" ]] && ((missing++))
+    done
+    
+    # Count duplicates
+    dupes=$(printf '%s\n' "${path_array[@]}" | sort | uniq -d | wc -l)
+    
+    echo "🛤️  PATH Analysis: $total entries, $missing missing, $dupes duplicates"
+    echo ""
+    
+    # Display each PATH entry with status
+    local num=1
+    for dir in "${path_array[@]}"; do
+        [[ -d "$dir" ]] && echo "   $num. ✅ $dir" || echo "   $num. ❌ $dir"
+        ((num++))
     done
 }
 
-# Auto-optimize PATH when this file is sourced
-# Only optimize if PATH has more than 15 entries or if FORCE_PATH_OPTIMIZATION is set
-if [[ ${#${PATH//:/ }} -gt 15 || -n "$FORCE_PATH_OPTIMIZATION" ]]; then
+# Show which version of a command is being used
+# Useful for debugging when multiple versions exist (e.g., mise vs Homebrew)
+path_which() {
+    [[ $# -eq 0 ]] && { echo "Usage: path_which <command>"; return 1 }
+    
+    local result=$(command -v "$1" 2>/dev/null)
+    [[ -n "$result" ]] && echo "✅ $1: $result" || { echo "❌ $1: not found"; return 1 }
+}
+
+# Verify all critical tools are accessible
+# Checks for node, npx, npm, and mise specifically
+path_verify() {
+    echo "🔧 Verifying critical tools:"
+    
+    local critical_tools=("node" "npx" "npm" "mise")
+    local all_found=true cmd
+    
+    for cmd in "${critical_tools[@]}"; do
+        if command -v "$cmd" > /dev/null 2>&1; then
+            echo "   ✅ $cmd"
+        else
+            echo "   ❌ $cmd missing"
+            all_found=false
+        fi
+    done
+    
+    # Return success only if all tools found
+    [[ "$all_found" == true ]] && return 0 || return 1
+}
+
+# Debug PATH issues and show current configuration
+# Displays entry count, tool availability, and priority order
+path_debug() {
+    local pos=1 target_pos=0 dir
+    local -a path_array
+    
+    echo "🔍 PATH Debug Information:"
+    echo "   Entries: $(echo "$PATH" | tr ':' '\n' | wc -l)"
+    echo "   ZDOTDIR: $ZDOTDIR"
+    echo "   Mise shims: $([[ -d "$HOME/.local/share/mise/shims" ]] && echo "✅ exists" || echo "❌ missing")"
+    echo "   Homebrew: $([[ -x /opt/homebrew/bin/brew ]] && echo "✅ available" || echo "❌ missing")"
+    echo "   Cache file: $([[ -f "$_PATH_CACHE_FILE" ]] && echo "✅ exists" || echo "❌ missing")"
+    
+    echo ""
+    echo "   Priority order (should be 1, 2, 3):"
+    
+    # Parse PATH and find positions of critical paths
+    IFS=':' read -A path_array <<< "$PATH"
+    
+    local critical_paths=(
+        "$HOME/.local/bin"
+        "$HOME/.local/share/mise/shims"
+        "/opt/homebrew/bin"
+    )
+    
+    for target in "${critical_paths[@]}"; do
+        target_pos=0
+        pos=1
+        for dir in "${path_array[@]}"; do
+            [[ "$dir" == "$target" ]] && { target_pos=$pos; break; }
+            ((pos++))
+        done
+        
+        local name="${target##*/}"
+        [[ $target_pos -eq 0 ]] && echo "   ⚠️  $name: not found" || echo "   ✅ $name: position $target_pos"
+    done
+}
+
+# ============================================================================
+# COMMAND ALIASES
+# ============================================================================
+
+# Convenient aliases for all PATH management functions
+alias path-opt="optimize_path"        # Manually re-optimize PATH
+alias path-info="path_analysis"       # Show PATH analysis
+alias path-which="path_which"         # Show which version of a command is used
+alias path-verify="path_verify"       # Verify critical tools are available
+alias path-debug="path_debug"         # Debug PATH issues
+
+# ============================================================================
+# INITIALIZATION
+# ============================================================================
+
+# Auto-optimize PATH on shell startup
+# This ensures mise shims and user tools always take priority
+if _should_optimize_path; then
     optimize_path
+    _update_path_cache
 fi
 
-# Make functions available globally in zsh
-# Note: In zsh, functions are automatically available in the current shell
-# For subshells, we can use 'typeset -f' or ensure they're defined in the right scope
-
-# Create aliases for convenience
-alias path-opt="optimize_path"
-alias path-info="path_analysis"  
-alias path-bench="path_benchmark"
-
-# Debug function
-path_debug() {
-    echo "🔍 PATH Debug Information:"
-    echo "   Current PATH entry count: $(echo $PATH | tr ':' '\n' | wc -l | xargs)"
-    echo "   ZDOTDIR: $ZDOTDIR"
-    echo "   mise shims directory: $HOME/.local/share/mise/shims"
-    echo "   mise shims exists: $([[ -d "$HOME/.local/share/mise/shims" ]] && echo "yes" || echo "no")"
-    echo "   Homebrew prefix: $(/opt/homebrew/bin/brew --prefix 2>/dev/null || echo "not found")"
-    
-    echo -e "\n   Priority paths check:"
-    local priority_paths=("$HOME/.local/bin" "$HOME/.local/share/mise/shims" "/opt/homebrew/bin")
-    local path_pos
-    for priority_path in "${priority_paths[@]}"; do
-        path_pos=$(printf '%s\n' ${PATH//:/$'\n'} | grep -n "^${priority_path}$" | cut -d: -f1)
-        printf "   %s: position %s\n" "$priority_path" "${path_pos:-not found}"
-    done
-}
-
-alias path-debug="path_debug"
+# Clean up temporary variables
+unset _PATH_CACHE_FILE

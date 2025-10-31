@@ -1,0 +1,15 @@
+echo "=== Homebrew Health Report ==="
+echo "Architecture: $(uname -m)"
+echo "Homebrew prefix: $(brew --prefix)"
+for dir in bin sbin Cellar
+do
+	if [[ -d "$(brew --prefix)/$dir" ]]
+	then
+		echo "✅ $(brew --prefix)/$dir"
+	else
+		echo "❌ Missing: $(brew --prefix)/$dir"
+	fi
+done
+echo -e "\n=== Broken Symlinks ==="
+find "$(brew --prefix)" -type l ! -exec test -e {} \; -print
+brew doctor --quiet

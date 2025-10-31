@@ -35,9 +35,6 @@ export SCRIPTS='/Users/mh/Developer/repos/id774/scripts'
 export SOPS_EDITOR=nano
 export SECRETS_FILE="${SECRETS_FILE:-$HOME/.local/share/secrets/.env}"
 
-# Legacy secrets.zsh (will be removed after migration)
-[ -f ${XDG_DATA_HOME}/secrets/secrets.zsh ] && source ${XDG_DATA_HOME}/secrets/secrets.zsh
-
 # =============================================================================
 # GREP
 # =============================================================================
