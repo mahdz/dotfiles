@@ -1,0 +1,52 @@
+#!/bin/zsh
+# zfunction: clean_zombies - Find and clean defunct processes by signaling or restarting parent apps
+
+echo "🔍 Checking for parents with defunct processes..."
+
+DEFUNCT_PARENTS=$(ps -eo ppid,state,comm | awk '$2 == "Z" {count[$1]++} END {for (ppid in count) print ppid, count[ppid]}' | sort -k2 -nr)
+
+if [[ -z "$DEFUNCT_PARENTS" ]]; then
+    echo "✅ No defunct processes found. All clear!"
+    return 0
+fi
+
+echo "$DEFUNCT_PARENTS" | while read -r PARENT_PID COUNT; do
+    PARENT_NAME=$(ps -o comm= -p "$PARENT_PID" 2>/dev/null | xargs)
+    if [[ -z "$PARENT_NAME" ]]; then
+        echo "❌ PID $PARENT_PID: Parent exited, but zombies remain (reboot to clean)"
+        continue
+    fi
+
+    echo "🧟 Found $COUNT defunct children under PID $PARENT_PID ($PARENT_NAME)"
+
+    echo "  📡 Sending SIGHUP to PID $PARENT_PID..."
+    kill -HUP "$PARENT_PID" 2>/dev/null
+
+    sleep 1
+
+    STILL_ZOMBIE=$(ps -o ppid= -eo state,ppid | grep "^Z.* $PARENT_PID$" | wc -l | tr -d \" \" )
+    if [[ "$STILL_ZOMBIE" -eq 0 ]]; then
+        echo "  ✅ Defunct processes cleaned after SIGHUP"
+        continue
+    else
+        echo "  ⚠️  Zombies remain after SIGHUP — restarting parent app"
+    fi
+
+    APP_PATH=$(lsappinfo info -only bundlePath "$(lsappinfo info -only pid $(pgrep -x "$PARENT_NAME") 2>/dev/null | cut -d= -f2 | tr -d \" \" )" 2>/dev/null)
+
+    if [[ -n "$APP_PATH" ]]; then
+        echo "  🔄 Restarting $PARENT_NAME..."
+        kill "$PARENT_PID" 2>/dev/null
+        open "$APP_PATH"
+        sleep 2
+        if pgrep "$PARENT_NAME" > /dev/null; then
+            echo "  ✅ $PARENT_NAME restarted successfully"
+        else
+            echo "  ❌ Failed to restart $PARENT_NAME"
+        fi
+    else
+        echo "  🛑 $PARENT_NAME is not a GUI app — can't auto-restart (consider reboot or manual restart)"
+    fi
+done
+
+echo "✅ Done."

@@ -23,8 +23,8 @@ readonly ZSH_CONFIG_FILES=(
     '.zshenv'
     '.zsh_aliases'
     '.zaliases'
-    'zshrc.d/myaliases.zsh'
-    'zshrc.d/myfunctions.zsh'
+    'zshrc.d/aliases.zsh'
+    "$ZSH_CUSTOM"/aliases.zsh
 )
 
 readonly BASH_CONFIG_FILES=(

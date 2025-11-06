@@ -1,12 +1,12 @@
 # =============================================================================
-# myaliases.zsh
+# aliases.zsh
 # =============================================================================
 # Defines Zsh and Bash aliases, suffix aliases, and related helper functions
 # for improved command-line productivity and consistency.
 #
 # Usage:
 #   Source from your .zshrc or load automatically via ZDOTDIR:
-#     source "${ZDOTDIR:-$HOME/.config/zsh}/zshrc.d/myaliases.zsh"
+#     source "${ZDOTDIR:-$HOME/.config/zsh}/zshrc.d/aliases.zsh"
 #
 # This file is intended for Apple Silicon/macOS environments using XDG-compliant
 # dotfiles and developer tooling.
@@ -25,27 +25,6 @@ type command_exists &> /dev/null 2>&1 || source "${XDG_CONFIG_HOME}/shell/shellr
 # eza already defines 'll' - so skip if that's present
 command_exists tree && alias tree="${aliases[tree]:-tree} -Ch"
 command_exists bat && alias cat='bat'
-
-alias zdot='cd "${ZDOTDIR:-$HOME/.config/zsh}"'
-
-# ============================
-# Pipe and Redirection Aliases
-# ============================
-# zsh suffix aliases
-#alias -g G='| grep'
-#alias -g H='| head'
-#alias -g L='| less'  
-#alias -g M='| more'
-#alias -g S='| sort'
-#alias -g T='| tail'
-#alias -g Z='| fzf'
-(( $+commands[bat] )) && alias -g -- -h='-h 2>&1 | bat --language=help --style=plain'
-(( $+commands[bat] )) && alias -g -- --help='--help 2>&1 | bat --language=help --style=plain'
-
-alias CA='2>&1 | cat -A'
-alias LL='2>&1 | less'
-alias NE='2> /dev/null'
-alias NUL='> /dev/null 2>&1'
 
 # ============================
 # Alias Management
@@ -73,8 +52,7 @@ alias quit='exit'
 alias zz='exit'
 
 # edit quicker with functions
-ea() { ${EDITOR:-micro} "${ZSH_CUSTOM:-$ZDOTDIR/custom}/myaliases.zsh" & disown; }
-ez() { ${EDITOR:-micro} "${ZDOTDIR:-$HOME/.config/zsh}/.zshrc" >/dev/null & disown; }
+ea() { ${EDITOR:-micro} "${ZSH_CUSTOM:-$ZDOTDIR/custom}/aliases.zsh" & disown; }
 ep() { ${EDITOR:-micro} "${ZDOTDIR:-$HOME/.config/zsh}/.zsh_plugins.txt" >/dev/null & disown; }
 es() { ${EDITOR:-micro} "${ZDOTDIR:-$HOME/.config/zsh}/.zstyles" >/dev/null & disown; }
 
@@ -108,23 +86,6 @@ print-functions() { # exclude oh-my-zsh, Warp, zle, and other misc functions
 # color
 alias colormap='for i in {0..255}; do print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+"\n"}; done'
 
-# =============================================================================
-# Dotfiles
-# =============================================================================
-
-: ${DOTFILES:=$HOME/.dotfiles}
-
-# Make sure this alias has priority over binaries in /opt/homebrew/bin
-alias -g dot='dots'
-
-# Dotfiles shortcuts for Warp AI suggestions
-alias ds='dots status'
-alias da='dots add'
-alias dan='dots add -n'  # dry-run first!
-alias dc='dots commit'
-alias dp='dots push'
-alias dl='dots pull'
-alias dd='dots diff'
 
 # =============================================================================
 # Git run_all

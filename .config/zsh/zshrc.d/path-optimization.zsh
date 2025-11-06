@@ -22,12 +22,6 @@ optimize_path() {
         "/opt/homebrew/bin"
         "/opt/homebrew/sbin"
         
-        # Specialized homebrew tools
-        "/opt/homebrew/opt/openssl@3/bin"
-        "/opt/homebrew/opt/gnu-tar/libexec/gnubin"
-        "/opt/homebrew/opt/gnu-tar/bin"
-        "/opt/homebrew/opt/sqlite/bin"
-        "/opt/homebrew/opt/curl/bin"
         
         # Language-specific tool directories
         "$HOME/.local/share/npm/bin"

@@ -3,6 +3,46 @@ description: AI rules derived by SpecStory from the project AI interaction histo
 globs: *
 ---
 
+# GitHub Copilot Instructions
+
+Last updated: 2025-10-18
+
+## Purpose
+
+Guide Copilot and AI agents to make safe, XDG-compliant, and minimal edits to this personal dotfiles repo. All rules are derived from real project usage and `AGENTS.md`.
+
+Priority guidelines
+- Respect the bare-repo dotfiles workflow: use the `dots` wrapper (git --git-dir="$HOME/.dotfiles" --work-tree="$HOME`) when suggesting Git commands or automation. See `AGENTS.md` for exact examples.
+- Preserve established structure: configuration files live under `$XDG_CONFIG_HOME` (`.config/`), user scripts under `.local/bin/` and short helpers in `bin/`. Avoid editing transient files in `.local/bin/`, `.cache/`, or other ephemeral locations.
+- Minimal, surgical changes only: prefer small PRs that touch the fewest files needed. Don’t refactor large groups of dotfiles in a single change.
+- Never commit secrets or private keys. If changes require secrets, add instructions describing which environment variables or secure retrieval tool to use (do not include keys inline).
+
+Patterns and conventions to follow (examples)
+- Bare-repo Git: use the `dots` flow: `dots status`, `dots add -n <path>` (dry-run), `dots add <path>`, `dots commit -m "msg"`, `dots push`.
+- `.gitignore` uses a deny-all strategy with selective un-ignores. When adding tracked files, update `.gitignore` and always run the `dots add -n` dry-run first.
+- Zsh-first scripts: shell files target Zsh (`emulate -L zsh`) and use `setopt` options. Avoid bash-only features unless you detect a file that explicitly uses bash.
+- Aliases and expansion: aliases are written to avoid expansion-time interpolation. Follow the alias patterns already present in `AGENTS.md` and `.config/zsh/` (do not change alias semantics globally).
+- Tool management: prefer `mise` and `uv` for developer tools (see `AGENTS.md`). Suggest `mise reshim` if generated edits add new tools.
+
+Developer workflows and checks
+- Manual validation: after changes, the maintainer expects to run `dots add -n` then `dots add` and `dots commit`. Provide a short verification snippet for any change that affects shell startup files (example: `dots checkout -- <file>` to revert).
+- New machine setup steps appear in `AGENTS.md`: cloning the bare repo and running `dots checkout` and `dots config --local status.showUntrackedFiles no`. Avoid suggesting alternate bootstrap flows.
+- CI/automation: this repo is documentation/config-heavy — avoid adding heavyweight CI unless clearly documented in `.github/workflows/`.
+
+What to avoid
+- Do not modify files in `.local/bin/` that are UV-managed symlinks. These are ephemeral and should not be tracked.
+- Don’t introduce project-level package managers or global language version changes (e.g., Homebrew-install Python) unless there is explicit evidence in the repo that this is intended.
+- Avoid sweeping automatic changes to many dotfiles or personal settings; prefer a focused PR and a short manual validation checklist.
+
+Where to look for examples and further rules
+- `AGENTS.md` — canonical workflow, `dots` function, `mise`/`uv` guidance, and the deny-all `.gitignore` strategy.
+- `Vault/02-projects/dotfiles/memory-bank/` — contextual notes and setup guides used by the maintainer.
+- `.github/prompts/` — generator/blueprint prompts that describe how to produce repository-level instructions.
+
+If unsure, be conservative: produce a short PR with a single-file or single-purpose change, include exact commands to validate locally (using `dots`), and a short explanation of why the change is safe.
+
+Last updated: 2025-10-18
+
 ## PROJECT OVERVIEW
 
 - This repository configures macOS developer environments, targeting Apple Silicon and modern macOS versions.
@@ -78,7 +118,7 @@ globs: *
 │   └── zsh/                  # Zsh config (ZDOTDIR)
 │   └── git/                  # Git config files
 │   └── homebrew/             # Homebrew config files
-│   └── mise/                 # Mise config files
+│   └── mise/                  # Mise config files
 │   └── vscode/              # VS Code config files
 ├── .local/
 │   ├── share/                # User data (XDG_DATA_HOME)
@@ -98,6 +138,7 @@ globs: *
 - GitHub for version control
 - Cline Memory Bank for persistent memory
 - Mise
+- UV
 
 ## PROJECT-SPECIFIC STANDARDS
 
@@ -170,327 +211,91 @@ globs: *
   - For dynamic secrets, use a tool like `pw` (password/secret retrieval tool) to fetch secrets from your keychain or other secure storage.
 - When using environment variables, ensure they are properly set in your shell environment or VS Code's terminal settings.
 - When modifying configurations, ensure that the changes maintain the functionality while improving security and integration with your existing secret management structure.
+- When defining JSON configurations for interacting with backend services, ensure the structure includes `inputs` (specifying input parameters) and `servers` (listing backend services with their configurations).
+  - The `inputs` array should define input parameters, including their `id`, `type` (e.g., `promptString`), `description`, and whether they are treated as passwords.
+  - The `servers` object should list backend services, each with its own configuration, including the command to launch the service, arguments, environment variables, and type of communication (e.g., `stdio`, `http`).
 
 ## WORKFLOW & RELEASE RULES
 
 - For dotfiles maintenance utilities closely tied to the Git dotfiles workflow, refactor scripts into Zsh functions within `~/.config/zsh/functions` instead of storing them as standalone executables in `~/.local/bin`.
 - Ensure `.zshrc` is configured to autoload functions from `$ZDOTDIR/functions`.
 - When facing extension activation errors in VS Code, first try reinstalling the extension. If the issue persists, examine the extension's `package.json` file for any misconfigurations, particularly in the `main` field, and correct them accordingly.
+- To generate or update `.github/copilot-instructions.md` for guiding AI coding agents:
+  - Focus on discovering essential knowledge for AI agents to be productive, including:
+    - The "big picture" architecture that requires reading multiple files to understand - major components, service boundaries, data flows, and the "why" behind structural decisions
+    - Critical developer workflows (builds, tests, debugging) especially commands that aren't obvious from file inspection alone
+    - Project-specific conventions and patterns that differ from common practices
+    - Integration points, external dependencies, and cross-component communication patterns
+  - Source existing AI conventions from `**/{.github/copilot-instructions.md,AGENT.md,AGENTS.md,CLAUDE.md,.cursorrules,.windsurfrules,.clinerules,.cursor/rules/**,.windsurf/rules/**,.clinerules/**,README.md}` (do one glob search).
+  - If `.github/copilot-instructions.md` exists, merge intelligently - preserve valuable content while updating outdated sections
+  - Write concise, actionable instructions (~20-50 lines) using markdown structure
+  - Include specific examples from the codebase when describing patterns
+  - Avoid generic advice ("write tests", "handle errors") - focus on THIS project's specific approaches
+  - Document only discoverable patterns, not aspirational practices
+  - Reference key files/directories that exemplify important patterns
+  - Update `.github/copilot-instructions.md` and ask for feedback on any unclear or incomplete sections to iterate.
 
 ## REFERENCE EXAMPLES
 
 ## PROJECT DOCUMENTATION & CONTEXT SYSTEM
 - Use the memory bank for persistent context and documentation.
 - The memory bank is located at `../Developer/dotfiles/memory-bank`.
-- The memory bank contains:
-  - `projectbrief.md`: Overview and purpose of the project.
-  - `productContext.md`: Context about the product and its goals.
-  - `activeContext.md`: Current work focus, recent changes, and next steps.
-  - `systemPatterns.md`: System architecture and key technical decisions.
-  - `techContext.md`: Technologies used, development setup, and technical constraints.
-  - `../Developer/dotfiles/memory-bank.md`: Guidelines for using the memory bank effectively.
-- To persist important context from VS Code chats, copy summaries, solutions, or code from the chat into your Memory Bank (`~/Developer/dotfiles/memory-bank`). This makes it accessible from any folder.
-- VS Code chat history is workspace-specific and does not sync across folders.
 
-## DEBUGGING
+## AI AGENT GUIDANCE
 
-- To check if a file is tracked and identify ignore patterns, use the following `dotfiles` commands:
-  ```bash
-  # Check git status for this file
-  dotfiles status -- <path_to_file>
+- The `.github/copilot-instructions.md` file provides specific guidance for AI coding agents working on this project. It is essential to consult this file before making any changes to the codebase.
 
-  # List ignore patterns affecting this path
-  dotfiles check-ignore -v <path_to_file>
+---
+description: Concise Copilot rules for the dotfiles repo (derived from AGENTS.md)
+globs: *
+---
 
-  # See if the file is tracked
-  dotfiles ls-files --error-unmatch <path_to_file>
-  ```
-  - The `dotfiles` command is an alias for: `git --git-dir=$HOME/.dotfiles --work-tree=$HOME`
-- When encountering issues with Mise and Python plugin installations (e.g., missing `origin` remote), follow these steps:
-  1. **Remove the broken pyenv directory:**
-     ```bash
-     rm -rf ~/.cache/mise/python/pyenv
-     ```
-  2. **Retry your uninstall or install command:**
-     ```bash
-     mise uninstall python -v
-     # or, if you want to reinstall:
-     mise install python
-     ```
-  3. **Update Mise itself or check for plugin updates:**
-     ```bash
-     mise self-update
-     mise plugins update
-     ```
-- To fix file permission errors in VS Code (e.g., `EACCES: permission denied, unlink`), use the following commands in the terminal:
-  ```bash
-  sudo chown -R $USER:staff /Applications/code-portable-data
-  sudo chmod -R 755 /Applications/code-portable-data
-  ```
-  For specific directories, use:
-  ```bash
-  sudo chmod 755 "/Applications/code-portable-data/user-data/CachedExtensionVSIXs/.trash"
-  sudo chmod 755 "/Applications/code-portable-data/user-data/logs"
-  ```
-- When VS Code’s settings sync is failing with `LocalInvalidContent (UserDataSyncError)` because there are syntax errors in your `settings.json` file. The error message means the file is not valid JSON. To fix it:
-  - Always check for missing or extra commas between properties in JSON.
-  - VS Code’s settings.json must be valid JSON (not JSONC, so comments are not allowed in the actual file).
-  - You can use the "Format Document" command in VS Code to help spot syntax errors.
-  - Check for trailing commas at the end of the last property in an object (not allowed in JSON).
-  - Remove comments (remove them).
-  - Check for any other missing or extra brackets/braces.
-- When encountering issues with the Prettier extension, and error messages like "Cannot find module 'prettier'", make sure Prettier is installed in your project or set the `prettier.prettierPath` setting to the correct location.
-- When VS Code reports extension update errors like `Cannot activate because ./dist/extension not found`:
-  1. Check the extension's documentation for build instructions (often `npm install` and `npm run build`).
-  2. Make sure you have run the build command in the extension's root directory.
-  3. Verify that the `./dist/extension` file (or folder) exists after building.
-  4. Ensure that the `main` field in the extension's `package.json` correctly points to the main Javascript file of the extension (e.g., `"main": "./dist/extension.js"`).
-- When Source Control isn't opening the dotfiles repo in VS Code, ensure that `git.ignoredRepositories` in `dotfiles.code-workspace` does not include the path to your dotfiles repository (e.g., `"/Users/mh/.dotfiles"`).
+# GitHub Copilot Instructions
 
-## FINAL DOs AND DON'Ts
-- **DO**: Use the provided memory bank for context and documentation.
-- **DO**: Write clear, maintainable code with proper error handling.
-- **DO**: Use descriptive comments and function headers.
-- **DON'T**: Modify or read sensitive files like `.env` or `secrets.*`.
-- **DON'T**: Introduce unnecessary complexity; keep scripts modular and focused.
-- **DON'T**: Introduce security vulnerabilities; follow best practices for handling sensitive data.
+Last updated: 2025-10-18
 
-## VS CODE CONFIGURATION
+## Purpose
 
-- Use a simplified VS Code workspace structure with a single root folder pointing to `$HOME`.
-- Configure `files.watcherExclude`, `files.exclude`, and `search.exclude` in `.code-workspace` to exclude large system directories (e.g., `Library`, `Downloads`, `Pictures`, `Movies`, `Music`) for better performance.
-- When encountering "Unknown Configuration Setting" or warnings related to experimental/preview settings in VS Code's `settings.json`, follow these steps:
-    1. **Identify Problematic Settings**: Review the `settings.json` file and identify the settings flagged as "Unknown Configuration Setting" or related to experimental/preview features.
-    2. **Check VS Code Documentation**: Consult the official VS Code documentation or release notes to determine if these settings have been deprecated, renamed, or moved.
-    3. **Update or Remove Settings**:
-        *   If a setting has been renamed, update the `settings.json` file with the new name.
-        *   If a setting is deprecated and no longer needed, remove it from the `settings.json` file.
-        *   For experimental/preview settings, consider the stability implications. If you rely on the functionality, keep the setting but be aware it might change. If you don't need it, remove it.
-    4. **Review and Test**: After making changes, review the `settings.json` file to ensure the changes are correct. Restart VS Code to apply the changes and test if any functionality is affected.
-- When editing `settings.json` in VS Code:
-  - Ensure it is valid JSON and not JSONC (i.e., comments are not allowed).
-  - Always check for missing or extra commas between properties. Trailing commas at the end of the last property in an object are not allowed.
-- The recommended way to work with a bare repo for dotfiles is to **open your `$HOME` directory in VS Code using a workspace file** that is configured for your dotfiles setup. This allows you to:
-  - Exclude noisy system folders from the sidebar.
-  - Set editor and extension preferences specific to dotfiles.
-  - Ensure VS Code and its Git integration use the correct `GIT_DIR` and `GIT_WORK_TREE` for the bare repo.
-- Using a workspace file gives you more control and a cleaner, more focused experience for dotfiles management, with benefits such as custom folder exclusions, per-project settings, and extension recommendations, that are not available when opening `$HOME` directly.
-- Example `dotfiles.code-workspace` configuration:
-````jsonc
-{
-  "folders": [
-    {
-      "name": "HOME",
-      "path": "../.."
-    }
-  ],
-  "settings": {
-    "files.watcherExclude": {
-      "**/.git/objects/**": true,
-      "**/.git/subtree-cache/**": true,
-      "**/node_modules/**": true,
-      "**/Library/**": true,
-      "**/Downloads/**": true,
-      "**/Pictures/**": true,
-      "**/Movies/**": true,
-      "**/Music/**": true
-    },
-    "files.exclude": {
-      "Library": true,
-      "Downloads": true,
-      "Pictures": true,
-      "Movies": true,
-      "Music": true,
-      "**/.dotfiles": true,
-      "**/.DS_Store": true,
-      "**/node_modules": true,
-      "**/.git": true
-    },
-    "search.exclude": {
-      "Library": true,
-      "Downloads": true,
-      "Pictures": true,
-      "Movies": true,
-      "Music": true
-    },
-    "git.ignoredRepositories": [
-      "/Users/mh/.dotfiles"
-    ]
-  },
-  "extensions": {
-    "recommendations": [
-      "eamodio.gitlens",
-      "editorconfig.editorconfig",
-      "dbaeumer.vscode-eslint",
-      "esbenp.prettier-vscode"
-    ]
-  }
-}
-````
+Guide Copilot and AI agents to make safe, XDG-compliant, and minimal edits to this personal dotfiles repo. All rules are derived from real project usage and `AGENTS.md`.
 
-- When encountering issues related to invalid values or syntax errors in VS Code's `settings.json`, especially with formatters or exclude settings:
-    1. **Validate Formatter Settings**: Ensure that the `editor.defaultFormatter` setting, if present at the root level, has a valid value. If the formatter is only intended for a specific language, define it within the language-specific configuration block (e.g., `[markdown]`).
-    2. **Correct JSON Syntax**: Review the `settings.json` file for any syntax errors, such as missing or extra commas, invalid property keys (ensure they are double-quoted), or trailing commas at the end of the file.
-    3. **Review Exclude Settings**: Check the `search.exclude` and `files.exclude` settings for any invalid entries or syntax errors. Ensure that each key-value pair is correctly formatted and that there are no stray characters.
-- The **"Prettier: Prettier Path"** setting in VS Code is a user or workspace setting that tells the Prettier extension where to find the `prettier` module. If you use Mise to manage Prettier globally, you usually don’t need to set this path unless you want to force VS Code to use a project-local version. If you see errors about "Cannot find module 'prettier'", make sure Prettier is installed in your project or set this path to the correct location.
-  - To set it:
-    - **User-wide:** `~/.config/Code/User/settings.json` (or via the VS Code UI: Preferences → Settings)
-    - **Workspace:** `settings.json` in your project folder
-  - Example:
-    ```json
-    {
-      "prettier.prettierPath": "./node_modules/prettier"
-    }
-    ```
-  - If you use Mise to manage Prettier globally, you usually don’t need to enable the `prettier.resolveGlobalModules` setting in VS Code. In fact, enabling it can sometimes cause confusion or conflicts, because Mise installs global npm packages in its own isolated environment, not in the system or Homebrew global npm space.
-- Setting `GIT_DIR` and `GIT_WORK_TREE` in `terminal.integrated.env.osx` affects all terminals in VS Code, which would break Git functionality for any other repositories. Instead, create a specific script or alias (like the existing `dots` function) for managing dotfiles.
+## Core Principles
+- **Bare-repo workflow:** Use the `dots` wrapper (`git --git-dir=$HOME/.dotfiles --work-tree=$HOME`) for all Git operations. See `AGENTS.md` for canonical usage.
+- **Minimal, surgical changes:** Prefer small PRs and avoid sweeping refactors. Never touch more files than needed.
+- **Never commit secrets or private keys.** If a secret is needed, instruct the user to use env vars or a secret manager.
+- **Respect the deny-all `.gitignore` strategy:** When adding tracked files, update `.gitignore` and always run `dots add -n` first.
+- **Do not modify UV-managed symlinks in `~/.local/bin/`.** These are ephemeral and not tracked.
+- **Preserve structure:** Configs live in `$XDG_CONFIG_HOME` (`.config/`), user scripts in `.local/bin/`, helpers in `bin/`.
+- **Shell scripts:** Target Zsh (`emulate -L zsh`), use `setopt`, and follow patterns in `AGENTS.md` and `.config/zsh/`.
+- **Aliases:** Follow alias patterns in `AGENTS.md` and `.config/zsh/`. Do not change global alias semantics.
+- **Tool management:** Prefer `mise` and `uv` for developer tools. Suggest `mise reshim` if new tools are added.
 
-## SHELL SCRIPTING BEST PRACTICES
+## Developer Workflows
+- **Git:** Use `dots status`, `dots add -n <path>`, `dots add <path>`, `dots commit -m "msg"`, `dots push`.
+- **Validation:** After changes, run `dots add -n` (dry run), then `dots add`, then `dots commit`. For shell startup files, provide a revert snippet (e.g., `dots checkout -- <file>`).
+- **New machine setup:** See `AGENTS.md` for cloning and setup steps. Do not suggest alternate bootstrap flows.
+- **CI/automation:** Avoid adding CI unless clearly documented in `.github/workflows/`.
 
-- To prevent alias interference in shell scripts:
-  - Use the `command` builtin to bypass aliases:
-    ```zsh
-    # Instead of: grep pattern file
-    command grep pattern file
-    ```
-  - In `.zshrc`, set up safe aliases that won't interfere with scripts:
-    ```zsh
-    # Safe aliases that preserve original command behavior
-    alias grep='nocorrect command grep'
-    alias ls='command ls'
-    alias git='command git'
-    ```
-- When writing shell scripts or functions:
-  - Use `emulate -L zsh` to ensure consistent behavior.
-  - Use `setopt LOCAL_OPTIONS` to limit option changes to the current scope.
-  - Use `setopt PIPE_FAIL` to exit on pipe failures.
-  - Use `setopt ERR_EXIT` to exit on errors.
-- VS Code chat history is workspace-specific and does not sync across folders. To persist important context, copy summaries, solutions, or code from the chat into your Memory Bank (`~/Developer/dotfiles/memory-bank`). This makes it accessible from any folder.
+## Project-Specific Patterns
+- **Memory Bank:** Persistent context and documentation live in `~/Developer/dotfiles/memory-bank/`.
+- **.gitignore:** Uses a deny-all strategy with explicit un-ignores. When un-ignoring nested directories, ensure all levels are explicitly un-ignored.
+- **Aliases:** Use expansion-safe patterns (see `AGENTS.md`).
+- **Python:** Install via Mise, not Homebrew. Let Mise manage versions and UV manage virtualenvs.
+- **VS Code:** Open `$HOME` via a workspace file for dotfiles. Pass `GIT_WORK_TREE` and `GIT_DIR` inline when launching VS Code for correct Git integration.
 
-## MCP CONTEXT RULES
+## Where to Look for Patterns
+- `AGENTS.md` — canonical workflow, `dots` function, `.gitignore` strategy, and shell script patterns.
+- `Vault/02-projects/dotfiles/memory-bank/` — setup and operational notes.
+- `.github/prompts/` — generator blueprints and exemplars.
 
-- MCP context rules (e.g., `10-mcp-context.json`) can be structured to categorize available tools and define their priority. Example:
-````json
-{
-  "mcpRules": {
-    "webInteraction": {
-      "servers": [
-        "fetch",
-        "webresearch",
-        "context7"
-      ],
-      "triggers": [
-        "web",
-        "scrape",
-        "browse",
-        "website",
-        "search",
-        "documentation"
-      ],
-      "description": "Tools for web browsing, searching, and documentation retrieval"
-    },
-    "knowledgeManagement": {
-      "servers": [
-        "basic-memory",
-        "mcp-obsidian",
-        "memory",
-        "markdownify"
-      ],
-      "triggers": [
-        "context",
-        "memory",
-        "knowledge graph",
-        "notes",
-        "markdown",
-        "convert"
-      ],
-      "description": "Tools for managing knowledge, notes, and content conversion"
-    },
-    "fileSystemOperations": {
-      "servers": [
-        "filesystem",
-        "apple-script"
-      ],
-      "triggers": [
-        "file",
-        "filesystem",
-        "applescript",
-        "directory"
-      ],
-      "description": "Tools for interacting with files, directories, and system automation"
-    },
-    "sourceControl": {
-      "servers": [
-        "git",
-        "github"
-      ],
-      "triggers": [
-        "git",
-        "github",
-        "repository",
-        "code search"
-      ],
-      "description": "Tools for Git and GitHub operations"
-    },
-    "aiAssistance": {
-      "servers": [
-        "sequential-thinking",
-        "ollama-mcp"
-      ],
-      "triggers": [
-        "reasoning",
-        "llm",
-        "model",
-        "think"
-      ],
-      "description": "Tools for AI-powered reasoning and local model execution"
-    }
-  },
-  "defaultBehavior": {
-    "priorityOrder": [
-      "knowledgeManagement",
-      "fileSystemOperations",
-      "webInteraction",
-      "sourceControl",
-      "aiAssistance"
-    ],
-    "fallbackBehavior": "Ask user which tool would be most appropriate"
-  }
-}
-````
-- Include relevant servers and an expanded set of trigger words for each category to improve tool activation.
-- When configuring tools, prefer using environment variables for API keys and secrets instead of hardcoding them directly in configuration files.
-  - Store secrets in encrypted environment variables (e.g., using SOPS and age) and reference them in your configurations.
-  - For dynamic secrets, use a tool like `pw` (password/secret retrieval tool) to fetch secrets from your keychain or other secure storage.
+## Quick PR Checklist
+1. `dots add -n` (dry run) — verify
+2. Update `.gitignore` if adding tracked files
+3. Include a one-line validation step in PR description (how to verify on a machine)
+4. Avoid touching `~/.local/bin/` symlinks or secrets
 
-## SHELL DEBUGGING
-
-- To enable shell script debugging:
-    ```bash
-    # Debugging Configuration (Add near the top of the script)
-    DEBUG=${DEBUG:-0}  # Default to off, can be enabled by setting DEBUG=1
-    # Debug logging function
-    debug() {
-      [[ $DEBUG -eq 1 ]] && echo "[DEBUG] $*" >&2
-    }
-    ```
-- To enable colorized debug output:
-    ````bash
-    # Debug configuration with color support
-    DEBUG=${DEBUG:-0}  # Default to off, enable with DEBUG=1
-
-    # ANSI color function for purple debug messages
-    light_purple() {
-        printf "\033[1;35m%s\033[0m" "$1"
-    }
-
-    # Enhanced debug function with color and stderr output
-    debug() {
-        if [[ $DEBUG -eq 1 ]]; then
-            printf "%s %s\n" "$(light_purple '**DEBUG**')" "$*" >&2
-        fi
-    }
-    ````
+---
+*This guidance intentionally follows the format and examples in `AGENTS.md`. If any section is unclear or incomplete, please provide feedback for further refinement.*
+...existing code...
 - To add a `NO_COLOR` environment variable check:
     ````bash
     # Debug configuration with smart color support
@@ -573,40 +378,4 @@ globs: *
 
 ## SHELL USAGE
 
-- To create a virtual environment with uv:
-  ```zsh
-  uv venv
-  uv pip install pyyaml
-  ```
-- You can run `uv venv` in any directory where you want to create a virtual environment.
-- **Best practice:** For project-specific dependencies, create a dedicated project folder, `cd` into it, and run `uv venv`.
-
-- If a file is currently tracked in your Git repository and you want to stop tracking it while keeping the local file, you should:
-  1. First remove it from Git's tracking (but keep the local file):
-     ```bash
-     git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" rm --cached <path_to_file>
-     ```
-  2. Then ensure it's properly ignored by adding it to your `.gitignore`:
-     ```
-     <path_to_file>
-     ```
-  3. Commit the changes:
-     ```bash
-     git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" commit -m "Stop tracking <path_to_file>"
-     ```
-
-- In Zsh, the function body must be terminated with a newline or semicolon before the closing brace. Example:
-    ````zsh
-    # ...existing code...
-    is-not-warpterm() { [[ $TERM_PROGRAM != "WarpTerminal" ]]; }
-    # ...existing code...
-    ````
-
-- To securely manage API keys and secrets, use environment variables and integrate with tools like SOPS and `pw`.
-  - Store static secrets in encrypted environment variables (e.g., using SOPS and age) within files like `~/.local/share/secrets/env-static.json`.
-  - For dynamic secrets, use a tool like `pw` (password/secret retrieval tool) to fetch secrets from your keychain or other secure storage.
-  - Reference these environment variables in your configurations. For example, instead of hardcoding an API key, use `${SMITHERY_API_KEY}`.
-
-## VS CODE SPECIFIC DEBUGGING
-
-- When Source Control isn't opening the dotfiles repo in VS Code, ensure that `git.ignoredRepositories` in `dotfiles.code-workspace` does not include the path to your dotfiles repository (e.g., `"/Users/mh/.dotfiles"`).
+- To create a virtual environment

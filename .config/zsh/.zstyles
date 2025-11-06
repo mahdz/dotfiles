@@ -41,10 +41,10 @@ zstyle ':zephyr:plugin:editor:glob-alias' noexpand "${noexpand[@]}"
 zstyle ':zephyr:plugin:editor' key-bindings 'vi'
 
 # Auto convert .... to ../..
-zstyle ':zephyr:plugin:editor' dot-expansion 'yes'
+zstyle ':zephyr:plugin:editor' dot-expansion 'no'
 
 # Use ^z to return background processes to foreground.
-# zstyle ':zephyr:plugin:editor' symmetric-ctrl-z 'yes'
+zstyle ':zephyr:plugin:editor' symmetric-ctrl-z 'yes'
 
 # Set the default (magic) command when hitting enter on an empty prompt.
 zstyle ':zephyr:plugin:editor' magic-enter 'yes'
@@ -66,12 +66,12 @@ zstyle ':zephyr:plugin:completion' compstyle 'zephyr'
 zstyle ':zsh_custom:plugin:dotfiles' bare 'yes'
 
 # History
-zstyle ':zephyr:plugin:history:alias' skip 'yes'
+# zstyle ':zephyr:plugin:history:alias' skip 'yes'
 zstyle ':hist:*' expand-aliases yes
 zstyle ':hist:*' auto-format yes
 
 # Homebrew
-zstyle ':zephyr:plugin:homebrew' 'use-cache' yes
+zstyle ':zephyr:plugin:homebrew' 'use-cache' no
 
 _kegonly=(curl ruby sqlite)
 zstyle ':zephyr:plugin:homebrew' 'keg-only-brews' "${_kegonly[@]}"
@@ -80,32 +80,30 @@ unset _kegonly noexpand
 #
 # OMZ
 #
-zstyle ':omz:update' mode disabled
+# zstyle ':omz:update' mode disabled
 
 # aliases
 # Enable all aliases in lib and plugins broadly
-zstyle ':omz:lib:*' aliases yes
-zstyle ':omz:plugins:*' aliases yes
+# zstyle ':omz:lib:*' aliases yes
+# zstyle ':omz:plugins:*' aliases yes
 
 # Disable directories aliases from lib
-zstyle ':omz:lib:directories' aliases no
+# zstyle ':omz:lib:directories' aliases no
 
 # Disable git plugin aliases
-zstyle ':omz:plugins:git' aliases no
+# zstyle ':omz:plugins:git' aliases no
 
 # GNU
-zstyle ':omz:lib:theme-and-appearance' gnu-ls no
+# zstyle ':omz:lib:theme-and-appearance' gnu-ls no
 # Prevent use-omz from trying to load themes since we use starship directly
-zstyle ':omz:lib:theme-and-appearance' 'skip' 'yes'
+# zstyle ':omz:lib:theme-and-appearance' 'skip' 'yes'
 
 # async
-zstyle ':omz:alpha:lib:git' async-prompt no
-
-# eza
+# zstyle ':omz:alpha:lib:git' async-prompt no
 
 # ssh-agent
 zstyle :omz:plugins:ssh-agent agent-forwarding on
-# zstyle :omz:plugins:ssh-agent quiet yes
+zstyle :omz:plugins:ssh-agent quiet yes
 zstyle :omz:plugins:ssh-agent lazy yes
 zstyle :omz:plugins:ssh-agent ssh-add-args --apple-load-keychain
 
@@ -139,10 +137,10 @@ zstyle ':completion:*:paths' accept-exact-dirs true
 zstyle ':zsh_custom:plugin:git' default-user mahdz
 
 # zshrc.d location
-zstyle ':zsh_custom:plugin:zshrcd' directory $ZDOTDIR/zshrc.d
+zstyle ':zsh_custom:plugin:zshrcd' directory "$ZDOTDIR/zshrc.d"
 
 # zfunctions location
-zstyle ':zsh_custom:plugin:zfunctions' directory $ZDOTDIR/functions
+zstyle ':zsh_custom:plugin:zfunctions' directory "$ZDOTDIR/functions"
 
 #
 # Prompt

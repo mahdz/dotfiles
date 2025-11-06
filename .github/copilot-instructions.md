@@ -54,30 +54,101 @@ Guide Copilot and AI agents to make safe, XDG-compliant, and minimal edits to th
 
 ## Developer Workflows
 
-- **Git operations:**
-  - `dots status` - check changes
-  - `dots add -n <path>` - dry run first
-  - `dots add <path>` - stage changes
-  - `dots commit -m "msg"` - commit
-  - `dots push` - sync to GitHub
+### Git Operations
 
-- **Validation steps:**
-  1. Run `dots add -n` (dry run)
-  2. Run `dots add` if dry run passes
-  3. Run `dots commit`
-  4. For shell files, provide revert command (e.g., `dots checkout -- <file>`)
+**Enhanced dots function (from ~/.config/zsh/custom/plugins/dotfiles/dotfiles.plugin.zsh):**
+```zsh
+dots() {
+    command git --git-dir="${DOTFILES:-$HOME/.dotfiles}" --work-tree="$HOME" "$@"
+}
+```
 
-- **New machine setup:** See `AGENTS.md` for canonical steps. Do not suggest alternate bootstrap flows.
+**Daily workflow:**
+```zsh
+dots status                          # Check what changed
+dots add -n <path>                   # DRY RUN first - mandatory!
+dots add <path>                      # Stage after dry run passes
+dots commit -m "simple message"      # Commit changes
+dots push                            # Sync to GitHub
+dots pull                            # Pull latest changes
+dots diff                            # View changes
+```
 
-- **CI/automation:** Avoid adding CI unless clearly documented in `.github/workflows/`.
+**Warp AI shortcuts:**
+```zsh
+ds                                  # dots status
+dan <filename>                      # dots add -n (dry-run first!)
+da <filename>                       # dots add (after dry-run passes)
+dc -m "message"                     # dots commit
+dp                                  # dots push
+dl                                  # dots pull
+dd                                  # dots diff
+```
+
+### Validation Steps
+
+1. **Always** run `dots add -n` first (critical safety check)
+2. Only run `dots add` if dry run passes without errors
+3. Run `dots commit` with clear, descriptive message
+4. For shell files, provide revert command: `dots checkout -- <file>`
+
+### Tool Management
+
+```zsh
+# Try Homebrew first for system tools
+brew install <tool>
+# Use mise for developer tools
+mise install <tool>@latest
+# Use uv for Python tools
+uv tool install <python-tool>
+# Fix broken tool links
+mise reshim
+```
+
+### Log Management
+
+```zsh
+# Rotate and compress old log files
+rotate-logs --dry-run                # Preview rotation actions
+rotate-logs --days 7 --keep 5       # Rotate logs older than 7 days, keep 5 archives
+rotate-logs                          # Default: 7 days, 5 archives
+
+# Check archived logs
+ls -la ~/.basic-memory/archives/     # View compressed archives
+zcat ~/.basic-memory/archives/name.log.gz | less  # View archived content
+```
+
+### New Machine Setup
+
+See `AGENTS.md` for canonical steps. Key commands:
+```zsh
+git clone --bare git@github.com:mahdz/dotfiles.git $HOME/.dotfiles
+dots() { git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" "$@"; }
+mkdir -p ~/.dotfiles-backup && dots checkout
+dots config --local status.showUntrackedFiles no
+```
 
 ## Project-Specific Patterns
 
-- **Memory Bank:** Documentation lives in `~/Developer/dotfiles/memory-bank/`
-- **`.gitignore`:** Uses deny-all with explicit un-ignores. Include all directory levels when un-ignoring nested paths.
-- **Aliases:** Use expansion-safe patterns (see `AGENTS.md` for examples)
-- **Python:** Install via Mise, not Homebrew. Use UV for package management.
+- **Memory Bank:** Documentation in `Vault/02-projects/dotfiles/memory-bank/`
+- **`.gitignore`:** Deny-all strategy with 200+ specific patterns. Include full directory paths when un-ignoring nested items.
+- **Python tools:** Always install via `mise`, manage packages with `uv`
+- **ZSH configs:** Located in `$ZDOTDIR` (`.config/zsh/`), follow established patterns
 - **VS Code:** Use workspace file, pass Git env vars for correct bare repo integration
+
+## Troubleshooting
+
+**Tool not found after install:**
+- Run `mise reshim` to refresh tool links
+- Check `echo $PATH` for correct loading
+
+**File not tracking despite `.gitignore`:**
+- Verify pattern order (later rules override earlier ones)
+- Test with `dots add -n <filename>` to debug
+
+**Something broke:**
+- Check changes with `dots status` and `dots diff`
+- Revert with `dots checkout HEAD -- <filename>`
 
 ## Where to Look for Patterns
 
@@ -85,12 +156,14 @@ Guide Copilot and AI agents to make safe, XDG-compliant, and minimal edits to th
 - **`Vault/02-projects/dotfiles/memory-bank/`** - Setup and operational guides
 - **`.github/prompts/`** - Generator blueprints and exemplars
 
-## Quick PR Checklist
+## Quick Edit Checklist
 
-1. `dots add -n` (dry run) - verify changes
-2. Update `.gitignore` if adding tracked files
-3. Include validation steps in PR description
-4. Never touch `~/.local/bin/` symlinks or secrets
+- [ ] `dots add -n <path>` (dry run) - verify changes won't break tracking
+- [ ] Update `.gitignore` if adding tracked files (include full paths)
+- [ ] Test tools with `mise reshim` if new ones added
+- [ ] Provide revert command `dots checkout -- <file>` for shell file changes
+- [ ] Include validation steps in any PR description
+- [ ] Never touch `~/.local/bin/` symlinks or secrets
 
 ---
 

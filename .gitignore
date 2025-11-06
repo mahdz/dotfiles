@@ -82,10 +82,10 @@
 !.config/pw/
 !.config/pw/*.conf
 
-!.config/raycast/
-!.config/raycast/ai-*/
-!.config/raycast/ai-*/*.json
-/.config/raycast/extensions
+#!.config/raycast/
+#!.config/raycast/ai-*/
+#!.config/raycast/ai-*/*.json
+#/.config/raycast/extensions
 
 !.config/ripgrep/
 !.config/ripgrep/*

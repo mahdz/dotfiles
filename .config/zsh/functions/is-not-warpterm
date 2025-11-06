@@ -1,4 +1,0 @@
-#!/bin/zsh
-#function is-not-warpterm {
-[[ "$TERM_PROGRAM" != WarpTerminal ]] || return 1
-#}

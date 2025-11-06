@@ -1,0 +1,16 @@
+#!/bin/bash
+# Start Plex Media Server with drive check
+# Created for Manny's Plex setup - checks SoMannyFiles drive before starting
+
+# Check if media drive is mounted
+if [ -d "/Volumes/SoMannyFiles/Movies" ]; then
+    echo "✓ SoMannyFiles drive is mounted"
+else
+    echo "⚠ Warning: SoMannyFiles drive not found"
+    echo "Movies library may not be accessible"
+fi
+
+# Start Plex Media Server
+open "/Applications/Plex Media Server.app"
+echo "Plex Media Server started"
+echo "Access at: http://localhost:32400/web"

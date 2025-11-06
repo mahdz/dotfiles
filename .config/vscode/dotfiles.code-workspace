@@ -83,7 +83,7 @@
     "specstory.helpUsImprove": false,
     "python.defaultInterpreterPath": "/Users/mh/.local/share/venvs",
     "debug.javascript.defaultRuntimeExecutable": {
-      "pwa-node": "${workspaceFolder}/.vscode/mise-tools/node"
+      "pwa-node": "/Users/mh/.local/share/mise/shims/node"
     }
   },
   "tasks": {

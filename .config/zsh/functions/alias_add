@@ -1,5 +1,4 @@
-#!/bin/zsh
-# Function: alias_add
+# function alias_add {
 #
 # Description:
 #   Add or update an alias and immediately reload the aliases file.
@@ -20,43 +19,45 @@
 #   0 - Success
 #   1 - Invalid arguments
 #   2 - Failed to write to aliases file
-#
-# shellcheck disable=SC2168
 
-local aliases="${ZDOTDIR}/zshrc.d/myaliases.zsh"
-local name="$1"
-local command="$2"
+    local name="$1" command="$2"
+    local search_dirs=("${ZDOTDIR:-$HOME}" "${ZDOTDIR:-$HOME}/zshrc.d" "${ZSH_CUSTOM:-$ZDOTDIR/custom}")   # adjust as needed
+    local aliases escaped_name qcmd
 
-# Check for required arguments
-if [[ -z "$name" || -z "$command" ]]; then
-  echo "Error: Missing required arguments"
-  echo "Usage: alias_add <alias_name> <command>"
-  return 1
-fi
+    if [[ -z "$name" || -z "$command" ]]; then
+        echo "Usage: alias_add <name> <command>" >&2; return 1
+    fi
 
-# Check if alias already exists
-if grep -q "^alias ${name}=" "${aliases}" 2>/dev/null; then
-  echo "Warning: Alias '${name}' already exists."
-  read -r "response?Do you want to update it? [y/N] "
-  if [[ ! "$response" =~ ^[Yy]$ ]]; then
-    echo "Operation cancelled."
+    # Find up to 3 files with 'aliases' in the filename under search_dirs, pick the first match
+    aliases=$(find "${search_dirs[@]}" -type f -iname '*aliases*' 2>/dev/null | head -n3 | head -n1)
+
+    # If none found, fall back to default and create it
+    if [[ -z "$aliases" ]]; then
+        aliases="${ZDOTDIR:-$HOME}/.aliases"
+        mkdir -p "$(dirname -- "$aliases")" 2>/dev/null || true
+        : >"$aliases" 2>/dev/null || { echo "Cannot create $aliases" >&2; return 2; }
+    fi
+
+    # Escape alias name for grep (so regex metacharacters in $name are safe)
+    escaped_name=$(printf '%s\n' "$name" | sed -e 's/[][^$.\/*+?(){}|\\]/\\&/g')
+
+    # If alias exists, prompt to update and remove existing line (portable)
+    if grep -q "^alias ${escaped_name}=" "$aliases" 2>/dev/null; then
+        printf "Alias '%s' exists. Update? [y/N] " "$name"
+        read -r resp
+        [[ "$resp" =~ ^[Yy]$ ]] || { echo "Cancelled."; return 0; }
+        awk -v n="$name" 'BEGIN{p="^alias " n "="} $0~p{next} {print}' "$aliases" >"${aliases}.tmp" && mv "${aliases}.tmp" "$aliases"
+    fi
+
+    # Append alias, escaping single quotes inside the command
+    qcmd=$(printf '%s' "$command" | sed "s/'/'\\\\''/g")
+    printf "alias %s='%s'\n" "$name" "$qcmd" >>"$aliases" || { echo "Write failed" >&2; return 2; }
+
+    # Try to reload aliases (non-fatal)
+    source "$aliases" 2>/dev/null || echo "Warning: failed to reload aliases" >&2
+
+    echo "Added/updated $name in $aliases"
     return 0
-  fi
-  # Remove existing alias
-  sed -i '' "/^alias ${name}=/d" "${aliases}"
-fi
+# }
 
-# Add new alias
-if ! echo "alias ${name}='${command}'" >>"${aliases}"; then
-  echo "Error: Failed to write to aliases file"
-  return 2
-fi
 
-echo "Successfully added/updated alias: ${name}='${command}'"
-
-# Reload aliases
-if ! source "${aliases}"; then
-  echo "Warning: Failed to reload aliases file"
-fi
-
-return 0

@@ -1,6 +1,6 @@
 ---
 description: 'Debug your application to find and fix a bug'
-tools: ['codebase', 'readFiles', 'editFiles', 'githubRepo', 'runCommands', 'fetch', 'search', 'usages', 'findTestFiles', 'get_errors', 'test_failure', 'run_in_terminal', 'get_terminal_output']
+tools: ['edit/editFiles', 'search', 'runCommands', 'runTasks', 'basic-memory/build_context', 'basic-memory/list_directory', 'basic-memory/list_memory_projects', 'basic-memory/read_content', 'basic-memory/read_note', 'basic-memory/recent_activity', 'basic-memory/search_notes', 'basic-memory/sync_status', 'basic-memory/view_note', 'basic-memory/fetch', 'basic-memory/search', 'deepwiki/*', 'sequential-thinking/*', 'agentic-tools/get_memory', 'agentic-tools/get_project', 'agentic-tools/list_memories', 'agentic-tools/list_projects', 'agentic-tools/search_memories', 'agentic-tools/get_memory', 'agentic-tools/get_project', 'agentic-tools/list_memories', 'agentic-tools/list_projects', 'agentic-tools/search_memories', 'toolbox/*', 'obsidian-mcp-tools/fetch', 'usages', 'vscodeAPI', 'think', 'problems', 'fetch', 'githubRepo', 'ms-vscode.vscode-websearchforcopilot/websearch', 'todos']
 ---
 
 # Debug Mode Instructions

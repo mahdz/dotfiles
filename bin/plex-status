@@ -1,0 +1,18 @@
+#!/bin/bash
+# Check Plex Media Server status
+# Created for Manny's Plex setup - shows server and drive status
+
+if pgrep -x "Plex Media Server" > /dev/null; then
+    echo "✓ Plex Media Server is running"
+    echo "Local access: http://localhost:32400/web"
+    
+    # Check if drive is mounted
+    if [ -d "/Volumes/SoMannyFiles/Movies" ]; then
+        echo "✓ Media drive is mounted"
+    else
+        echo "⚠ Media drive not mounted"
+    fi
+else
+    echo "✗ Plex Media Server is not running"
+    echo "Start with: plex-start"
+fi

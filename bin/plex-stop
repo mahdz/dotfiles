@@ -1,0 +1,6 @@
+#!/bin/bash
+# Stop Plex Media Server
+# Created for Manny's Plex setup - gracefully shuts down the server
+
+osascript -e 'quit app "Plex Media Server"'
+echo "Plex Media Server stopped"

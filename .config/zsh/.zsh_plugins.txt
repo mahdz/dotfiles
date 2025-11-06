@@ -6,11 +6,11 @@
 # CORE ENVIRONMENT SETUP (load first, no defer)
 # ------------------------------------------------------------------------------
 
-$ZSH_CUSTOM/plugins/xdg
+"$ZSH_CUSTOM"/plugins/xdg
 mattmc3/zephyr path:plugins/history
 mattmc3/zephyr path:plugins/environment
 mattmc3/zephyr path:plugins/homebrew
-$ZSH_CUSTOM/plugins/dotfiles
+"$ZSH_CUSTOM"/plugins/dotfiles
 
 # ------------------------------------------------------------------------------
 # OMZ + COMPLETIONS
@@ -24,15 +24,16 @@ getantidote/use-omz
 # ------------------------------------------------------------------------------
 
 ohmyzsh/ohmyzsh path:lib/async_prompt.zsh
-ohmyzsh/ohmyzsh path:lib/completion.zsh conditional:is-not-warpterm
+ohmyzsh/ohmyzsh path:lib/completion.zsh #conditional:is-not-warpterm
 #ohmyzsh/ohmyzsh path:lib/directories.zsh
-ohmyzsh/ohmyzsh path:lib/key-bindings.zsh conditional:is-not-warpterm
+ohmyzsh/ohmyzsh path:lib/key-bindings.zsh # conditional:is-not-warpterm
 ohmyzsh/ohmyzsh path:lib/termsupport.zsh
 
 # ------------------------------------------------------------------------------
 # NON-CRITICAL OH-MY-ZSH LIBRARIES (safe to defer)
 # ------------------------------------------------------------------------------
 
+ohmyzsh/ohmyzsh path:lib/bzr.zsh
 ohmyzsh/ohmyzsh path:lib/cli.zsh
 ohmyzsh/ohmyzsh path:lib/clipboard.zsh
 ohmyzsh/ohmyzsh path:lib/compfix.zsh
@@ -41,8 +42,10 @@ ohmyzsh/ohmyzsh path:lib/diagnostics.zsh
 ohmyzsh/ohmyzsh path:lib/functions.zsh
 ohmyzsh/ohmyzsh path:lib/git.zsh
 ohmyzsh/ohmyzsh path:lib/grep.zsh
+ohmyzsh/ohmyzsh path:lib/history.zsh
 ohmyzsh/ohmyzsh path:lib/misc.zsh
-ohmyzsh/ohmyzsh path:lib/prompt_info_functions.zsh conditional:is-not-warpterm
+ohmyzsh/ohmyzsh path:lib/nvm.zsh
+ohmyzsh/ohmyzsh path:lib/prompt_info_functions.zsh
 ohmyzsh/ohmyzsh path:lib/spectrum.zsh
 ohmyzsh/ohmyzsh path:lib/theme-and-appearance.zsh
 ohmyzsh/ohmyzsh path:lib/vcs_info.zsh
@@ -51,24 +54,25 @@ ohmyzsh/ohmyzsh path:lib/vcs_info.zsh
 # DEV TOOLS (safe to defer)
 # ------------------------------------------------------------------------------
 
+ohmyzsh/ohmyzsh path:plugins/mise
 ohmyzsh/ohmyzsh path:plugins/git
-$ZSH_CUSTOM/plugins/python
-$ZSH_CUSTOM/plugins/ruby
+"$ZSH_CUSTOM"/plugins/python
+"$ZSH_CUSTOM"/plugins/ruby
 
 
 # ------------------------------------------------------------------------------
 # NON-CRITICAL ZEPHYR PLUGINS (safe to defer)
-# ------------------------------------------------------------------------------
+# ----------------------------s--------------------------------------------------
 
 # These are consolidated and organized by priority
-mattmc3/zephyr path:plugins/color conditional:is-not-warpterm
+mattmc3/zephyr path:plugins/color
 mattmc3/zephyr path:plugins/compstyle
 mattmc3/zephyr path:plugins/directory
 mattmc3/zephyr path:plugins/helper
 mattmc3/zephyr path:plugins/prompt
-$ZSH_CUSTOM/themes kind:fpath
+"$ZSH_CUSTOM"/themes kind:fpath
 mattmc3/zephyr path:plugins/utility
-mattmc3/zephyr path:plugins/editor conditional:is-not-warpterm
+mattmc3/zephyr path:plugins/editor # conditional:is-not-warpterm
 mattmc3/zephyr path:plugins/zfunctions
 mattmc3/zephyr path:plugins/macos
 
@@ -78,7 +82,7 @@ mattmc3/zephyr path:plugins/macos
 
 ohmyzsh/ohmyzsh path:plugins/ssh-agent
 ohmyzsh/ohmyzsh path:plugins/zoxide
-#ohmyzsh/ohmyzsh path:plugins/copypath
+ohmyzsh/ohmyzsh path:plugins/copypath
 ohmyzsh/ohmyzsh path:plugins/common-aliases
 #romkatv/zsh-bench kind:path
 marlonrichert/zsh-hist
@@ -90,6 +94,7 @@ agkozak/zhooks
 # FINAL PLUGINS (loaded last, no defer unless known-safe)
 # ------------------------------------------------------------------------------
 
+"$ZSH_CUSTOM"/plugins/aliases
 mattmc3/zephyr path:plugins/confd
 zsh-users/zsh-autosuggestions conditional:is-not-warpterm post:post-autosuggestions
 zsh-users/zsh-history-substring-search conditional:is-not-warpterm post:post-history-substring-search

@@ -1,6 +1,0 @@
----
-name: Test
-windows:
-  - tabs:
-      - layout:
-          cwd: "/Users/mh"

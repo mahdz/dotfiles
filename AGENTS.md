@@ -74,6 +74,35 @@ dd                                  # dots diff
 
 ### Tool Management
 
+**Python Configuration:** Mise + uv integration with 2-way sync
+
+**Configuration Details:**
+- **Python versions**: Managed by mise, backed by uv's pre-built binaries
+- **Python 3.14.0**: Symlinked from `~/.local/share/uv/python/cpython-3.14.0-macos-aarch64-none`
+- **Virtual environments**: Auto-created per-project in `.venv` folders (via `python.uv_venv_auto = true`)
+- **Project dependencies**: Installed with `uv pip install` inside project venvs
+- **Global CLI tools**: Declared in `~/.config/mise/config.toml` as `"pipx:tool" = "version"`
+- **Tool backend**: mise's pipx backend with `uvx = true` (uses `uv tool install` internally)
+
+**Key Configuration Files:**
+- **`~/.config/mise/config.toml`**: Single source of truth for all tools (Python versions, CLI tools)
+- **`~/.config/uv/uv.toml`**: UV settings (`python-preference = "system"` for mise compatibility)
+- **`~/.config/mise/.default-python-packages`**: Default packages for new Python installs
+
+**Sync and Maintenance:**
+
+```zsh
+mise sync python --uv              # 2-way sync Python versions between mise and uv
+mise reshim                        # Update shims after installing new tools
+mise install                       # Install all tools from config (idempotent)
+```
+
+**Backup:*
+
+- **Pre-migration backup**: `~/mise-python-3.14.0-backup-20251022.tar.gz` (16MB)
+- Contains old core:python@3.14.0 installation before switching to uv backend
+
+
 **Python Environment (Configured: 2025-10-22):**
 
 ```zsh
@@ -125,13 +154,12 @@ zcat ~/.basic-memory/archives/name.log.gz | less  # View archived log content
 
 **NEVER track:**
 
-* mise-managed tool installations in `~/.local/share/mise/installs/pipx-*/` (managed by config)
 * Cache files, logs, or temporary files
 * Secrets or sensitive data
 
 ## Gitignore Strategy
 
-**Deny-all approach (200+ lines):**
+**Deny-all approach:**
 
 The `.gitignore` file uses a comprehensive deny-all strategy with detailed patterns for:
 - Core configuration files (`.editorconfig`, `.zshenv`, etc.)
@@ -194,54 +222,6 @@ dots config --local status.showUntrackedFiles no
 * `dots diff` - see the changes
 * `dots checkout HEAD -- filename` - revert a file
 
-## Python Configuration
-
-**Last configured: 2025-10-22** - Mise + uv integration with 2-way sync
-
-### Configuration Details
-- **Python versions**: Managed by mise, backed by uv's pre-built binaries
-- **Python 3.14.0**: Symlinked from `~/.local/share/uv/python/cpython-3.14.0-macos-aarch64-none`
-- **Virtual environments**: Auto-created per-project in `.venv` folders (via `python.uv_venv_auto = true`)
-- **Project dependencies**: Installed with `uv pip install` inside project venvs
-- **Global CLI tools**: Declared in `~/.config/mise/config.toml` as `"pipx:tool" = "version"`
-- **Tool backend**: mise's pipx backend with `uvx = true` (uses `uv tool install` internally)
-
-### Key Configuration Files
-- **`~/.config/mise/config.toml`**: Single source of truth for all tools (Python versions, CLI tools)
-- **`~/.config/uv/uv.toml`**: UV settings (`python-preference = "system"` for mise compatibility)
-- **`~/.config/mise/.default-python-packages`**: Default packages for new Python installs
-
-### Sync and Maintenance
-```zsh
-mise sync python --uv              # 2-way sync Python versions between mise and uv
-mise reshim                        # Update shims after installing new tools
-mise install                       # Install all tools from config (idempotent)
-```
-
-### Backup
-- **Pre-migration backup**: `~/mise-python-3.14.0-backup-20251022.tar.gz` (16MB)
-- Contains old core:python@3.14.0 installation before switching to uv backend
-
-## Recent Cleanup and Maintenance
-
-**Last cleanup: 2025-10-07** - Comprehensive technical debt elimination
-
-### Cleanup Results
-- **Space saved**: ~16MB+ through systematic cleanup
-- **Files removed**: Technical debt including .DS_Store files, empty configs, old backups
-- **Tools added**: Smart log rotation system with compression and archival
-- **Scripts enhanced**: All bin scripts now include comprehensive inline documentation
-- **Configurations optimized**: Removed orphaned configs, validated XDG compliance
-
-### New Tools Available
-- **`rotate-logs`**: Automated log management with configurable retention policies
-- **Enhanced scripts**: All scripts now self-documenting per user preference
-
-### Maintenance Guidelines
-- **Quarterly cleanup**: Run configuration audits to identify orphaned configs
-- **Log rotation**: `rotate-logs` available for managing growing log files
-- **Documentation**: All scripts contain comprehensive usage information inline
-
 ## Documentation
 
 For setup guides and maintenance info:
@@ -259,3 +239,90 @@ For setup guides and maintenance info:
 
 * [Configuration Analysis](Documents/cleanup-config-analysis.md) - Configuration consolidation review
 * [Migration Analysis](Documents/migrate-tasks-analysis.md) - Task migration assessment
+
+## Git Configuration
+
+### Configuration Structure
+
+Git configuration is organized across two XDG-compliant files to enable context-dependent behavior:
+
+**Primary Configuration:** `~/.config/git/config` (applies globally to all repositories)
+- Contains standard Git settings and global aliases
+- All configuration inherited by default
+- Source of truth for most settings
+
+**Dotfiles Overrides:** `~/.dotfiles/config` (applies conditionally via `includeIf gitdir:~/.dotfiles/`)
+- Context-specific aliases that override global settings only when in the dotfiles directory
+- Allows specialized behavior for bare repository management
+- Keeps dotfiles workflow separate from regular Git usage
+
+**Legacy:** `~/.gitconfig` (REMOVED)
+- Previously contained duplicate settings that caused conflicts
+- Removed after consolidation to avoid confusion
+- All settings preserved in `~/.config/git/config`
+
+### Context-Dependent Aliases
+
+Two critical aliases have intentional different behavior depending on context:
+
+#### 'd' Alias
+
+**Global** (in regular repositories):
+```bash
+git d                      # Shows: diff --color-words
+```
+- Displays colored word-by-word diff highlighting changes within lines
+- Useful for code review and detailed change inspection
+
+**Dotfiles** (in ~/.dotfiles directory):
+```bash
+dots d                     # Shows: dotfiles diff
+```
+- Displays bare repository diff for dotfiles management
+- Tracks configuration file changes across the home directory
+
+#### 'wip' Alias
+
+**Global** (in regular repositories):
+```bash
+git wip                    # Runs: commit -am 'WIP: work in progress'
+```
+- Only stages **tracked** files (does not include new files)
+- Quick way to save work-in-progress on known files
+- `-a` flag stages modifications only, `-m` provides commit message
+
+**Dotfiles** (in ~/.dotfiles directory):
+```bash
+dots wip                   # Runs: add -A && commit -m 'WIP'
+```
+- Stages **all** files including new untracked files
+- Uses `add -A` to capture everything (critical for dotfiles)
+- Ensures no configuration changes are lost
+
+### SSH Signing Configuration
+
+Commits are signed using SSH keys for security and verification:
+
+```bash
+# Current configuration
+git config --global user.signingkey      # Shows: ~/.ssh/id_ed25519.pub
+git config --global gpg.format           # Shows: ssh
+git config --global commit.gpgsign       # Shows: true (auto-sign all commits)
+
+# Allowed signers file for verification
+~/.config/git/allowed_signers             # Registered SSH public keys
+```
+
+**Signature Verification:**
+- `G` = Good signature (verified)
+- `B` = Bad signature
+- `U` = Untrusted signature (key not in allowed_signers)
+
+**Testing signatures:**
+```bash
+# View commit signature
+git log --show-signature -1
+
+# Recent dotfiles commits should show "G" for good signatures
+dots log --show-signature -5
+```

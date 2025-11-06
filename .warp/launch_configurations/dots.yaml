@@ -8,7 +8,7 @@ windows:
           panes:
             - cwd: "/Users/mh"
               commands:
-                - exec: "lDD && echo '=== Dotfiles Status ===' && ds"
+                - exec: "l && echo '=== Dotfiles Status ===' && ds"
                 - exec: "echo '[ 💡 TIP ] Use dan <file> to dry-run before da'"
             - cwd: "/Users/mh"
               commands:
@@ -20,17 +20,17 @@ windows:
           panes:
             - cwd: "/Users/mh/.config"
               commands:
-                - exec: "lDD && echo '=== Config Files ==='"
+                - exec: "l && echo '=== Config Files ==='"
             - cwd: "/Users/mh/bin"
               commands:
-                - exec: "lDD && echo '=== Scripts ==='"
+                - exec: "l && echo '=== Scripts ==='"
       - title: "Projects"
         layout:
           split_direction: horizontal
           panes:
             - cwd: "/Users/mh/Developer"
               commands:
-                - exec: "lDD && echo '=== Development ==='"
+                - exec: "l && echo '=== Development ==='"
             - cwd: "/Users/mh/Vault/02-projects"
               commands:
-                - exec: "lDD && echo '=== Documentation ==='"
+                - exec: "l && echo '=== Documentation ==='"

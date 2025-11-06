@@ -1,9 +1,3 @@
-##? Get an Azure DB token
-function azdbtok {
-    local tok="$(az account get-access-token --resource https://ossrdbms-aad.database.windows.net --query accessToken --output tsv)"
-    echo "$tok" | tee >(pbcopy) >(cat)
-}
-
 ##? Show all extensions in current folder structure.
 function allexts {
   find . -not \( -path '*/.git/*' -prune \) -type f -name '*.*' | sed 's|.*\.|\.|' | sort | uniq -c
@@ -33,7 +27,7 @@ function clone {
     user=${1%/*}
     repo=${1##*/}
   else
-    user=mattmc3
+    user=mahdz
     repo=$1
   fi
 
@@ -121,7 +115,7 @@ function touchf {
 
 # works in both bash and zsh
 ##? up - go up any number of directories
-up() {
+function up {
   local parents=${1:-1}
   if ! (( "$parents" > 0 )); then
     echo >&2 "up: expecting a numeric parameter"
@@ -167,7 +161,7 @@ function echoerr {
 }
 
 ##? Pass thru for copy/paste markdown
-#function $ { $@ }
+function $ { $@ }
 
 ##? Check if a file can be autoloaded by trying to load it in a subshell.
 function is-autoloadable {
@@ -183,8 +177,6 @@ function is-callable {
 function is-true {
   [[ -n "$1" && "$1:l" == (1|y(es|)|t(rue|)|o(n|)) ]]
 }
-
-
 
 function mkdirvar {
   local dirvar
@@ -213,7 +205,7 @@ function funcfresh {
 # @param the Homebrew formula name
 # @param the website for the application
 #
-installApp(){
+function installApp {
     application="$1"
     website="$2"
 
@@ -245,7 +237,7 @@ installApp(){
 #
 # Clear last terminal line
 #
-__clearLastLine(){
+function __clearLastLine {
     tput cuu 1 >&2
     tput el >&2
 }
@@ -258,7 +250,7 @@ __clearLastLine(){
 #
 # Return the file selected by the user
 #
-getFile(){
+function getFile {
     files=$(/bin/ls | grep -E "$2")
     __clearLastLine #I cannot get the error output to silence!
     file;
@@ -282,7 +274,7 @@ getFile(){
 #
 # return 0 if not needed, 1 if it is
 #
-__checkSudo(){
+function __checkSudo {
     sudo -n true 2>/dev/null
     sudo_needed=$(echo $?)
 
@@ -300,7 +292,7 @@ __checkSudo(){
 #
 # return file name
 #
-__getFilename(){
+function __getFilename {
     echo "${1%.*}"
 }
 
@@ -311,12 +303,12 @@ __getFilename(){
 #
 # return file extension
 #
-__getFileExtension(){
+function __getFileExtension {
     echo "${1##*.}"
 }
 
 # quickly edit or run scripts from my scripts directory
-dot_scripts() {
+function dot_scripts {
   var=$(gum choose "edit" "run" --item.foreground="360" --cursor="→ ")
   script=$(find ${XDG_CONFIG_HOME} -type f | sort | fzf --height=12 --cycle -d"/" --with-nth=6.. --reverse)
   case $var in
@@ -334,9 +326,9 @@ edit_zsh() {
     zshrc)
       $EDITOR $HOME/.config/zsh/.zshrc ;;
     functions)
-      $EDITOR $HOME/.config/zsh/zshrc.d/myfuncs.zsh ;;
+      $EDITOR $ZSH_CUSTOM/functions.zsh ;;
     aliases)
-      $EDITOR $HOME/.config/zsh/zshrc.d/myaliases.zsh ;;
+      $EDITOR $ZSH_CUSTOM/aliases.zsh ;;
     zshenv)
       $EDITOR $HOME/.config/zsh/.zshenv ;;
   esac
@@ -355,7 +347,7 @@ cpd() {
 }
 
 # quickly access any alias or function i have
-qa() { eval "$( (alias && functions | sed -nE 's@^([^_].*)\(\).*@\1@p') | cut -d'=' -f1 | fzf --reverse)" }
+qa() { eval "$( (alias && functions | sed -nE 's@^([^_].*)\(\).*@\1@p') | cut -d'=' -f1 | fzf --reverse | IFS= read -r cmd; print -r -- "$cmd")" }
 
 # get cheat sheet for a command
 chst() {
@@ -364,7 +356,7 @@ chst() {
 }
 
 # create a directory and enter it
-mkcd() { mkdir -p "$1" && cd "$1"; }
+mkcd() { command mkdir -p "$1" && cd "$1"; }
 
 # Make dir and copy
 mkcp() {

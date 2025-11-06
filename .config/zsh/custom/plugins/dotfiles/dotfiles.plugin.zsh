@@ -1,6 +1,6 @@
 # --- Environment ---
+: ${DOTFILES:=$HOME/.dotfiles}
 : "${ZDOTDIR:=$HOME/.config/zsh}"
-export DOTFILES="${HOME}/.dotfiles"
 export DOT_WORKSPACE="${XDG_CONFIG_HOME:-$HOME/.config}/vscode/dotfiles.code-workspace"
 export ZSH_CUSTOM="${ZSH_CUSTOM:-$ZDOTDIR/custom}"
 
@@ -62,6 +62,18 @@ show_dotfiles_workspace() {
 }
 
 # --- Aliases ---
+# Make sure this alias has priority over binaries in /opt/homebrew/bin
+alias -g dot='dots'
+
+# Dotfiles shortcuts for Warp AI suggestions
+alias ds='dots status'
+alias da='dots add'
+alias dan='dots add -n'  # dry-run first!
+alias dc='dots commit'
+alias dp='dots push'
+alias dl='dots pull'
+alias dd='dots diff'
+
 alias zdot="cd \"$ZDOTDIR\""
 alias zcust="cd \"$ZSH_CUSTOM\""
 alias dotg="dots git"
@@ -73,9 +85,6 @@ fi
 # dotfiles
 alias dotdir='cd "$DOTFILES"'
 alias dotcode='GIT_WORK_TREE="$HOME" && cd "$DOTFILES" && code .'
-# alias dotfl="cd \$DOTFILES/local"
-# alias fdot='cd ${XDG_CONFIG_HOME:-~/.config}/fish'
-# alias fconf=fdot
 alias zdot='cd $ZDOTDIR'
 
 hash -d vault="$VAULT_PATH"

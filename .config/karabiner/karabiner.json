@@ -1,5 +1,8 @@
 {
-    "global": { "show_in_menu_bar": false },
+    "global": {
+        "show_additional_menu_items": true,
+        "show_in_menu_bar": false
+    },
     "profiles": [
         {
             "complex_modifications": {
@@ -154,7 +157,6 @@
                     },
                     {
                         "description": "Mac OSX: left cmd + double-tap q → close application",
-                        "enabled": false,
                         "manipulators": [
                             {
                                 "conditions": [
@@ -391,7 +393,6 @@
                     },
                     {
                         "description": "Google Chrome: Caps lock hyper key + r → Reload page",
-                        "enabled": false,
                         "manipulators": [
                             {
                                 "conditions": [
@@ -481,7 +482,6 @@
                     },
                     {
                         "description": "Google Chrome: Caps lock hyper key + f → Search the web",
-                        "enabled": false,
                         "manipulators": [
                             {
                                 "conditions": [
@@ -511,7 +511,6 @@
                     },
                     {
                         "description": "Google Chrome: Caps lock hyper key + d → View downloads",
-                        "enabled": false,
                         "manipulators": [
                             {
                                 "conditions": [
@@ -572,6 +571,7 @@
                         ]
                     },
                     {
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "description": "ctrl shift rcmd a",
@@ -613,6 +613,7 @@
                         ]
                     },
                     {
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "description": "ctrl shift rcmd m",
@@ -626,6 +627,7 @@
                         ]
                     },
                     {
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "description": "ctrl shift rcmd s",
@@ -639,6 +641,7 @@
                         ]
                     },
                     {
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "description": "rcmd",
@@ -649,6 +652,7 @@
                         ]
                     },
                     {
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "description": "rcmd a",
@@ -662,6 +666,7 @@
                         ]
                     },
                     {
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "description": "rcmd b",
@@ -675,6 +680,7 @@
                         ]
                     },
                     {
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "description": "rcmd c",
@@ -688,6 +694,7 @@
                         ]
                     },
                     {
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "description": "rcmd d",
@@ -701,6 +708,7 @@
                         ]
                     },
                     {
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "description": "rcmd f",
@@ -714,6 +722,7 @@
                         ]
                     },
                     {
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "description": "rcmd g",
@@ -727,6 +736,7 @@
                         ]
                     },
                     {
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "description": "rcmd k",
@@ -740,6 +750,7 @@
                         ]
                     },
                     {
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "description": "rcmd m",
@@ -753,6 +764,7 @@
                         ]
                     },
                     {
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "description": "rcmd p",
@@ -766,6 +778,7 @@
                         ]
                     },
                     {
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "description": "rcmd s",
@@ -779,6 +792,7 @@
                         ]
                     },
                     {
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "description": "rcmd t",
@@ -792,6 +806,7 @@
                         ]
                     },
                     {
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "description": "rcmd u",
@@ -805,6 +820,7 @@
                         ]
                     },
                     {
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "description": "rcmd v",
@@ -818,6 +834,7 @@
                         ]
                     },
                     {
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "description": "rcmd w",
@@ -831,6 +848,7 @@
                         ]
                     },
                     {
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "description": "rcmd z",

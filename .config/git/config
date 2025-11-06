@@ -1,5 +1,5 @@
 [user]
-	name = mahdz
+  name = mahdz
   email = 11878521+mahdz@users.noreply.github.com
   signingkey = ~/.ssh/id_ed25519.pub
 
@@ -23,11 +23,11 @@
 
 # GitHub CLI integration for credential management
 [credential "https://github.com"]
-  helper =
+  helper = 
   helper = !/opt/homebrew/bin/gh auth git-credential
 
 [credential "https://gist.github.com"]
-  helper =
+  helper = 
   helper = !/opt/homebrew/bin/gh auth git-credential
 
 [branch]
@@ -92,6 +92,13 @@
 	# Like the default, but padding the days with a leading 0, for column width consistency.
 	# date = format-local:%a %b %d %T %Y
 
+[merge]
+  tool = code
+  ff = true
+
+[mergetool "code"]
+  cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
+
 [pretty]
   original = %C(yellow)%h%C(green) %ad %C(reset)| %s%C(red)%d %C(blue)[%an]%C(reset)
   graph = %C(yellow)%h %C(reset)%s %C(blue)[%an]%C(red bold)%d%C(reset)
@@ -105,70 +112,72 @@
   autoSetupRemote = true
   default = current
 
-[merge]
-  tool = code
-  ff = true
-
-[mergetool "code"]
-  cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
-
 [rebase]
   autoSquash = true
   missingCommitsCheck = warn
   autoStash = true
   updateRefs = true
 
+[advice]
+  statusHints = true
+
+# To understand the structure of this aliases see https://www.atlassian.com/blog/git/advanced-git-aliases
+# NOTE: Context-dependent behavior via includeIf:
+# - This file contains GLOBAL aliases that apply to all repositories
+# - ~/.dotfiles/config includes context-specific overrides (see bottom of file)
+# - Aliases 'd' and 'wip' have different behavior in dotfiles context (see dotfiles config)
 [alias]
-	# Add/Commit
+  # Add/Commit
   aa = add .
 
-	# commit {{
+  # commit {{
   wip = commit -am 'WIP: work in progress'
   checkpoint = !git add -A && git commit -m "Checkpoint $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-	# }}
+  # }}
 
-	# Most recent commit
+  # Most recent commit
   last = log -1 HEAD
 
   hist = log --pretty=format:'%C(yellow)%h%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
 
-	# Logging
+  # Logging
   lg = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)' --all
+
   log1 = log --all --decorate --oneline --graph --author
 
-	# Utility
+  # Utility
   stat = status -sb
 
-	# Show all my git aliases
+  # Show all my git aliases
   alias = !git config --get-regexp ^alias\\. | sort | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
 
-	# config/users
+  # config/users
   whoami = !git config user.name && git config user.email
 
-	# Clone a repo but get only the current commit instead of the full history. Useful for installing tools.
+  # Clone a repo but get only the current commit instead of the full history. Useful for installing tools.
   shallow-clone = clone --depth=1
 
-	# misc {{
+  # misc {{
   revert = !git stash && git reset --hard
 
-	# Quickly unstage everything
+  # Quickly unstage everything
   unstage = reset HEAD --
 
-	# Better diff with color
+  # Better diff with color
   d = diff --color-words
 
-	# Show recent commits with timestamp
+  # Show recent commits with timestamp
   ll = log --pretty=format:'%C(yellow)%h%Creset %Cgreen%ad%Creset %s%C(bold blue)%d%Creset' --date=short
   ld = !git diff --name-only --cached | xargs -r bat --diff
 
-	# Stash interactively
+  # Stash interactively
   stash-i = !git stash push -p -m "interactive stash"
   squash = rebase -i
 
-	# Undo last commit
+  # Undo last commit
   undo = reset --soft HEAD~1
 
-	# Stash...
+  # Stash...
 
 [filter "lfs"]
   clean = git-lfs clean -- %f
@@ -183,6 +192,9 @@
   gitUser = mahdz
   cloneAddFlags = --depth=1
   debug = true
+
+[include]
+  path = /Users/mh/.config/git/config.local
 
 [includeIf "gitdir:~/.dotfiles/"]
   path = ~/.dotfiles/config

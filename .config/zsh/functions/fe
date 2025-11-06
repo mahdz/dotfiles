@@ -9,8 +9,17 @@
 # fe [FUZZY PATTERN] - Open the selected file with the default editor
 #   - Bypass fuzzy finder if there's only one match (--select-1)
 #   - Exit if there's no match (--exit-0)
-#fe() {
+#function fe() {
+
+  # Check for required commands
+  for cmd in fzf-tmux bat; do
+    if ! command_exists "$cmd"; then
+      echo "Error: $cmd is not installed." >&2
+      exit 1
+  fi
+  done
+
   local files
   IFS=$'\n' files=($(fzf-tmux --query="$1" --multi --select-1 --exit-0 --preview="bat --color=always {}"))
-  [[ -n "$files" ]] && ${EDITOR:-vim} "${files[@]}"
+  [[ -n "$files" ]] && ${EDITOR:-micro} "${files[@]}"
 #}
