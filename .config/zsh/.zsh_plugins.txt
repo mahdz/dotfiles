@@ -10,6 +10,7 @@
 mattmc3/zephyr path:plugins/history
 mattmc3/zephyr path:plugins/environment
 mattmc3/zephyr path:plugins/homebrew
+"$ZSH_CUSTOM"/plugins/homebrew
 "$ZSH_CUSTOM"/plugins/dotfiles
 
 # ------------------------------------------------------------------------------
@@ -44,7 +45,7 @@ ohmyzsh/ohmyzsh path:lib/git.zsh
 ohmyzsh/ohmyzsh path:lib/grep.zsh
 ohmyzsh/ohmyzsh path:lib/history.zsh
 ohmyzsh/ohmyzsh path:lib/misc.zsh
-ohmyzsh/ohmyzsh path:lib/nvm.zsh
+# ohmyzsh/ohmyzsh path:lib/nvm.zsh
 ohmyzsh/ohmyzsh path:lib/prompt_info_functions.zsh
 ohmyzsh/ohmyzsh path:lib/spectrum.zsh
 ohmyzsh/ohmyzsh path:lib/theme-and-appearance.zsh

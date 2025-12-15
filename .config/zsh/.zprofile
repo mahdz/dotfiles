@@ -30,12 +30,22 @@ path_prepend() {
 # PATH INITIALIZATION
 # =============================================================================
 
-# Initialize Homebrew (Apple Silicon) - MUST be first for proper tool detection
-if command -v brew &> /dev/null; then
-  HOMEBREW_PREFIX="$(brew --prefix)"
-  path_prepend "$HOMEBREW_PREFIX/bin"
-  path_prepend "$HOMEBREW_PREFIX/sbin"
-  path_prepend "$HOMEBREW_PREFIX/opt/git/bin"
+# Start with essential system paths to ensure basic commands are available
+# This prevents "command not found" errors during shell initialization
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+# Initialize Homebrew - prepends to PATH for proper tool detection
+# Add to PATH unconditionally so subsequent tools (mise, etc.) can be found
+if [[ "$(uname -m)" == "arm64" ]]; then
+  # Apple Silicon
+  path_prepend "/opt/homebrew/opt/git/bin"
+  path_prepend "/opt/homebrew/sbin"
+  path_prepend "/opt/homebrew/bin"
+else
+  # Intel
+  path_prepend "/usr/local/opt/git/bin"
+  path_prepend "/usr/local/sbin"
+  path_prepend "/usr/local/bin"
 fi
 
 # =============================================================================
@@ -45,7 +55,16 @@ fi
 
 # User-specific development tools (highest priority)
 # Ensure mise shim directory is at the front of PATH
-# path_prepend "${XDG_DATA_HOME:-$HOME/.local/share}/mise/shims"
+# -----------------------------
+# Mise initialization
+# -----------------------------
+# Initialize mise for full functionality (shell hooks, auto-switching, etc.)
+# This supersedes the shim-only approach and enables advanced features
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh)"
+else
+  export PATH="$HOME/.local/share/mise/shims:$PATH"
+fi
 
 # npm global bin directory (for mise integration)
 path_prepend "$HOME/.local/share/npm-global/bin"
@@ -65,7 +84,7 @@ path_prepend "$HOME/bin"
 # =============================================================================
 
 # ShellHistory.app
-path_append "${PATH}:/Applications/ShellHistory.app/Contents/Helpers"
+path_append "/Applications/ShellHistory.app/Contents/Helpers"
 
 # Added by LM Studio CLI (lms)
 path_append "$HOME/.lmstudio/bin"
@@ -81,16 +100,6 @@ path_append "${XDG_CONFIG_HOME:-$HOME/.config}/vscode"
 path_append "/Users/mh/Developer/repos/id774/scripts"
 
 # =============================================================================
-# STANDARD SYSTEM PATHS
-# =============================================================================
-# Core system paths - these should come before Apple-specific paths
-
-path_append "/usr/bin"
-path_append "/bin"
-path_append "/usr/sbin"
-path_append "/sbin"
-
-# =============================================================================
 # APPLE SYSTEM PATHS
 # =============================================================================
 # These have lowest priority
@@ -101,3 +110,22 @@ path_append "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/loc
 path_append "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin"
 path_append "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin"
 path_append "/Library/Apple/usr/bin"
+
+# -----------------------------
+# Cache directories
+# -----------------------------
+__zsh_data_dir="${XDG_DATA_HOME:-$HOME/.local/share}/zsh"
+__zsh_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+/bin/mkdir -p "$__zsh_data_dir" "$__zsh_cache_dir"
+
+# -----------------------------
+# Create XDG directories if they don't exist
+# -----------------------------
+/bin/mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}" \
+            "${XDG_CACHE_HOME:-$HOME/.cache}" \
+            "${XDG_DATA_HOME:-$HOME/.local/share}" \
+            "${XDG_STATE_HOME:-$HOME/.local/state}"
+
+export ZSH_CACHE_DIR="$__zsh_cache_dir"
+export ZSH_COMPDUMP="$__zsh_cache_dir/.zcompdump"
+export ZSH_COMPCACHE="$__zsh_cache_dir/.zcompcache"

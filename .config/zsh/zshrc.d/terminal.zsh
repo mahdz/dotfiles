@@ -12,3 +12,16 @@
 #    disable_warp_hooks
 #  fi
 #fi
+
+# Disable pagers in non-interactive environments (e.g., Cline IDE) and VSCode
+if [[ -n "$CLINE_ACTIVE" || "$TERM_PROGRAM" == "vscode" ]]; then
+    export TERM=xterm-256color
+    export PAGER="/bin/cat"
+    export GIT_PAGER="/bin/cat"
+    export SYSTEMD_PAGER="/bin/cat"
+    export LESS="-FRX"
+    PS1="%n@%m %1~ %# "
+
+    # https://code.visualstudio.com/docs/terminal/shell-integration
+    source "$(code --locate-shell-integration-path zsh)"
+fi

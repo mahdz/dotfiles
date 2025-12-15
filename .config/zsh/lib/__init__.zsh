@@ -4,6 +4,25 @@
 # This runs prior to any other conf.d contents.
 
 # =============================================================================
+# PATH Setup (Before Antidote)
+# =============================================================================
+# Ensure system paths are in PATH before plugins load
+# This prevents "command not found" errors during plugin initialization
+path=(
+  $HOME/bin(N)
+  $HOME/.local/bin(N)
+  ${HOMEBREW_PREFIX:-/opt/homebrew}/{,s}bin(N)
+  /usr/local/{,s}bin(N)
+  /usr/bin
+  /bin
+  /usr/sbin
+  /sbin
+  $path
+)
+typeset -U path
+export PATH
+
+# =============================================================================
 # ENVIRONMENT VARIABLES & EXPORTS
 # =============================================================================
 

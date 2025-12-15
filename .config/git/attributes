@@ -1,7 +1,7 @@
 # Common settings that generally should always be used with your language specific settings
 
-# Auto detect text files and perform LF normalization
-*          text=auto
+# Auto detect text files and normalize to LF, but ignore line ending changes in diffs
+*          text=auto diff
 
 # Documents
 *.bibtex   text diff=bibtex
@@ -21,7 +21,7 @@
 *.adoc     text
 *.textile  text
 *.mustache text
-*.csv      text eol=lf
+*.csv      text
 *.tab      text
 *.tsv      text
 *.txt      text
@@ -40,14 +40,14 @@
 *.eps      binary
 
 # Scripts
-*.bash     text eol=lf
-*.fish     text eol=lf
-*.ksh      text eol=lf
-*.sh       text eol=lf
-*.zsh      text eol=lf
-*.bat      text eol=crlf
-*.cmd      text eol=crlf
-*.ps1      text eol=crlf
+*.bash     text
+*.fish     text
+*.ksh      text
+*.sh       text
+*.zsh      text
+*.bat      text
+*.cmd      text
+*.ps1      text
 
 # Serialisation
 *.json  text diff=json
@@ -104,7 +104,7 @@
 *.pyd      binary
 
 # Jupyter notebook
-*.ipynb    text eol=lf
+*.ipynb    text
 
 # GitHub linguist fixes
 .config/vscode/*.json     linguist-language=JSON-with-Comments

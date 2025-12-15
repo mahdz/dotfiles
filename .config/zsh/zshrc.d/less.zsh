@@ -1,37 +1,39 @@
+#!/bin/zsh
 # =============================================================================
-# LESS ALIASES AND FUNCTIONS
+# LESS AND PAGER CONFIGURATION
 # =============================================================================
+# ZSH-specific configuration for enhanced file viewing
+# Features: syntax highlighting (bat), pagination (less), git integration
+#
+# Source this file in your .zshrc:
+#   source ~/.zsh/less.zsh
 
-# Less environment variables - remove -X to allow alternate screen buffer
-export LESS="-iR --incsearch --use-color --mouse"
-export LESSFLAGS="-iR --incsearch --use-color --mouse"
+# PAGER CONFIGURATION
+# =============================================================================
+# Configure LESS for improved readability and interaction
+# Flags: -iR (ignore case, raw), -F (quit if one screen), --incsearch (search as type)
+#        --use-color (colored output), --mouse (mouse support), -x4 (tab width),
+#        --status-column (show search status)
+export LESS="-iR -F --incsearch --use-color --mouse -x4 --status-column"
 
-# Configure bat to not leave output on screen
+# SYNTAX HIGHLIGHTING WITH BAT
+# =============================================================================
 if command -v bat >/dev/null 2>&1; then
     export BAT_PAGER="less -R"
+    alias cless='bat --paging=always'
+    alias cpreview='bat --paging=always --style=header,grid'
 fi
 
-# Useful less aliases
-alias -g L='| less'                    # Pipe to less
-alias -g LL='2>&1 | less'             # Pipe stdout and stderr to less
-
-# Less with different options
-alias lessc='less -S'                  # Don't wrap long lines (chop)
-alias lessn='less -N'                  # Show line numbers
-alias lesss='less -S -N'               # Both chop and line numbers
-
-# Quick file viewing with syntax highlighting (if bat is available)
-if command -v bat >/dev/null 2>&1; then
-    alias cless='bat --paging=always'   # Colorized less
-    alias preview='bat --paging=always --style=header,grid'
-fi
-
-# Less for specific file types
-alias jsonless='jq . | less'           # Pretty print JSON and page
-alias yamlless='bat -l yaml --paging=always'
-
-# Function to view files with automatic syntax detection
+# PAGER FUNCTIONS
+# =============================================================================
+# View files with automatic syntax highlighting
+# Usage: lessview file.txt
 lessview() {
+    if [[ $# -eq 0 ]]; then
+        echo "Usage: lessview <file> [file2 ...]" >&2
+        return 1
+    fi
+
     if command -v bat >/dev/null 2>&1; then
         bat --paging=always "$@"
     else
@@ -39,14 +41,41 @@ lessview() {
     fi
 }
 
-# View git log with better formatting in less
-alias gitlog='git log --oneline --graph --decorate --color=always | less'
-alias gitlogfull='git log --graph --pretty=format:"%C(auto)%h%d %s %C(cyan)(%cr) %C(blue)<%an>%C(reset)" --color=always | less'
+# GLOBAL PIPE ALIASES (ZSH)
+# =============================================================================
+# These global aliases work anywhere in a ZSH command line
+alias -g L='| less'                    # Pipe to less
+alias -g LL='2>&1 | less'             # Pipe stdout and stderr to less
 
-# Search through command history and page results
-alias histgrep='history | command grep -i'
-alias histless='history | less'
+# LESS VARIANT ALIASES
+# =============================================================================
+alias less_chop='less -S'              # Don't wrap long lines (chop mode)
+alias less_num='less -N'           # Show line numbers
+alias less_numchop='less -S -N'           # Both chop and line numbers
 
-# Directory listing with less
-alias lsl='ls -la | less'
-alias treeless='tree -C | less'        # If you have tree installed
+# GIT LOG VIEWING
+# =============================================================================
+if command -v git >/dev/null 2>&1; then
+    alias gitlog='git log --oneline --graph --decorate --color=always | less'
+    alias gitlog_full='git log --graph --pretty=format:"%C(auto)%h%d %s %C(cyan)(%cr) %C(blue)<%an>%C(reset)" --color=always | less'
+fi
+
+# HISTORY AND LISTING ALIASES
+# =============================================================================
+alias hist_search='history | grep -i'
+alias hist_less='history | less'
+alias list_less='ls -la | less'
+
+if command -v tree >/dev/null 2>&1; then
+    alias tree_less='tree -C | less'
+fi
+
+# FILE FORMAT-SPECIFIC VIEWERS
+# =============================================================================
+if command -v jq >/dev/null 2>&1; then
+    alias json_less='jq . | less'
+fi
+
+if command -v bat >/dev/null 2>&1; then
+    alias yaml_less='bat -l yaml --paging=always'
+fi

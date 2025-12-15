@@ -77,6 +77,17 @@ _kegonly=(curl ruby sqlite)
 zstyle ':zephyr:plugin:homebrew' 'keg-only-brews' "${_kegonly[@]}"
 unset _kegonly noexpand
 
+# Environment - configure prepath to include system binaries
+# This prevents the environment plugin from removing /usr/bin, /bin, etc from PATH
+zstyle ':zephyr:plugin:environment' 'prepath' \
+  $HOME/bin \
+  $HOME/.local/bin \
+  /usr/local/bin \
+  /usr/bin \
+  /bin \
+  /usr/sbin \
+  /sbin
+
 #
 # OMZ
 #

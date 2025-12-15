@@ -3,5 +3,3 @@ setuptools
 wheel
 pip-tools
 uv
-build
-twine

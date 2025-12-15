@@ -1,6 +1,10 @@
 # ~/.config/mise/config.toml
-# Global mise configuration
+# Global mise configuration (patched)
 # Assumes: Homebrew-installed uv, zsh shell, and SOPS-managed secrets
+# Notes:
+#    - Prefer pinned versions for reproducibility; use 'latest' only for non-critical tools.
+#    - post_install validation runs basic --version checks and smoke tests.
+#    - Secrets paths normalized: .env.json, .env.dev, .env (hook checks .env)
 
 [env]
 # Path configurations
@@ -13,66 +17,76 @@ MISE_GO_DEFAULT_PACKAGES_FILE = "~/.config/mise/.default-go-packages"
 
 # Load multiple secret files, redacted in logs
 _.file = [
-  { path = "$SECRETS_DIR/.env.json", redact = true },
-  { path = "$SECRETS_DIR/.env.dev", redact = true },
+{ path = "$SECRETS_DIR/.env.json", redact = true },
+{ path = "$SECRETS_DIR/.env.dev",   redact = true },
+{ path = "$SECRETS_DIR/.env",       redact = true },
 ]
+
+# [env.status]
+# Controls per-env log output; keep false to avoid # leaking secrets to logs
+# show_env = "false"
 
 [hooks.enter]
 shell = "zsh"
 # Autoloaded function; only runs if the file exists
+# Note: load-secrets must be idempotent and safe for interactive shells
 script = "[ -f $SECRETS_DIR/.env ] && load-secrets"
 
 [tools]
 # npm MUST be first to prioritize standalone version over Node's bundled npm
 npm = "11.6.2"
 
-# Core runtimes (dependency order matters after npm)
-node = { version = "latest", postinstall = "corepack enable" }
-python = "latest"
-bun = "latest"
+# Core runtimes (pin majors/minors when possible for reproducibility)
+node = { version = "20.19.6" }   # prefer LTS major (adjust to tested minor if needed)
+python = "3.13"
+bun = "latest"                   # non-critical runtime; keep latest or pin as needed
 
-# System utilities (fast, independent tools)
+# System utilities (pin critical CLIs; others may remain latest)
 ripgrep = "latest"
-shellcheck = "latest"
+shellcheck = "0.9.0"             # example pin; adjust if you tested a different version
 gemini-cli = "latest"
-pre-commit = "latest"
+pre-commit = "3.5.0"             # pin to a known stable release
 
 # Node.js packages (grouped by function)
 # Code formatting & linting
-"npm:prettier" = "3"
+"npm:prettier" = "3.7.4"
 "npm:markdownlint-cli" = "latest"
 
 # Node.js utilities
 "npm:npm-check" = "latest"
 "npm:npkill" = "latest"
 
-# AI/MCP tools (may have longer install times)
+# AI/MCP tools (may have longer install times; keep pinned if dependent on native libs)
 "npm:@motesoftware/nanocoder" = "latest"
 "npm:@pimzino/agentic-tools-mcp" = "latest"
 
+# Misc
+"npm:resumed" = "latest"
+"npm:jsonresume-theme-even" = "latest"
+
 # Python CLI tools (managed via pipx backend with uvx=true)
-# "pipx:aider-chat" = "latest"  # TODO: Waiting for tiktoken PyO3 Python 3.14 support
+# Comments: pin production-critical ones; leave experimental latest
 "pipx:basic-memory" = "latest"
-"pipx:psf/black" = "latest"
+"pipx:psf/black" = "23.12.0"
 "pipx:gallery-dl" = "latest"
 "pipx:khard" = "latest"
 "pipx:mac-cleanup" = "latest"
-# "pipx:markitdown-mcp" = "latest"  # TODO: Waiting for onnxruntime Python 3.14 wheels
 "pipx:osxmetadata" = "latest"
 "pipx:rich-cli" = "latest"
-"pipx:ruff" = "latest"
+"pipx:ruff" = "0.2.0"
 "pipx:speedtest-cli" = "latest"
-"pipx:yt-dlp" = "latest"
+"pipx:yt-dlp" = "2025.11.12"
+"pipx:twine" = "6.2.0"
 
 [settings]
 # Core settings
 experimental = true
 always_keep_download = false
 always_keep_install = false
-verbose = false                              # Set to true only for debugging
+verbose = false                              # Set to true only for debugging (avoid in CI)
 http_timeout = "60s"                         # Increase if network is slow
 jobs = 4
-cache_prune_age = "3d"
+cache_prune_age = "7d"                       # Increased from 3d to 7d for reliability
 activate_aggressive = true
 gix = false
 python_compile = false
@@ -87,4 +101,13 @@ uv_venv_auto = true
 uv_venv_create_args = ["--seed"]
 
 [settings.status]
+# UI-level env status display (kept true so tools show env in status UI)
+# Note: [env.status].show_env=false prevents per-run env dumps in logs
 show_env = false
+
+# Post-install validation hook
+# Ensure this script exists in a secure location within your repo (e.g., 99-meta/tools/scripts/mise-validate.sh)
+[hooks.postinstall]
+script = "~/.config/mise/hooks/mise-validate.sh"
+# Optional: Provide a small timeout so the hook cannot hang indefinitely
+timeout = "120s"

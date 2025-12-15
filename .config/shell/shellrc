@@ -50,12 +50,15 @@ export PERSONAL_BIN_DIR="${HOME}/.local/bin"
 # SSH Agent
 export SSH_AUTH_SOCK="$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh"
 
+# Obsidian Vault Path
+export VAULT_PATH="$HOME/Vault"
+
 # =============================================================================
 # Dev Tool Variables
 # =============================================================================
 
-# Obsidian Vault Path
-export VAULT_PATH="$HOME/Vault"
+# Mise configuration
+export MISE_NODE_COREPACK=0
 
 # uv generally respects XDG variables for its cache and data directories.
 # However, you can explicitly guide it for maximum control.
@@ -396,9 +399,9 @@ fi
 export HOMEBREW_NO_ANALYTICS=1
 export HOMEBREW_CLEANUP_MAX_AGE_DAYS=3
 export HOMEBREW_CLEANUP_PERIODIC_FULL_DAYS=3
-export HOMEBREW_BAT=1
 export HOMEBREW_VERBOSE_USING_DOTS=1
 export HOMEBREW_BUNDLE_FILE="${XDG_CONFIG_HOME}/homebrew/Brewfile"
+export HOMEBREW_BREWFILE="${XDG_CONFIG_HOME}/homebrew/Brewfile"
 
 # =============================================================================
 # UTILITY FUNCTIONS

@@ -11,7 +11,7 @@
 --glob=!package-lock.json
 --glob=!pnpm-lock.yaml
 --glob=!yarn.lock
---glob=!Libray/*
+--glob=!Library/*
 --glob=!history*
 --glob=!cache/**
 --glob=!tmp/*

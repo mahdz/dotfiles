@@ -1,3 +1,4 @@
-prefix=/Users/mh/.local/share/npm-global
+prefix=/Users/mh/.local/share/mise/installs/npm
 cache=${XDG_CACHE_HOME}/npm
 init-module=${XDG_CONFIG_HOME}/npm/config/npm-init.js
+fetch-timeout=120000
