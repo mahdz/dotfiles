@@ -34,9 +34,9 @@ indent_size = 4
 max_line_length = 80
 
 # Dotfiles / common config formats — use 2 spaces (aligns with Google practice)
-[*.{yml,yaml,json,toml,env,ini,conf,rc,gitignore,gitconfig}]
+[*.{yml,json,toml,env,ini,conf,rc,gitignore,gitconfig}]
 indent_style = space
-indent_size = 4 
+indent_size = 4
 
 # JSON files — ensure no final newline (common practice, or true if preferred for source)
 [*.json]

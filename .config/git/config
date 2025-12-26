@@ -23,11 +23,11 @@
 
 # GitHub CLI integration for credential management
 [credential "https://github.com"]
-  helper = 
+  helper =
   helper = !/opt/homebrew/bin/gh auth git-credential
 
 [credential "https://gist.github.com"]
-  helper = 
+  helper =
   helper = !/opt/homebrew/bin/gh auth git-credential
 
 [branch]
@@ -193,8 +193,7 @@
   cloneAddFlags = --depth=1
   debug = true
 
-[include]
-  path = /Users/mh/.config/git/config.local
-
 [includeIf "gitdir:~/.dotfiles/"]
   path = ~/.dotfiles/config
+[safe]
+	directory = /opt/pw

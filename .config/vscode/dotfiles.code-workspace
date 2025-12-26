@@ -17,21 +17,20 @@
       "path": "/Users/mh/.local/bin"
     },
     {
+      "name": "🗂 bin",
+      "path": "/Users/mh/bin"
+    },
+    {
       "name": "💾 .cache",
       "path": "/Users/mh/.cache"
     },
     {
       "name": "📄 Docs",
-      "path": "/Users/mh/Vault/02-projects/dotfiles"
+      "path": "/Users/mh/Vault/01-projects/dotfiles"
     }
   ],
   "settings": {
     "git.enabled": true,
-    "terminal.integrated.env.osx": {
-      "XDG_CONFIG_HOME": "/Users/mh/.config",
-      "XDG_DATA_HOME": "/Users/mh/.local/share",
-      "PATH": "/Users/mh/.local/bin:/Users/mh/bin:/Users/mh/.local/share/mise/shims:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
-    },
     "files.exclude": {
       "**/.git": false,
       "**/.git/**": true,
@@ -69,32 +68,12 @@
     },
     "[gitconfig]": {
       "editor.defaultFormatter": "yy0931.gitconfig-lsp",
-      "editor.wordWrap": "on",
-      "editor.formatOnSave": true,
-      "files.trimTrailingWhitespace": false
+      "editor.formatOnSave": true
     },
     "[jsonc]": {
-      "editor.formatOnSave": false,
-      "files.insertFinalNewline": true
     },
     "gitdoc.enabled": true,
-    "markdown.validate.enabled": false,
     "specstory.derivedRules.enabled": true,
-    "specstory.helpUsImprove": false,
-    "python.defaultInterpreterPath": "/Users/mh/.local/share/venvs",
-    "debug.javascript.defaultRuntimeExecutable": {
-      "pwa-node": "/Users/mh/.local/share/mise/shims/node"
-    }
-  },
-  "tasks": {
-    "version": "2.0.0",
-    "tasks": [
-      {
-        "label": "echo",
-        "type": "shell",
-        "command": "echo Hello",
-        "problemMatcher": []
-      }
-    ]
+    "specstory.helpUsImprove": false
   }
 }
