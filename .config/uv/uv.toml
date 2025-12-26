@@ -1,5 +1,5 @@
 # UV configuration optimized for mise integration
-python-preference = "system"
+python-preference = "managed"
 python-downloads = "automatic"
 
 # Performance optimizations

@@ -8,8 +8,6 @@ brew antidote
 brew aom
 brew aria2
 brew aribb24
-brew autoconf
-brew automake
 brew awk
 brew bash
 brew bash-completion
@@ -34,7 +32,6 @@ brew dbus
 brew defaultbrowser
 brew diff-so-fancy
 brew diffutils
-brew docutils
 brew double-conversion
 brew edencommon
 brew exiftool
@@ -125,6 +122,7 @@ brew libgcrypt
 brew libgit2
 brew libgpg-error
 brew libheif
+brew libiconv
 brew libidn
 brew libidn2
 brew libimobiledevice
@@ -225,13 +223,13 @@ brew powerlevel10k
 brew prettyping
 brew procs
 brew pstree
-brew python@3.13
-brew python@3.14
 brew qpdf
 brew qrencode
 brew rav1e
+brew rclone
 brew readline
 brew rich-cli
+brew ripgrep
 brew rlwrap
 brew rsync
 brew rtmpdump
@@ -303,6 +301,7 @@ cask blockblock
 cask cirrus
 cask claude
 cask clay
+cask codex
 cask cryptomator
 cask dayflow
 cask etrecheckpro
@@ -440,18 +439,20 @@ appstore 1290358394 Cardhop (2.4.3)
 appstore 1472875808 CardPointers (7.0.7)
 appstore 1130254674 CloudMounter (4.16)
 appstore 1545870783 Color Picker (2.1.4)
-appstore 1198176727 ControllerForHomeKit (8.0.2)
-appstore 1447330651 Copilot (6.0.10)
+appstore 1198176727 ControllerForHomeKit (8.1.1)
+appstore 1447330651 Copilot (6.1.0)
 appstore 1552415914 Couverture (1.6)
-appstore 953286746 Darkroom (7.0.2)
+appstore 953286746 Darkroom (7.0.9)
+appstore 953286746 Darkroom 2 (7.0.2)
 appstore 1453273600 Data Jar (1.1.4)
 appstore 290986013 Deliveries (9.6.1)
-appstore 1355679052 Dropover (5.1.3)
+appstore 1355679052 Dropover (5.2.0)
 appstore 1615988943 Folder Peek (1.12.0)
 appstore 6698876601 Folder Preview (2.5)
 appstore 6443796196 FreeScaler (1.0.1)
 appstore 1351639930 Gifski (2.23.1)
-appstore 6737538832 HEVCut (6.7.1)
+appstore 6749858592 HEICut (7.1.3)
+appstore 6737538832 HEVCut (7.1.3)
 appstore 1462943921 Hue Essentials (4.5.1)
 appstore 6444667067 Hyperduck (1.4.0)
 appstore 6739505345 Hyperspace (1.4.2)
@@ -470,17 +471,17 @@ appstore 1576121509 OK JSON (2.10.1)
 appstore 409201541 Pages (14.4)
 appstore 375589283 Parcel (8.2.4)
 appstore 1499215709 Pasteboard Viewer (2.11.0)
-appstore 6714467650 Perplexity (2.251118.0)
-appstore 6739038077 PhotoSort (1.20)
+appstore 6714467650 Perplexity (2.251216.0)
+appstore 6739038077 PhotoSort (1.21)
 appstore 6739781207 Pieoneer (1.17)
-appstore 6741746652 PigeonCast (2.2.1)
+appstore 6741746652 PigeonCast (3.0.0)
 appstore 1289583905 Pixelmator Pro (3.7.1)
 appstore 6478105775 Playlisty for Spotify (1.28)
 appstore 1459275972 Playlisty for Apple Music (3.35)
 appstore 1660037028 PreviewText (1.0.9)
 appstore 6748257094 Project Ingest (1.0.0)
 appstore 6745497754 Projectholic (0.90)
-appstore 1611378436 Pure Paste (1.13.1)
+appstore 1611378436 Pure Paste (1.13.2)
 appstore 6738274497 Raycast Companion (1.2.0)
 appstore 1596283165 rcmd (2.7.0)
 appstore 1546140065 RegExp (2.3.3)
@@ -490,16 +491,16 @@ appstore 1522267256 Shareful (1.11.0)
 appstore 0 ShellHistory (3.1.0)
 appstore 1594183810 Shortery (8.2)
 appstore 1006087419 SnippetsLab (2.6.2)
-appstore 6502294348 Space (1.3.4)
+appstore 6502294348 Space (1.3.5)
 appstore 1296723195 Startup Manager (2.6.0)
 appstore 6449814769 swipefy_app (2.11.6)
 appstore 6744716215 TaskForge (1.19.1)
-appstore 946399090 Telegram Lite (6.3.2)
+appstore 946399090 Telegram Lite (6.3.9)
 appstore 899247664 TestFlight (4.1.0)
 appstore 1492174677 Text Case (2023.3)
 appstore 6739804295 Tuneful (2.9.1)
-appstore 6477287463 Unwatched (1.8.0)
-appstore 1607635845 Velja (3.0.0)
+appstore 6477287463 Unwatched (1.8.1)
+appstore 1607635845 Velja (3.0.1)
 appstore 1518836004 Video Converter (1.1.7)
 appstore 1524540481 Widgy (26.1.1)
 
@@ -511,7 +512,6 @@ vscode bioinfo.markitdown-vscode
 vscode bmalehorn.shell-syntax
 vscode chouzz.vscode-better-align
 vscode christian-kohler.path-intellisense
-vscode chrmarti.regex
 vscode codezombiech.gitignore
 vscode davidanson.vscode-markdownlint
 vscode dbaeumer.vscode-eslint
@@ -539,6 +539,7 @@ vscode guttih.sheller
 vscode henriquebruno.github-repository-manager
 vscode hverlin.mise-vscode
 vscode idleberg.applescript
+vscode idleberg.jxa
 vscode interactive-smartlog.interactive-smartlog
 vscode irongeek.vscode-env
 vscode janisdd.vscode-edit-csv
@@ -553,6 +554,7 @@ vscode maciejdems.add-to-gitignore
 vscode mads-hartmann.bash-ide-vscode
 vscode miguelsolorio.symbols
 vscode mkhl.shfmt
+vscode moshfeu.diff-merge
 vscode ms-python.debugpy
 vscode ms-python.python
 vscode ms-python.vscode-python-envs
@@ -564,7 +566,6 @@ vscode oderwat.indent-rainbow
 vscode oliverdantzer.file-structure-tree
 vscode openai.chatgpt
 vscode pimzino.agentic-tools-mcp-companion
-vscode polymermallard.box-comment
 vscode ragokan.vscode-ai-context-provider
 vscode remcohaszing.schemastore
 vscode richie5um2.vscode-sort-json
@@ -579,12 +580,10 @@ vscode sidneys1.gitconfig
 vscode sleistner.vscode-fileutils
 vscode specstory.specstory-vscode
 vscode stevebeauge.quick-toggle-hide-ignored-files
-vscode streetsidesoftware.code-spell-checker
 vscode tamasfe.even-better-toml
 vscode the0807.uv-toolkit
 vscode timonwong.shellcheck
 vscode tkoresearch.applescript-support
-vscode upstash.context7-mcp
 vscode usernamehw.errorlens
 vscode vrocky.git-scan-fix
 vscode vsls-contrib.gitdoc
