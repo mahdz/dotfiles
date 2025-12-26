@@ -4,25 +4,6 @@
 # This runs prior to any other conf.d contents.
 
 # =============================================================================
-# PATH Setup (Before Antidote)
-# =============================================================================
-# Ensure system paths are in PATH before plugins load
-# This prevents "command not found" errors during plugin initialization
-path=(
-  $HOME/bin(N)
-  $HOME/.local/bin(N)
-  ${HOMEBREW_PREFIX:-/opt/homebrew}/{,s}bin(N)
-  /usr/local/{,s}bin(N)
-  /usr/bin
-  /bin
-  /usr/sbin
-  /sbin
-  $path
-)
-typeset -U path
-export PATH
-
-# =============================================================================
 # ENVIRONMENT VARIABLES & EXPORTS
 # =============================================================================
 
@@ -31,7 +12,7 @@ export PATH
 if [[ -n "${SSH_CONNECTION}" ]]; then
   export EDITOR=nano
 elif (( $+commands[code] )); then
-  export EDITOR=code
+  export EDITOR="code --wait"
 elif (( $+commands[micro] )); then
   export EDITOR=micro
 else
@@ -44,15 +25,6 @@ export VISUAL=${VISUAL:-$EDITOR}
 # Set pager and options
 export PAGER=less
 export LESS='-iRFXMx4 --incsearch --use-color --mouse'
-
-export SCRIPTS='/Users/mh/Developer/repos/id774/scripts'
-
-# =============================================================================
-# SECRETS
-# =============================================================================
-
-export SOPS_EDITOR=nano
-export SECRETS_FILE="${SECRETS_FILE:-$HOME/.local/share/secrets/.env}"
 
 # =============================================================================
 # GREP

@@ -4,8 +4,6 @@
 
 : ${ANTIDOTE_HOME:=${XDG_CACHE_HOME:-~/.cache}/repos}
 
-# ZSH="${ANTIDOTE_HOME}/ohmyzsh/ohmyzsh"
-
 # Keep all 3 for different test scenarios.
 # ANTIDOTE_REPO=$ANTIDOTE_HOME/mattmc3/antidote
 # ANTIDOTE_REPO=~/Projects/mattmc3/antidote
@@ -15,7 +13,14 @@ zstyle ':antidote:home' path $ANTIDOTE_HOME
 zstyle ':antidote:repo' path $ANTIDOTE_REPO
 zstyle ':antidote:bundle' use-friendly-names 'yes'
 zstyle ':antidote:plugin:*' defer-options '-p'
-zstyle ':antidote:*' zcompile 'yes'
+zstyle ':antidote:*' zcompile 'no'
+
+is-not-warpterm() {
+  [[ $TERM_PROGRAM != WarpTerminal ]]
+}
+is-theme-starship() {
+  [[ $ZSH_THEME == starship* ]]
+}
 
 # Defensive: ensure ANTIDOTE_REPO is not empty
 if [[ -z "$ANTIDOTE_REPO" ]]; then
@@ -30,5 +35,4 @@ fi
 
 # Source Antidote (must be before any `antidote` command is used)
 source "$ANTIDOTE_REPO/antidote.zsh"
-
 antidote load
