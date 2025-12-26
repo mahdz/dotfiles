@@ -1,17 +1,14 @@
 #
-# XDG base dirs - don't pollute home
+# xdg - don't pollute home
 #
 
-#
-# Variables
-#
+# XDG basedirs
 
-export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
-export XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
-export XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
-export XDG_STATE_HOME=${XDG_STATE_HOME:-$HOME/.local/state}
-#export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-$HOME/.xdg}
-export XDG_PROJECTS_DIR=${XDG_PROJECTS_DIR:-$HOME/Developer/repos}
+export XDG_CONFIG_HOME=~/.config
+export XDG_CACHE_HOME=~/.cache
+export XDG_DATA_HOME=~/.local/share
+export XDG_STATE_HOME=~/.local/state
+export XDG_PROJECTS_DIR=~/Developer
 
 for _xdgdir in XDG_{CONFIG,CACHE,DATA,STATE}_HOME; do
   [[ -e ${(P)_xdgdir} ]] || mkdir -p ${(P)_xdgdir}
@@ -24,7 +21,7 @@ unset _xdgdir
 
 # less
 export LESSKEY="${LESSKEY:-$XDG_CONFIG_HOME/less/lesskey}"
-export LESSHISTFILE="${LESSHISTFILE:-/dev/null}"  # Disabled for privacy
+export LESSHISTFILE="${LESSHISTFILE:-$XDG_CACHE_HOME/less/history}"
 
 # readline
 export INPUTRC="${INPUTRC:-$XDG_CONFIG_HOME/readline/inputrc}"
@@ -48,20 +45,10 @@ alias wget="${aliases[wget]:-wget} --hsts-file=\$XDG_CACHE_HOME/wget/wget-hsts"
 export GNUPGHOME="${GNUPGHOME:-$XDG_DATA_HOME/gnupg}"
 alias gpg="${aliases[gpg]:-gpg} --homedir \"\$GNUPGHOME\""
 
-# jupyter
-# export JUPYTER_CONFIG_DIR="${JUPYTER_CONFIG_DIR:-$XDG_CONFIG_HOME/jupyter}"
 
 # node
-#path+=(
-#  /{opt/homebrew,usr/local}/share/npm/bin(N)
-#)
-# export NVM_DIR="${XDG_CONFIG_HOME-}/nvm"
-
 export NPM_CONFIG_USERCONFIG="${NPM_CONFIG_USERCONFIG:-$XDG_CONFIG_HOME/npm/npmrc}"
 export NODE_REPL_HISTORY="${NODE_REPL_HISTORY:-$XDG_DATA_HOME/nodejs/repl_history}"
-
-# nuget
-# export NUGET_PACKAGES="${NUGET_PACKAGES:-$XDG_CACHE_HOME/NuGetPackages}"
 
 # postgres
 export PSQLRC="${PSQLRC:-$XDG_CONFIG_HOME/pg/psqlrc}"

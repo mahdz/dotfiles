@@ -19,6 +19,10 @@ zstyle ':zephyr:plugin:*' 'use-cache' no
 # XDG
 zstyle ':zephyr:plugin:*' use-xdg-basedirs 'yes'
 
+# Environment
+zstyle ':zephyr:plugin:environment' skip-path-setup yes
+zstyle ':zephyr:plugin:homebrew' skip-path-setup yes
+
 # Always show color
 zstyle ':zephyr:plugin:*' color 'yes'
 
@@ -66,7 +70,7 @@ zstyle ':zephyr:plugin:completion' compstyle 'zephyr'
 zstyle ':zsh_custom:plugin:dotfiles' bare 'yes'
 
 # History
-# zstyle ':zephyr:plugin:history:alias' skip 'yes'
+zstyle ':zephyr:plugin:history:alias' skip 'yes'
 zstyle ':hist:*' expand-aliases yes
 zstyle ':hist:*' auto-format yes
 
@@ -79,19 +83,14 @@ unset _kegonly noexpand
 
 # Environment - configure prepath to include system binaries
 # This prevents the environment plugin from removing /usr/bin, /bin, etc from PATH
-zstyle ':zephyr:plugin:environment' 'prepath' \
-  $HOME/bin \
-  $HOME/.local/bin \
-  /usr/local/bin \
-  /usr/bin \
-  /bin \
-  /usr/sbin \
-  /sbin
-
-#
-# OMZ
-#
-# zstyle ':omz:update' mode disabled
+# zstyle ':zephyr:plugin:environment' 'prepath' \
+#   $HOME/bin \
+#   $HOME/.local/bin \
+#   /usr/local/bin \
+#   /usr/bin \
+#   /bin \
+#   /usr/sbin \
+#   /sbin
 
 # aliases
 # Enable all aliases in lib and plugins broadly
@@ -99,22 +98,22 @@ zstyle ':zephyr:plugin:environment' 'prepath' \
 # zstyle ':omz:plugins:*' aliases yes
 
 # Disable directories aliases from lib
-# zstyle ':omz:lib:directories' aliases no
+zstyle ':omz:lib:directories' aliases no
 
 # Disable git plugin aliases
-# zstyle ':omz:plugins:git' aliases no
+zstyle ':omz:plugins:git' aliases no
 
 # GNU
 # zstyle ':omz:lib:theme-and-appearance' gnu-ls no
 # Prevent use-omz from trying to load themes since we use starship directly
-# zstyle ':omz:lib:theme-and-appearance' 'skip' 'yes'
+zstyle ':omz:lib:theme-and-appearance' 'skip' 'yes'
 
 # async
 # zstyle ':omz:alpha:lib:git' async-prompt no
 
 # ssh-agent
 zstyle :omz:plugins:ssh-agent agent-forwarding on
-zstyle :omz:plugins:ssh-agent quiet yes
+# zstyle :omz:plugins:ssh-agent quiet yes
 zstyle :omz:plugins:ssh-agent lazy yes
 zstyle :omz:plugins:ssh-agent ssh-add-args --apple-load-keychain
 
