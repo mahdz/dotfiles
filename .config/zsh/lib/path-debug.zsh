@@ -19,15 +19,21 @@ path_entries=($(echo "$PATH" | tr ':' '\n'))
 # =============================================================================
 
 echo ""
-blue "═══════════════════════════════════════════════════════════════"
-blue "ZSH PATH DIAGNOSTICS"
-blue "═══════════════════════════════════════════════════════════════"
+echo "$(blue "═══════════════════════════════════════════════════════════════")"
+echo "$(blue "ZSH PATH DIAGNOSTICS")"
+echo "$(blue "═══════════════════════════════════════════════════════════════")"
 echo ""
 
 # 1. Current PATH
 section_header "Current PATH (in order)"
 echo "$PATH" | tr ':' '\n' | nl
 echo ""
+
+# 1. Current PATH
+echo "${YELLOW}1. Current PATH (in order):${NC}"
+echo "$PATH" | tr ':' '\n' | nl
+echo ""
+
 
 # 2. PATH Entry Count & Duplicates
 section_header "PATH Statistics"
