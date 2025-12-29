@@ -1,53 +1,68 @@
 #!/bin/zsh
 # =============================================================================
-# PATH Debug Diagnostics
+# PATH Debug Diagnostics (Refactored)
 # =============================================================================
-# Source this file to diagnose PATH issues:
-#   source ~/.config/zsh/lib/path-debug.zsh
+# Uses utilities from ~/.shellrc for consistency and maintainability
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
+# Ensure utility functions are available
+[[ -r "${HOME}/.shellrc" ]] && source "${HOME}/.shellrc"
 
-echo "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
-echo "${BLUE}ZSH PATH DIAGNOSTICS${NC}"
-echo "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
+# =============================================================================
+# SETUP
+# =============================================================================
+
+# Store PATH entries once to avoid repeated processing
+path_entries=($(echo "$PATH" | tr ':' '\n'))
+
+# =============================================================================
+# DIAGNOSTICS
+# =============================================================================
+
+echo ""
+blue "═══════════════════════════════════════════════════════════════"
+blue "ZSH PATH DIAGNOSTICS"
+blue "═══════════════════════════════════════════════════════════════"
 echo ""
 
 # 1. Current PATH
-echo "${YELLOW}1. Current PATH (in order):${NC}"
+section "Current PATH (in order)"
 echo "$PATH" | tr ':' '\n' | nl
 echo ""
 
 # 2. PATH Entry Count & Duplicates
-echo "${YELLOW}2. PATH Statistics:${NC}"
-local path_count=$(echo "$PATH" | tr ':' '\n' | wc -l)
-local unique_count=$(echo "$PATH" | tr ':' '\n' | sort -u | wc -l)
+section "PATH Statistics"
+local path_count=${#path_entries[@]}
+local unique_entries=($(printf '%s\n' "${path_entries[@]}" | sort -u))
+local unique_count=${#unique_entries[@]}
 local duplicate_count=$((path_count - unique_count))
+
 echo "   Total entries: $path_count"
 echo "   Unique entries: $unique_count"
 echo "   Duplicates: $duplicate_count"
-[[ $duplicate_count -gt 0 ]] && echo "   ${RED}⚠️  WARNING: PATH contains duplicates!${NC}"
+
+if [[ $duplicate_count -gt 0 ]]; then
+    warn "PATH contains duplicates!"
+else
+    success "No duplicate PATH entries"
+fi
 echo ""
 
 # 3. Missing Directories in PATH
-echo "${YELLOW}3. Missing Directories (not on filesystem):${NC}"
+section "Missing Directories (not on filesystem)"
 local missing=0
-local -a missing_dirs
-for dir in $(echo "$PATH" | tr ':' '\n'); do
-    if [[ ! -d "$dir" ]]; then
+local missing_dirs=()
+
+for dir in "${path_entries[@]}"; do
+    if ! is_directory "$dir"; then
         missing=$((missing + 1))
         missing_dirs+=("$dir")
     fi
 done
 
 if [[ $missing -eq 0 ]]; then
-    echo "   ${GREEN}✅ All PATH entries exist${NC}"
+    success "All PATH entries exist"
 else
-    echo "   ${RED}❌ Found $missing missing entries:${NC}"
+    warn "Found $missing missing entries:"
     for dir in "${missing_dirs[@]}"; do
         echo "      - $dir"
     done
@@ -55,97 +70,127 @@ fi
 echo ""
 
 # 4. Critical Tool Locations
-echo "${YELLOW}4. Critical Tool Locations:${NC}"
+section "Critical Tool Locations"
 local tools=("node" "npm" "python" "git" "mise")
+local missing_tools=0
+
 for tool in "${tools[@]}"; do
-    if command -v "$tool" &>/dev/null; then
+    if have "$tool"; then
         local location=$(command -v "$tool")
-        echo "   ${GREEN}✅${NC} $tool: $location"
+        echo "   $(green "✅") $tool: $location"
     else
-        echo "   ${RED}❌${NC} $tool: NOT FOUND"
+        echo "   $(red "❌") $tool: NOT FOUND"
+        missing_tools=$((missing_tools + 1))
     fi
 done
 echo ""
 
 # 5. Mise Shims
-echo "${YELLOW}5. Mise Shims Configuration:${NC}"
+section "Mise Shims Configuration"
 local mise_shims="$HOME/.local/share/mise/shims"
-if [[ -d "$mise_shims" ]]; then
-    echo "   ${GREEN}✅${NC} Directory exists: $mise_shims"
+
+if is_directory "$mise_shims"; then
+    echo "   $(green "✅") Directory exists: $mise_shims"
     local shim_count=$(ls -1 "$mise_shims" 2>/dev/null | wc -l)
     echo "   Available shims: $shim_count"
-    
+
     # Check if mise shims are in PATH
     if [[ ":$PATH:" == *":$mise_shims:"* ]]; then
         local position=$(echo "$PATH" | tr ':' '\n' | nl | grep "$mise_shims" | awk '{print $1}')
-        echo "   ${GREEN}✅${NC} In PATH at position: $position"
+        echo "   $(green "✅") In PATH at position: $position"
     else
-        echo "   ${RED}❌${NC} NOT in PATH - this is a problem!"
+        warn "Mise shims NOT in PATH - this is a problem!"
     fi
 else
-    echo "   ${RED}❌${NC} Directory NOT found: $mise_shims"
+    warn "Mise shims directory NOT found: $mise_shims"
 fi
 echo ""
 
 # 6. Homebrew Configuration
-echo "${YELLOW}6. Homebrew Configuration:${NC}"
+section "Homebrew Configuration"
+local brew_prefix="${HOMEBREW_PREFIX:-/opt/homebrew}"
+local brew_bin="$brew_prefix/bin"
+
 echo "   HOMEBREW_PREFIX: ${HOMEBREW_PREFIX:-not set}"
-if [[ -x "${HOMEBREW_PREFIX:-/opt/homebrew}/bin/brew" ]]; then
-    echo "   ${GREEN}✅${NC} Brew executable found"
-    local brew_bin="${HOMEBREW_PREFIX:-/opt/homebrew}/bin"
+
+if is_executable "$brew_prefix/bin/brew"; then
+    echo "   $(green "✅") Brew executable found"
     if [[ ":$PATH:" == *":$brew_bin:"* ]]; then
-        echo "   ${GREEN}✅${NC} Brew bin in PATH"
+        echo "   $(green "✅") Brew bin in PATH"
     else
-        echo "   ${RED}⚠️  WARNING: Brew bin NOT in PATH${NC}"
+        warn "Brew bin NOT in PATH"
     fi
 else
-    echo "   ${RED}❌${NC} Brew executable not found"
+    warn "Brew executable not found at $brew_prefix/bin/brew"
 fi
 echo ""
 
 # 7. XDG Compliance
-echo "${YELLOW}7. XDG Directory Configuration:${NC}"
+section "XDG Directory Configuration"
 echo "   XDG_CONFIG_HOME: ${XDG_CONFIG_HOME:-not set}"
 echo "   XDG_DATA_HOME: ${XDG_DATA_HOME:-not set}"
 echo "   XDG_CACHE_HOME: ${XDG_CACHE_HOME:-not set}"
+
+# Validate XDG directories exist
+if is_non_zero_string "$XDG_CONFIG_HOME" && ! is_directory "$XDG_CONFIG_HOME"; then
+    warn "XDG_CONFIG_HOME is set but directory doesn't exist: $XDG_CONFIG_HOME"
+fi
+if is_non_zero_string "$XDG_DATA_HOME" && ! is_directory "$XDG_DATA_HOME"; then
+    warn "XDG_DATA_HOME is set but directory doesn't exist: $XDG_DATA_HOME"
+fi
 echo ""
 
 # 8. Plugin Load Order Issue Detection
-echo "${YELLOW}8. Plugin Configuration Check:${NC}"
-if [[ -n "$_DOTFILES_PLUGIN_LOADED" ]]; then
-    echo "   ${GREEN}✅${NC} Dotfiles plugin: LOADED"
+section "Plugin Configuration Check"
+
+if is_non_zero_string "$_DOTFILES_PLUGIN_LOADED"; then
+    echo "   $(green "✅") Dotfiles plugin: LOADED"
 else
-    echo "   ⚠️  Dotfiles plugin: not loaded yet (may be deferred)"
+    warn "Dotfiles plugin: not loaded yet (may be deferred)"
 fi
 
-# Check for environment plugin
+# Check for environment functions
 if (( $+functions[env] )); then
-    echo "   ${GREEN}✅${NC} Environment functions: available"
+    echo "   $(green "✅") Environment functions: available"
 else
-    echo "   ⚠️  Environment functions: not yet available"
+    warn "Environment functions: not yet available"
 fi
 
 # Check for homebrew plugin
-if [[ -n "$HOMEBREW_PREFIX" ]]; then
-    echo "   ${GREEN}✅${NC} Homebrew plugin: loaded"
+if is_non_zero_string "$HOMEBREW_PREFIX"; then
+    echo "   $(green "✅") Homebrew plugin: loaded"
 else
-    echo "   ⚠️  Homebrew plugin: may not be loaded"
+    warn "Homebrew plugin: may not be loaded"
 fi
 echo ""
 
 # 9. Recommendations
-echo "${YELLOW}9. Recommendations:${NC}"
+section "Recommendations"
+local has_recommendations=0
+
 if [[ $duplicate_count -gt 0 ]]; then
-    echo "   ${YELLOW}⚠️  Remove duplicate PATH entries${NC}"
+    warn "Remove duplicate PATH entries"
+    has_recommendations=1
 fi
 
 if [[ $missing -gt 0 ]]; then
-    echo "   ${YELLOW}⚠️  Remove non-existent directories from PATH${NC}"
+    warn "Remove non-existent directories from PATH"
+    has_recommendations=1
 fi
 
-if [[ ! -d "$mise_shims" ]]; then
-    echo "   ${YELLOW}⚠️  Install/configure mise shims${NC}"
+if ! is_directory "$mise_shims"; then
+    warn "Install/configure mise shims"
+    has_recommendations=1
+fi
+
+if [[ $missing_tools -gt 0 ]]; then
+    warn "$missing_tools critical tool(s) not found"
+    has_recommendations=1
+fi
+
+if [[ $has_recommendations -eq 0 ]]; then
+    success "No issues detected!"
 fi
 
 echo ""
-echo "${BLUE}═══════════════════════════════════════════════════════════════${NC}"
+blue "═══════════════════════════════════════════════════════════════"
