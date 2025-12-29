@@ -23,49 +23,56 @@
     {
       "name": "💾 .cache",
       "path": "/Users/mh/.cache"
-    },
-    {
-      "name": "📄 Docs",
-      "path": "/Users/mh/Vault/01-projects/dotfiles"
     }
   ],
   "settings": {
     "git.enabled": true,
+    // "files.exclude": {
+    //   "**/.git": false,
+    //   "**/.git/**": true,
+    //   "**/.DS_Store": true,
+    //   "**/.Trash": true,
+    //   "**/.cache/**": true,
+    //   "**/.npm": true,
+    //   "**/.ollama": true,
+    //   "**/.basic-memory": true,
+    //   "**/node_modules": true,
+    //   "**/bower_components": true,
+    //   "Applications": true,
+    //   "Desktop": true,
+    //   "Documents": true,
+    //   "Downloads": true,
+    //   "Library": true,
+    //   "Movies": true,
+    //   "Music": true,
+    //   "Pictures": true,
+    //   "Public": true
+    // },
+    // "files.watcherExclude": {
+    //   "**/.git/**": true,
+    //   "**/.DS_Store": true,
+    //   "**/.cache/**": true,
+    //   "**/.npm/**": true,
+    //   "**/.basic-memory/**": true,
+    //   "**/node_modules/**": true,
+    //   "**/bower_components/**": true,
+    //   "**/Downloads/**": true,
+    //   "**/Movies/**": true,
+    //   "**/Music/**": true,
+    //   "**/Pictures/**": true,
+    //   "**/Library/**": true
+    // },
     "files.exclude": {
-      "**/.git": false,
-      "**/.git/**": true,
-      "**/.DS_Store": true,
-      "**/.Trash": true,
-      "**/.cache/**": true,
-      "**/.npm": true,
-      "**/.ollama": true,
-      "**/.basic-memory": true,
-      "**/node_modules": true,
-      "**/bower_components": true,
-      "Applications": true,
-      "Desktop": true,
-      "Documents": true,
-      "Downloads": true,
-      "Library": true,
-      "Movies": true,
-      "Music": true,
-      "Pictures": true,
-      "Public": true
-    },
-    "files.watcherExclude": {
-      "**/.git/**": true,
-      "**/.DS_Store": true,
-      "**/.cache/**": true,
-      "**/.npm/**": true,
-      "**/.basic-memory/**": true,
-      "**/node_modules/**": true,
-      "**/bower_components/**": true,
-      "**/Downloads/**": true,
-      "**/Movies/**": true,
-      "**/Music/**": true,
-      "**/Pictures/**": true,
-      "**/Library/**": true
-    },
+      "**/.dotfiles-backup": true
+  },
+  "files.watcherExclude": {
+      "**/.dotfiles/**": false
+  },
+  "git.scanRepositories": [
+      "/Users/mh/.dotfiles",
+      "/Users/mh/Developer",
+      "/Users/mh/.cache/repos"
+  ],
     "[gitconfig]": {
       "editor.defaultFormatter": "yy0931.gitconfig-lsp",
       "editor.formatOnSave": true

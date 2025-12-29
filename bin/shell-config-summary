@@ -1,0 +1,127 @@
+#!/bin/bash
+# shell-config-summary
+# Generate modern Zsh configuration summary (Antidote + Mise + Zsh)
+#
+# PURPOSE:
+#   Creates a Markdown document summarizing your current shell environment,
+#   including Zsh config, Antidote plugins, Mise tools, and key exports.
+#
+# USAGE:
+#   shell-config-summary [output-file]
+#   shell-config-summary                    # outputs to ~/.config/shell_env_summary.md
+#   shell-config-summary /tmp/config.md     # outputs to custom location
+
+set -euo pipefail
+
+# Configuration
+ZDOTDIR="${ZDOTDIR:-$HOME/.config/zsh}"
+MISE_CONFIG="${HOME}/.config/mise/config.toml"
+OUTPUT="${1:-$HOME/.config/shell_env_summary.md}"
+
+# Helper: Sanitize backticks in output for Markdown code blocks
+sanitize() {
+  sed 's/`/\\`/g'
+}
+
+# Helper: Create Markdown section with code block
+section_md() {
+  local title="$1"
+  shift
+  local content
+  content=$("$@" 2>/dev/null | sanitize || echo "(no data)")
+  echo "## $title"
+  echo ""
+  echo '```'
+  echo "$content"
+  echo '```'
+  echo ""
+}
+
+# Extract environment variables from .zshenv
+extract_env() {
+  grep -E '^export |^[A-Z_]+=' "$ZDOTDIR/.zshenv" 2>/dev/null | head -30 || echo "# (no exports found)"
+}
+
+# Extract Antidote plugins
+extract_plugins() {
+  echo "# Antidote Plugin Configuration"
+  echo "# Location: $ZDOTDIR/.zsh_plugins.txt"
+  echo ""
+  sed '/^#/d;/^[[:space:]]*$/d' "$ZDOTDIR/.zsh_plugins.txt" | head -40
+}
+
+# Extract Mise tools
+extract_mise_tools() {
+  echo "# Mise Tools Configuration"
+  echo "# Location: $MISE_CONFIG"
+  echo ""
+  if [[ -f "$MISE_CONFIG" ]]; then
+    awk '/^\[tools\]/,/^\[/ { if ($0 !~ /^\[/ || /^\[tools\]/) print }' "$MISE_CONFIG" | head -50
+  else
+    echo "(mise config not found)"
+  fi
+}
+
+# Extract PATH and related
+extract_path_info() {
+  echo "ZDOTDIR: $ZDOTDIR"
+  echo "SHELL: ${SHELL:-not set}"
+  echo "ZSH_VERSION: ${ZSH_VERSION:-not set (run in zsh to see)}"
+  echo ""
+  echo "PATH directories:"
+  echo "$PATH" | tr ':' '\n' | sed 's/^/  /'
+}
+
+# Extract key aliases
+extract_aliases() {
+  echo "# Common Dotfiles Aliases"
+  grep -E '^alias (ds|da|dc|dp|dl|dd|dot|zdot)=' "$ZDOTDIR/.zshrc" 2>/dev/null || echo "# (aliases not found)"
+  echo ""
+  echo "# Other Aliases"
+  grep -E '^alias ' "$ZDOTDIR/custom/plugins/dotfiles/dotfiles.plugin.zsh" 2>/dev/null | head -15 || echo "# (no custom aliases)"
+}
+
+# Generate the Markdown document
+generate_markdown() {
+  {
+    echo "# Zsh Configuration Summary"
+    echo ""
+    echo "**Generated:** $(date)"
+    echo "**System:** macOS ($(uname -m))"
+    echo ""
+    
+    section_md "ZDOTDIR & Shell Info" extract_path_info
+    section_md "Environment Exports (.zshenv)" extract_env
+    section_md "Antidote Plugins (.zsh_plugins.txt)" extract_plugins
+    section_md "Mise Tools Configuration" extract_mise_tools
+    section_md "Dotfiles Aliases" extract_aliases
+    
+    echo "## Additional Notes"
+    echo ""
+    echo "- **Plugin Manager:** Antidote (replaces oh-my-zsh)"
+    echo "- **Tool Manager:** Mise (Node, Python, Dev tools)"
+    echo "- **Dotfiles Workflow:** Bare Git repo via \`dots\` function"
+    echo "- **Shell:** Zsh with XDG-compliant config structure"
+    echo ""
+    echo "For more details, see:"
+    echo "- \`AGENTS.md\` - Project overview"
+    echo "- \`.github/copilot-instructions.md\` - Detailed setup guide"
+    echo "- \`~/.config/zsh/\` - All Zsh configurations"
+  } > "$OUTPUT"
+}
+
+# Main
+main() {
+  if [[ ! -d "$ZDOTDIR" ]]; then
+    echo "❌ ZDOTDIR not found: $ZDOTDIR" >&2
+    return 1
+  fi
+  
+  generate_markdown
+  
+  echo "✅ Shell configuration summary generated"
+  echo "📄 Output: $OUTPUT"
+  echo "👁️  Preview: head -60 \"$OUTPUT\""
+}
+
+main "$@"

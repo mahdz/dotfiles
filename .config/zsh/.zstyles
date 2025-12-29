@@ -20,8 +20,7 @@ zstyle ':zephyr:plugin:*' 'use-cache' no
 zstyle ':zephyr:plugin:*' use-xdg-basedirs 'yes'
 
 # Environment
-zstyle ':zephyr:plugin:environment' skip-path-setup yes
-zstyle ':zephyr:plugin:homebrew' skip-path-setup yes
+# zstyle ':zephyr:plugin:environment' skip-path-setup yes
 
 # Always show color
 zstyle ':zephyr:plugin:*' color 'yes'
@@ -73,13 +72,6 @@ zstyle ':zsh_custom:plugin:dotfiles' bare 'yes'
 zstyle ':zephyr:plugin:history:alias' skip 'yes'
 zstyle ':hist:*' expand-aliases yes
 zstyle ':hist:*' auto-format yes
-
-# Homebrew
-zstyle ':zephyr:plugin:homebrew' 'use-cache' no
-
-_kegonly=(curl ruby sqlite)
-zstyle ':zephyr:plugin:homebrew' 'keg-only-brews' "${_kegonly[@]}"
-unset _kegonly noexpand
 
 # Environment - configure prepath to include system binaries
 # This prevents the environment plugin from removing /usr/bin, /bin, etc from PATH

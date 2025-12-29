@@ -1,48 +1,62 @@
-# ~/.config/mise/config.toml
-# Global mise configuration (patched)
-# Assumes: Homebrew-installed uv, zsh shell, and SOPS-managed secrets
-# Notes:
-#    - Prefer pinned versions for reproducibility; use 'latest' only for non-critical tools.
-#    - post_install validation runs basic --version checks and smoke tests.
-#    - Secrets paths normalized: .env.json, .env.dev, .env (hook checks .env)
+# mise.toml - Comprehensive Development Environment Configuration
 
-redactions = ["SECRET_*", "*_TOKEN", "PASSWORD", "API_*"]
+# ==============================================================================
+# SETTINGS
+# ==============================================================================
+[settings]
+# UV Package Manager Integration
+python.uv_venv_auto = true
+python.uv_venv_create_args = ["--seed"]
+pipx.uvx = true
 
+# General Settings
+experimental = false
+always_keep_download = false
+always_keep_install = false
+plugin_autoupdate_last_check_duration = "7d"
+jobs = 4
+verbose = false
+log_level = "warn"
+activate_aggressive = true
+
+# Git integration
+gix = false
+
+[settings.status]
+show_env = false
+
+# ==============================================================================
+# ENVIRONMENT VARIABLES
+# ==============================================================================
 [env]
-# Path configurations
-SECRETS_DIR = "$XDG_CONFIG_HOME/security"
-
-# Default package lists
+PYTHONUNBUFFERED = "1"
+UV_FROZEN = "false"
 MISE_PYTHON_DEFAULT_PACKAGES_FILE = "$XDG_CONFIG_HOME/mise/.default-python-packages"
 MISE_NODE_DEFAULT_PACKAGES_FILE = "$XDG_CONFIG_HOME/mise/.default-npm-packages"
+SECRETS_DIR = "$XDG_CONFIG_HOME/security"
 
-# Load multiple secret files, redacted in logs
 _.file = [
   { path = "$HOME/.env", redact = true },
+  { path = "$XDG_CONFIG_HOME/security/.env", redact = true },
 ]
 
-[hooks]
-preinstall = "echo 'About to install $MISE_TOOL_NAME@$MISE_TOOL_VERSION'"
 
-[hooks.enter]
-shell = "zsh"
-# Autoloaded function; only runs if the file exists
-script = "[ -f $XDG_CONFIG_HOME/security/.env ] && load-secrets"
-
+# ============================================================================
+# CORE RUNTIME TOOLS (Essential for development)
+# ============================================================================
 [tools]
-# npm MUST be first to prioritize standalone version over Node's bundled npm
-npm = "11.6.2"
+# Core runtime
+python = "3.13"
 
 # Core runtimes (pin majors/minors when possible for reproducibility)
-node = { version = "20.19.6" }   # prefer LTS major (adjust to tested minor if needed)
-bun = "latest"                   # non-critical runtime; keep latest or pin as needed
+node = { version = "20.19.6" } # prefer LTS major (adjust to tested minor if needed)
+bun = "latest"                 # non-critical runtime; keep latest or pin as needed
 
 # System utilities (pin critical CLIs; others may remain latest)
 ripgrep = "latest"
-shellcheck = "0.9.0"             # example pin; adjust if you tested a different version
+shellcheck = "0.9.0"  # example pin; adjust if you tested a different version
 gemini-cli = "latest"
-pre-commit = "3.5.0"             # pin to a known stable release
-jules = "latest"
+pre-commit = "3.5.0"  # pin to a known stable release
 
 # Node.js packages (grouped by function)
 # Code formatting & linting
@@ -54,6 +68,8 @@ jules = "latest"
 "npm:npkill" = "latest"
 
 # AI/MCP tools (may have longer install times; keep pinned if dependent on native libs)
+"npm:cline" = "latest"
+"npm:@google/jules" = "latest"
 "npm:@motesoftware/nanocoder" = "latest"
 "npm:@pimzino/agentic-tools-mcp" = "latest"
 
@@ -75,48 +91,11 @@ jules = "latest"
 "pipx:speedtest-cli" = "latest"
 "pipx:yt-dlp" = "latest"
 "pipx:twine" = "6.2.0"
-"npm:@google/jules" = "latest"
 
-[settings]
-# Core settings
-experimental = true
-always_keep_download = false
-always_keep_install = false
-verbose = false                              # Set to true only for debugging (avoid in CI)
-http_timeout = "60s"                         # Increase if network is slow
-jobs = 4
-cache_prune_age = "7d"                       # Increased from 3d to 7d for reliability
-gix = false
-python_compile = false
-legacy_version_file = true
-plugin_autoupdate_last_check_duration = "7d"
-activate_aggressive = true
-
-[settings.pipx]
-uvx = true
-
-[settings.python]
-uv_venv_auto = true
-uv_venv_create_args = ["--seed"]
-
-[settings.status]
-# UI-level env status display (kept true so tools show env in status UI)
-# Note: [env.status].show_env=false prevents per-run env dumps in logs
-show_env = false
-
-[[hooks.postinstall]]
-script = "echo '✅ Installed $MISE_TOOL_NAME@$MISE_TOOL_VERSION'"
-timeout = "10s"
-
-[[hooks.postinstall]]
-script = "$XDG_CONFIG_HOME/mise/hooks/mise-validate.sh"
-timeout = "30s"
-
-[[hooks.postinstall]]
-script = '''
-  if ! mise which npm >/dev/null 2>&1; then
-    echo "❌ npm missing after install - check PATH/shims" >&2
-    exit 1
-  fi
-'''
-timeout = "20s"
+[hooks]
+preinstall = 'printf "About to install %s@%s\n" "$MISE_TOOL_NAME" "$MISE_TOOL_VERSION"'
+enter = '[[ -f $XDG_CONFIG_HOME/security/.env ]] && load-secrets'
+postinstall = [
+  'printf "✅ Installed %s@%s\n" "$MISE_TOOL_NAME" "$MISE_TOOL_VERSION"',
+  'exec "$XDG_CONFIG_HOME/mise/hooks/mise-validate.sh"',
+]

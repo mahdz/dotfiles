@@ -1,4 +1,5 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
+
 ################################################################################
 # This file is sourced only for login shells. It is used to define the bare
 # minimum shell functions and env vars that are needed during bootstrap of a
@@ -8,18 +9,6 @@
 # load order: .zshenv [.shellrc], .zshrc [.shellrc, .aliases [.shellrc]], .zlogin
 ################################################################################
 
-export LANG='en_US.UTF-8'
-# Setting LC_ALL overrides all other LC_* variables.
-# LANG is kept as a fallback.
-export LC_ALL='en_US.UTF-8'
-export LESSCHARSET='utf-8'
-
-export ZDOTDIR="${ZDOTDIR:-${HOME}}"
-export XDG_CACHE_HOME="${XDG_CACHE_HOME:-${HOME}/.cache}"
-export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
-export XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}"
-export XDG_STATE_HOME="${XDG_STATE_HOME:-${HOME}/.local/state}"
-
 # Cache the architecture check to avoid calling `uname` repeatedly
 [[ -z "${ARCH}" ]] && export ARCH="$(uname -m)"
 export ARCHFLAGS="-arch ${ARCH}"
@@ -27,61 +16,47 @@ export ARCHFLAGS="-arch ${ARCH}"
 # =============================================================================
 # Env vars for basic/common setup
 # =============================================================================
-export GIT_CONFIG_GLOBAL="${XDG_CONFIG_HOME}/git/config"
 
 # The github username where the setup scripts are downloaded from
 export GH_USERNAME='mahdz'
 
-# This repo is cloned into this location
-export DOTFILES="${HOME}/.dotfiles"
-
-# Branch name of the dotfiles repo that's to be used for testing PR changes before merging
-export DOTFILES_BRANCH='main'
-
-# VS Code Workspace
-export DOTFILES_WORKSPACE="${XDG_CONFIG_HOME:-$HOME/.config}/vscode/dotfiles.code-workspace"
-
 # All development codebases are cloned into a subfolder of this folder
-export PROJECTS_BASE_DIR="${HOME}/Developer"
+export PROJECTS_BASE_DIR="$HOME/Developer"
 
 # Executable scripts that are not shared as part of this public repo are present here
-export PERSONAL_BIN_DIR="${HOME}/.local/bin"
-
-# SSH Agent
-export SSH_AUTH_SOCK="$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh"
-
-# Obsidian Vault Path
-export VAULT_PATH="$HOME/Vault"
+export PERSONAL_BIN_DIR="$HOME/.local/bin"
 
 # =============================================================================
 # Dev Tool Variables
 # =============================================================================
 
 # Mise configuration
-export MISE_NODE_COREPACK=0
+# export MISE_NODE_COREPACK=0
 
 # uv generally respects XDG variables for its cache and data directories.
 # However, you can explicitly guide it for maximum control.
-export UV_PYTHON_DOWNLOADS=auto
-export UV_MANAGED_PYTHON=1
+# export UV_PYTHON_DOWNLOADS=auto
+# export UV_MANAGED_PYTHON=1
+
+export UV_PYTHON="$HOME/.local/share/mise/installs/python/3.13.11/bin/python"
 
 # uv cache directory (should default to XDG_CACHE_HOME/uv)
-export UV_CACHE_DIR="${XDG_CACHE_HOME}/uv"
+# export UV_CACHE_DIR="${XDG_CACHE_HOME}/uv"
 
 # uv Python installations directory (should default to XDG_DATA_HOME/uv/python)
-export UV_PYTHON_INSTALL_DIR="${XDG_DATA_HOME}/uv/python" # Explicitly set if default is not desired
+# export UV_PYTHON_INSTALL_DIR="${XDG_DATA_HOME}/uv/python" # Explicitly set if default is not desired
 
 # uv tool installations directory (should default to XDG_DATA_HOME/uv/tools)
-export UV_TOOL_DIR="${XDG_DATA_HOME}/uv/tools" # Explicitly set if default is not desired
+# export UV_TOOL_DIR="${XDG_DATA_HOME}/uv/tools" # Explicitly set if default is not desired
 
 # uv tool binary directory (should default to XDG_DATA_HOME/bin or XDG_BIN_HOME)
 # uv usually places executables in XDG_DATA_HOME/bin, which we've added to PATH.
 # If you want to explicitly set it:
-export UV_TOOL_BIN_DIR="${XDG_BIN_HOME:-$HOME/.local/bin}"
+# export UV_TOOL_BIN_DIR="${XDG_BIN_HOME:-$HOME/.local/share/bin}"
 
 # Python specific variables for uv (mostly handled by uv itself)
 # PYTHONDONTWRITEBYTECODE: Prevents Python from writing .pyc files to source directories
-export PYTHONDONTWRITEBYTECODE=1
+# export PYTHONDONTWRITEBYTECODE=1
 
 # PYTHONSTARTUP: Path to a Python startup script (e.g., for common imports)
 # If you have one, place it in an XDG-compliant location.
@@ -91,8 +66,9 @@ export PYTHONDONTWRITEBYTECODE=1
 # SECRETS CONFIGURATION
 # =============================================================================
 
-export PW_KEYCHAIN=~/Library/Keychains/Secrets.keychain-db
-export PW_RC=${XDG_CONFIG_HOME}/pw/config
+export PW_RC="${XDG_CONFIG_HOME}/pw/config"
+export PW_KEYCHAIN="${HOME}/Library/Keychains/${PW_KEYCHAIN_NAME:-Secrets}.keychain-db"
+export SECRETS_DIR="${XDG_CONFIG_HOME}/security" # Never commit
 
 # =============================================================================
 # PAGER CONFIGURATION
@@ -209,200 +185,6 @@ section_header() {
   echo "$(blue '==>') $(purple "${1}")"
 }
 
-is_non_zero_string() {
-  [[ -n "${1}" ]]
-}
-
-strip_trailing_slash() {
-  echo "${1%\/}"
-}
-
-extract_last_segment() {
-  local without_trailing_slash
-  without_trailing_slash="$(strip_trailing_slash "${1}")"
-  echo "${without_trailing_slash##*/}"
-  unset without_trailing_slash
-}
-
-is_arm() {
-  [[ "${ARCH}" =~ 'arm' ]]
-}
-
-is_file() {
-  is_non_zero_string "${1}" && [[ -f "${1}" ]]
-}
-
-is_executable() {
-  is_non_zero_string "${1}" && [[ -x "${1}" ]]
-}
-
-is_directory() {
-  is_non_zero_string "${1}" && [[ -d "${1}" ]]
-}
-
-dir_has_children() {
-  is_directory "${1}" && is_non_zero_string "$(ls -A "${1}")"
-}
-
-ensure_dir_exists() {
-  if is_non_zero_string "${1}"; then
-    mkdir -pv "${1}"
-  else
-    warn "Skipping creation of the directory since '$(yellow "${1}")' is not defined"
-  fi
-}
-
-is_git_repo() {
-  is_non_zero_string "${1}" && is_directory "${1}/.git"
-}
-
-load_file_if_exists() {
-  # shellcheck disable=SC2015
-  # shellcheck disable=SC1090
-  is_file "${1}" && source "${1}"
-}
-
-# delete_directory_if_exists() {
-#   is_directory "${1}" && echo "$(red 'Deleting') '$(green "${1}")'" && sudo rm -rf "${1}"
-# }
-
-command_exists() {
-  type "${1}" &> /dev/null 2>&1
-}
-
-is_zsh() { [[ -n $ZSH_VERSION ]]; }
-
-if is_zsh; then
-  # to reload Zsh configuration files.
-  # WARNING: Sourcing .zshenv/.zshrc/.zlogin from a file that might be sourced *by* them
-  # can lead to infinite loops or unexpected behavior if not called carefully.
-  # This is likely intended for manual use or specific bootstrap scenarios after config changes.
-  # Note: This is kind of equivalent to 'omz reload', but that doesn't seem to work when installing on a vanilla OS
-  load_zsh_configs() {
-    local file_list=('.zshenv' '.zshrc')
-    for file in "${file_list[@]}"; do
-      load_file_if_exists "${ZDOTDIR}/${file}"
-    done
-    unset file
-    unset file_list
-  }
-fi
-
-append_to_path_if_dir_exists() {
-  is_directory "${1}" && path+=("${1}")
-}
-
-append_to_fpath_if_dir_exists() {
-  is_directory "${1}" && fpath+="${1}"
-}
-
-prepend_to_path_if_dir_exists() {
-  is_directory "${1}" && export PATH="${1}:${PATH+:${PATH}}"
-}
-
-prepend_to_manpath_if_dir_exists() {
-  is_directory "${1}" && export MANPATH="${1}:${MANPATH+:${MANPATH}}"
-}
-
-prepend_to_ldflags_if_dir_exists() {
-  is_directory "${1}" && export LDFLAGS="-L${1} ${LDFLAGS+ ${LDFLAGS}}"
-}
-
-prepend_to_cppflags_if_dir_exists() {
-  is_directory "${1}" && export CPPFLAGS="-I${1} ${CPPFLAGS+ ${CPPFLAGS}}"
-}
-
-prepend_to_pkg_config_path_if_dir_exists() {
-  is_directory "${1}" && export PKG_CONFIG_PATH="${1}${PKG_CONFIG_PATH+:${PKG_CONFIG_PATH}}"
-}
-
-is_macos() {
-  [[ "${OSTYPE}" =~ 'darwin' ]]
-}
-
-is-not-warpterm() {
-  [[ $TERM_PROGRAM != WarpTerminal ]]
-}
-is-theme-starship() {
-  [[ $ZSH_THEME == starship* ]]
-}
-
-# =============================================================================
-# Ask for the administrator password upfront and keep it alive until this script has finished #
-# =============================================================================
-keep_sudo_alive() {
-  section_header 'Keeping sudo alive till this script has finished'
-  sudo -v
-  while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
-}
-
-folder_size() {
-  local folder="${1:-$(pwd)}"
-  echo "$(yellow "$(realpath "${folder}")") --> $(cyan "$(/usr/bin/du -sh "${folder}" | cut -f1)") bytes"
-}
-
-clone_repo_into() {
-  local target_folder="${2}"
-  ensure_dir_exists "${target_folder}"
-  if ! is_git_repo "${target_folder}"; then
-    local tmp_folder
-    tmp_folder="$(mktemp -d)"
-    # Note: Do not use --depth while cloning since that messes up when using upstream to rebase from
-    git -C "${tmp_folder}" clone -q "${1}" .
-    mv "${tmp_folder}/.git" "${target_folder}"
-    git -C "${target_folder}" checkout .
-    git -C "${target_folder}" submodule update --init --recursive --remote --rebase --force
-    rm -rf "${tmp_folder}"
-    success "Successfully cloned '$(yellow "${1}")$(green "' into '")$(yellow "${target_folder}")$(green "'")"
-
-    local target_branch="${3}"
-    if is_non_zero_string "${target_branch}"; then
-      git -C "${target_folder}" switch "${target_branch}"
-      local checked_out_branch
-      checked_out_branch="$(git -C "${target_folder}" branch --show-current)"
-      [[ "${checked_out_branch}" != "${target_branch}" ]] && error "'${target_branch}' is not equal to the branch that was checked out: '${checked_out_branch}'; something is wrong. Please correct before retrying!"
-      unset checked_out_branch
-    fi
-    unset tmp_folder
-    unset target_branch
-  else
-    warn "Skipping cloning of '$(yellow "${1}")' since '$(yellow "${target_folder}")' is already a git repo"
-  fi
-  unset target_folder
-}
-
-# =============================================================================
-# Setup ssh scripts/directories
-# =============================================================================
-
-set_ssh_folder_permissions() {
-  section_header 'Setting ssh config file permissions'
-  local target_folder="${HOME}/.ssh"
-  ensure_dir_exists "${target_folder}"
-  # Set directory permissions first
-  chmod 700 "${target_folder}"
-  if dir_has_children "${target_folder}"; then
-    find "${target_folder}" -type f -exec chmod 600 {} \;
-    success "Ensured correct permissions for '$(yellow "${target_folder}")' and files within it."
-  else
-    warn "'$(yellow "${target_folder}")' exists but is empty. No file permissions to set."
-  fi
-  unset target_folder
-}
-
-# Moving homebrew env vars here itself so that the initial homebrew installation on a vanilla OS can be done/applied into memory immediately
-if is_arm; then
-  export HOMEBREW_PREFIX='/opt/homebrew'
-else
-  export HOMEBREW_PREFIX='/usr/local'
-fi
-export HOMEBREW_NO_ANALYTICS=1
-export HOMEBREW_CLEANUP_MAX_AGE_DAYS=3
-export HOMEBREW_CLEANUP_PERIODIC_FULL_DAYS=3
-export HOMEBREW_VERBOSE_USING_DOTS=1
-export HOMEBREW_BUNDLE_FILE="${XDG_CONFIG_HOME}/homebrew/Brewfile"
-export HOMEBREW_BREWFILE="${XDG_CONFIG_HOME}/homebrew/Brewfile"
-
 # =============================================================================
 # UTILITY FUNCTIONS
 # =============================================================================
@@ -494,3 +276,182 @@ validate_not_root() {
   fi
   return 0
 }
+
+is_non_zero_string() {
+  [[ -n "${1}" ]]
+}
+
+strip_trailing_slash() {
+  echo "${1%\/}"
+}
+
+extract_last_segment() {
+  local without_trailing_slash
+  without_trailing_slash="$(strip_trailing_slash "${1}")"
+  echo "${without_trailing_slash##*/}"
+  unset without_trailing_slash
+}
+
+is_arm() {
+  [[ "${ARCH}" =~ 'arm' ]]
+}
+
+is_file() {
+  is_non_zero_string "${1}" && [[ -f "${1}" ]]
+}
+
+is_executable() {
+  is_non_zero_string "${1}" && [[ -x "${1}" ]]
+}
+
+is_directory() {
+  is_non_zero_string "${1}" && [[ -d "${1}" ]]
+}
+
+dir_has_children() {
+  is_directory "${1}" && is_non_zero_string "$(ls -A "${1}")"
+}
+
+ensure_dir_exists() {
+  if is_non_zero_string "${1}"; then
+    mkdir -pv "${1}"
+  else
+    warn "Skipping creation of the directory since '$(yellow "${1}")' is not defined"
+  fi
+}
+
+is_git_repo() {
+  is_non_zero_string "${1}" && is_directory "${1}/.git"
+}
+
+load_file_if_exists() {
+  # shellcheck disable=SC2015
+  # shellcheck disable=SC1090
+  is_file "${1}" && source "${1}"
+}
+
+# delete_directory_if_exists() {
+#   is_directory "${1}" && echo "$(red 'Deleting') '$(green "${1}")'" && sudo rm -rf "${1}"
+# }
+
+command_exists() {
+  type "${1}" &> /dev/null 2>&1
+}
+
+is_zsh() { [[ -n $ZSH_VERSION ]]; }
+
+if is_zsh; then
+  # ⚠️ WARNING: Re-sourcing startup files is risky!
+  # Only use this after manual edits to config files.
+  # Safer alternative: Start a new shell session.
+  load_zsh_configs() {
+    local file_list=('.zshenv' '.zshrc')
+    for file in "${file_list[@]}"; do
+      load_file_if_exists "${ZDOTDIR}/${file}"
+    done
+    unset file
+    unset file_list
+  }
+fi
+
+append_to_path_if_dir_exists() {
+  is_directory "${1}" && path+=("$1")
+}
+
+prepend_to_path_if_dir_exists() {
+  is_directory "${1}" && path=("$1" $path)
+}
+
+append_to_fpath_if_dir_exists() {
+  is_directory "${1}" && fpath+="${1}"
+}
+
+prepend_to_manpath_if_dir_exists() {
+  is_directory "${1}" && export MANPATH="${1}:${MANPATH+:${MANPATH}}"
+}
+
+prepend_to_ldflags_if_dir_exists() {
+  is_directory "${1}" && export LDFLAGS="-L${1} ${LDFLAGS+ ${LDFLAGS}}"
+}
+
+prepend_to_cppflags_if_dir_exists() {
+  is_directory "${1}" && export CPPFLAGS="-I${1} ${CPPFLAGS+ ${CPPFLAGS}}"
+}
+
+prepend_to_pkg_config_path_if_dir_exists() {
+  is_directory "${1}" && export PKG_CONFIG_PATH="${1}${PKG_CONFIG_PATH+:${PKG_CONFIG_PATH}}"
+}
+
+is_macos() {
+  [[ "${OSTYPE}" =~ 'darwin' ]]
+}
+
+# =============================================================================
+# Ask for the administrator password upfront and keep it alive until this script has finished #
+# =============================================================================
+keep_sudo_alive() {
+  section_header 'Keeping sudo alive till this script has finished'
+  sudo -v
+  while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+}
+
+folder_size() {
+  local folder="${1:-$(pwd)}"
+  echo "$(yellow "$(realpath "${folder}")") --> $(cyan "$(/usr/bin/du -sh "${folder}" | cut -f1)") bytes"
+}
+
+clone_repo_into() {
+  local target_folder="${2}"
+  ensure_dir_exists "${target_folder}"
+  if ! is_git_repo "${target_folder}"; then
+    local tmp_folder
+    tmp_folder="$(mktemp -d)"
+    # Note: Do not use --depth while cloning since that messes up when using upstream to rebase from
+    git -C "${tmp_folder}" clone -q "${1}" .
+    mv "${tmp_folder}/.git" "${target_folder}"
+    git -C "${target_folder}" checkout .
+    git -C "${target_folder}" submodule update --init --recursive --remote --rebase --force
+    rm -rf "${tmp_folder}"
+    success "Successfully cloned '$(yellow "${1}")$(green "' into '")$(yellow "${target_folder}")$(green "'")"
+
+    local target_branch="${3}"
+    if is_non_zero_string "${target_branch}"; then
+      git -C "${target_folder}" switch "${target_branch}"
+      local checked_out_branch
+      checked_out_branch="$(git -C "${target_folder}" branch --show-current)"
+      [[ "${checked_out_branch}" != "${target_branch}" ]] && error "'${target_branch}' is not equal to the branch that was checked out: '${checked_out_branch}'; something is wrong. Please correct before retrying!"
+      unset checked_out_branch
+    fi
+    unset tmp_folder
+    unset target_branch
+  else
+    warn "Skipping cloning of '$(yellow "${1}")' since '$(yellow "${target_folder}")' is already a git repo"
+  fi
+  unset target_folder
+}
+
+# =============================================================================
+# Setup ssh scripts/directories
+# =============================================================================
+
+set_ssh_folder_permissions() {
+  section_header 'Setting ssh config file permissions'
+  local target_folder="${HOME}/.ssh"
+  ensure_dir_exists "${target_folder}"
+  # Set directory permissions first
+  chmod 700 "${target_folder}"
+  if dir_has_children "${target_folder}"; then
+    find "${target_folder}" -type f -exec chmod 600 {} \;
+    success "Ensured correct permissions for '$(yellow "${target_folder}")' and files within it."
+  else
+    warn "'$(yellow "${target_folder}")' exists but is empty. No file permissions to set."
+  fi
+  unset target_folder
+}
+
+# SSH Agent
+if is_macos; then
+  export SSH_AUTH_SOCK="$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh"
+elif [[ -v XDG_RUNTIME_DIR ]]; then
+  export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
+fi

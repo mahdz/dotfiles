@@ -1,0 +1,297 @@
+# mise.toml - Comprehensive Development Environment Configuration
+
+# ==============================================================================
+# SETTINGS
+# ==============================================================================
+[settings]
+# UV Package Manager Integration
+python.uv_venv_auto = true
+python.uv_venv_create_args = ["--seed"]
+
+pipx.uvx = true
+
+# General Settings
+experimental = true
+always_keep_download = false
+always_keep_install = false
+plugin_autoupdate_last_check_duration = "7d"
+jobs = 1
+verbose = true
+log_level = "info"
+activate_aggressive = true
+
+# OLD - Core settings
+http_timeout = "60s"
+cache_prune_age = "7d"
+# gix = false
+# Disables native Git integration; set true for VCS operations
+gix = false
+
+# python_compile = false
+# Skips .pyc generation; useful for lightweight environments
+python_compile = false
+
+[settings.status]
+show_env = false
+
+# ==============================================================================
+# ENVIRONMENT VARIABLES
+# ==============================================================================
+[env]
+# Tool Configuration
+PYTHONUNBUFFERED = "1"  # Real-time output
+UV_FROZEN = "false"
+
+# Python/Node defaults
+MISE_PYTHON_DEFAULT_PACKAGES_FILE = "$XDG_CONFIG_HOME/mise/.default-python-packages"
+MISE_NODE_DEFAULT_PACKAGES_FILE = "$XDG_CONFIG_HOME/mise/.default-npm-packages"
+
+# Path configurations
+SECRETS_DIR = "$XDG_CONFIG_HOME/security"
+
+_.file = [
+  { path = "$HOME/.env", redact = true },
+  { path = "$XDG_CONFIG_HOME/security/.env", redact = true },
+]
+
+# ============================================================================
+# CORE RUNTIME TOOLS (Essential for development)
+# ============================================================================
+[tools]
+npm = "11.6.2"
+node = "22"      # LTS: Use specific minor version for reproducibility
+python = "3.12"  # Latest stable with UV support
+go = "1.23"      # Latest stable
+rust = "1.84"    # Latest stable
+deno = "2.1"     # Alternative JS runtime
+
+# ============================================================================
+# PACKAGE MANAGERS & BUILD TOOLS (Aqua: Lightweight, GitHub releases)
+# ============================================================================
+
+# Linting & Formatting
+"aqua:astral-sh/ruff" = "0.9.4"      # Fast Python linter
+"aqua:biomejs/biome" = "1.9.4"       # Unified JS/TS formatter
+"aqua:pre-commit/pre-commit" = "4.1.0"
+
+# Package Management
+"aqua:pnpm/pnpm" = "10.1.0"          # Fast Node package manager
+
+# ============================================================================
+# SYSTEM UTILITIES (UBI: GitHub binary releases)
+# ============================================================================
+"ubi:jdx/usage" = "2.0.4"            # CLI documentation tool
+"ubi:jgm/pandoc" = "3.6.2"           # Universal document converter
+
+# ==============================================================================
+# CRITICAL SYSTEM UTILITIES
+# ==============================================================================
+
+# Aqua-based utilities (lightweight binary management)
+# aqua:astral-sh/uv = "0.5.26"
+# aqua:cli/cli = "2.66.1"
+# aqua:errata-ai/vale = "3.9.4"
+
+# UBI-based utilities (GitHub Release binary installer)
+# ubi:jesseduffield/lazygit = "0.45.2"
+# ubi:jesseduffield/lazydocker = "0.24.1"
+
+# ==============================================================================
+# NPM PACKAGES (Organized by Category)
+# ==============================================================================
+
+# --- Code Formatting & Linting ---
+"npm:prettier" = "3.6.2"          # JavaScript/TypeScript formatter
+"npm:eslint" = "9.30.1"           # JavaScript linter
+"npm:@typescript-eslint/eslint-plugin" = "7.0.0"
+"npm:@typescript-eslint/parser" = "7.0.0"
+"npm:stylelint" = "16.2.1"        # CSS linter
+"npm:markdownlint-cli" = "0.38.0" # Markdown linter
+
+# --- Node.js Utilities ---
+"npm:tsx" = "4.7.0"               # TypeScript executor
+"npm:ts-node" = "10.9.2"          # TypeScript REPL
+"npm:nodemon" = "3.1.0"           # File watcher for auto-restart
+"npm:npm-check" = "latest"
+"npm:npkill" = "latest"
+# npm:pm2 = "5.3.1"               # Production process manager
+# npm:concurrently = "8.2.2"      # Run multiple commands concurrently
+
+# --- Build & Development Tools ---
+# npm:@swc/cli = "0.3.14"         # SWC bundler
+# npm:webpack = "5.91.0"          # Module bundler
+# npm:webpack-cli = "5.1.4"
+# npm:turbo = "2.0.4"             # Monorepo build system
+# npm:vite = "5.1.0"              # Next-gen frontend tooling
+
+# --- Testing ---
+# npm:vitest = "1.5.0"            # Vitest test runner
+#  npm:jest = "29.7.0"             # Jest test framework
+# npm:mocha = "10.2.0"            # Mocha test framework
+# npm:chai = "4.3.10"             # Assertion library
+
+# --- AI/MCP Tools ---
+# npm:@anthropic-ai/claude-code = "latest"    # Claude Code integration
+"npm:mcp" = "latest"                          # Model Context Protocol
+# npm:@anthropic-ai/sdk = "latest"            # Anthropic SDK
+# npm:openai = "4.26.0"                       # OpenAI SDK
+
+# --- Development Utilities ---
+# npm:serve = "14.2.0"            # Static file server
+# npm:http-server = "14.1.1"      # Simple HTTP server
+# npm:kill-port = "2.0.1"         # Kill processes by port
+"npm:json" = "11.0.0"             # JSON CLI utility
+
+# AI/MCP tools (may have longer install times; keep pinned if dependent on native libs)
+"npm:@motesoftware/nanocoder" = "latest"
+"npm:@pimzino/agentic-tools-mcp" = "latest"
+"npm:@google/jules" = "latest"
+
+# Misc
+"npm:resumed" = "latest"
+"npm:jsonresume-theme-even" = "latest"
+
+# ==============================================================================
+# PYTHON TOOLS (via pipx backend)
+# ==============================================================================
+
+# --- Code Quality & Formatting ---
+"pipx:black" = "24.1.1"           # Python code formatter
+"pipx:pylint" = "3.0.3"           # Code analysis
+# pipx:mypy = "1.8.0"             # Static type checker
+# pipx:bandit = "1.7.5"           # Security issue scanner
+
+# --- Development Utilities ---
+"pipx:pip-tools" = "7.4.1"        # pip-compile for lock files
+# pipx:pdm = "2.13.0"             # Package manager
+"pipx:poetry" = "1.7.1"           # Dependency management
+# pipx:virtualenv = "20.25.1"     # Virtual environment manager
+
+# --- Python Runtime Tools ---
+"pipx:pygments" = "2.17.2"        # Syntax highlighting
+# pipx:ipython = "8.20.0"         # Enhanced Python shell
+# pipx:jupyter = "1.0.0"          # Jupyter notebooks
+# pipx:jupyterlab = "4.1.0"       # JupyterLab IDE
+
+# --- Data & Content Tools ---
+"pipx:gallery-dl" = "1.26.0"      # Image/media downloader
+"pipx:yt-dlp" = "2024.1.0"        # YouTube/video downloader
+"pipx:requests" = "2.31.0"        # HTTP library
+
+# --- Jules (AI/Code Assistant) ---
+"pipx:basic-memory" = "latest"    # Memory management utility
+"pipx:jules" = "latest"           # Jules - Code assistant tool
+
+# --- Documentation & Analysis ---
+"pipx:sphinx" = "7.2.6"           # Documentation generator
+"pipx:isort" = "5.13.2"           # Import sorting
+
+# System utilities (pin critical CLIs; others may remain latest)
+ripgrep = "latest"
+shellcheck = "0.9.0"             # example pin; adjust if you tested a different version
+gemini-cli = "latest"
+
+
+# Python CLI tools (managed via pipx backend with uvx=true)
+# Comments: pin production-critical ones; leave experimental latest
+"pipx:khard" = "latest"
+"pipx:mac-cleanup" = "latest"
+"pipx:osxmetadata" = "latest"
+"pipx:rich-cli" = "latest"
+"pipx:speedtest-cli" = "latest"
+"pipx:twine" = "6.2.0"
+
+# ==============================================================================
+# TASKS
+# ==============================================================================
+[tasks]
+fmt = { run = '''
+  set -e
+  echo "🔧 Running Prettier..."
+  prettier --write . || { echo "❌ Prettier failed"; exit 1; }
+
+  echo "🔧 Running Black..."
+  black . || { echo "❌ Black failed"; exit 1; }
+
+  echo "🔧 Running Ruff..."
+  ruff check --fix . || { echo "❌ Ruff failed"; exit 1; }
+
+  echo "✅ Formatting complete"
+''', shell = "zsh", description = "Format all code (prettier → black → ruff)" }
+
+# Linting
+lint = { run = "eslint . && pylint src/ && ruff check .", description = "Run all linters" }
+
+# Install dependencies
+install = { run = "npm install && uv sync", description = "Install all dependencies" }
+
+# Environment info
+info = { run = "echo '=== Versions ===' && node -v && python --version && go version && echo '=== Mise Tools ===' && mise ls", description = "Display environment info" }
+
+# ==============================================================================
+# HOOKS
+# ==============================================================================
+
+# Verify installation success
+[[hooks.postinstall]]
+script = '''
+  echo "🔍 Verifying installation of $MISE_TOOL_NAME..."
+  if command -v "$MISE_TOOL_NAME" &>/dev/null; then
+    echo "✅ $MISE_TOOL_NAME is available in PATH"
+  else
+    echo "⚠️  $MISE_TOOL_NAME not found in PATH (may need shell restart)"
+  fi
+'''
+timeout = "10s"
+
+# Run optional validation script if present
+[[hooks.postinstall]]
+script = '''
+  validate_script="${XDG_CONFIG_HOME:=$HOME/.config}/mise/hooks/mise-validate.sh"
+  if [[ -f "$validate_script" ]]; then
+    echo "🔍 Running validation script..."
+    bash "$validate_script" || echo "⚠️  Validation had warnings"
+  fi
+'''
+timeout = "30s"
+
+# Critical: Verify npm is available
+[[hooks.postinstall]]
+script = '''
+  if ! command -v npm &>/dev/null; then
+    echo "❌ npm not found after installation" >&2
+    echo "💡 Troubleshooting: Check PATH and run 'mise install'" >&2
+    exit 1
+  fi
+  echo "✅ npm verified in PATH"
+'''
+timeout = "10s"
+
+# ==============================================================================
+# NOTES
+# ==============================================================================
+# 1. UV Integration:
+#    - python.uv_venv_auto = true: Automatically creates venvs with UV
+#    - UV_FROZEN = false: Allow flexible dependency resolution
+#
+# 2. Tool Categories:
+#    - Core runtimes: node, python, go, rust, deno
+#    - System utilities: aqua for lightweight tools, ubi for GitHub releases
+#    - npm packages: grouped by function (formatting, utilities, AI, etc.)
+#    - Python tools: via pipx backend for isolated environments
+#
+# 3. Usage:
+#    - Activate: eval "$(mise activate bash)"  # or zsh, fish, etc.
+#    - Install: mise install
+#    - Run tasks: mise run build
+#    - Execute tool: mise exec python -- python script.py
+#    - Use specific version: mise use node@20
+#
+# 4. Environment Variables:
+#    - Place sensitive values in .mise.local.toml (gitignored)
+#    - Use ${VAR} syntax to reference system environment variables
+#
+# 5. For production:
+#    - Set log_level = "warn"
+#    - Set verbose = false
+#    - Consider NODE_ENV = "production"

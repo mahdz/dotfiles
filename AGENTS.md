@@ -13,8 +13,6 @@ This is a **configuration management project** (treated as a code project for do
 *   **Homebrew:** For macOS package management.
 *   **mise:** For managing development tools and their versions.
 *   **uv:** For managing Python tools.
-*   **Obsidian:** For documentation and knowledge management, integrated with dotfiles for notes and guides.
-*   **TaskWarrior:** For command-line task management.
 
 ## Managing Dotfiles
 
@@ -24,8 +22,8 @@ The core of this project revolves around the `dots` function, which is a wrapper
 
 The `dots` function is defined as:
 ```zsh
-# Located at: ~/.config/zsh/functions/dots
-command git --git-dir="${DOTFILES:-$HOME/.dotfiles}" --work-tree="$HOME" "$@"
+# Located at: ~/.config/zsh/custom/plugins/dotfiles/dotfiles.zsh
+command git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" "$@"
 ```
 
 **Daily Workflow:**
@@ -53,13 +51,12 @@ command git --git-dir="${DOTFILES:-$HOME/.dotfiles}" --work-tree="$HOME" "$@"
 *   `$HOME/.cache`: Cache files.
 *   `$HOME/.config/`: Primary location for configuration files.
 *   `$HOME/.local/bin/`: Location for personal scripts and executables.
-*   `$HOME/.config/raycast/extensions/`: Raycast extension configurations.
 
 ### Files
 
 *   `$HOME/.gitignore`: Global `.gitignore` for the dotfiles repository.
 *   `$HOME/.config/zsh/`: Zsh configuration directory.
-*   `WARP.md`: Essential commands reference (this file).
+*   `AGENTS.md`: Essential commands reference (this file).
 
 ## Dotfiles Management Conventions
 
@@ -67,7 +64,6 @@ command git --git-dir="${DOTFILES:-$HOME/.dotfiles}" --work-tree="$HOME" "$@"
 
 *   **ALWAYS test first:** Use `dots add -n <filename>` before `dots add <filename>`.
 *   **NEVER track:**
-    *   UV symlinks in `$HOME/.local/bin/` (they change frequently).
     *   Cache files, logs, or temporary files.
     *   Secrets or sensitive data.
 
@@ -87,7 +83,7 @@ Example:
 !.gitignore
 !.github/
 !.github/**
-!WARP.md
+!AGENTS.md
 ```
 
 **Adding New Files:**

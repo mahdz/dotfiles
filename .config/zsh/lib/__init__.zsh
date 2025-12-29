@@ -26,6 +26,8 @@ export VISUAL=${VISUAL:-$EDITOR}
 export PAGER=less
 export LESS='-iRFXMx4 --incsearch --use-color --mouse'
 
+export MISE_LOCKFILE_DISABLE=true
+
 # =============================================================================
 # GREP
 # =============================================================================

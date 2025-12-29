@@ -27,6 +27,12 @@ if [[ "$OSTYPE" == darwin* ]]; then
   export XDG_PROJECTS_DIR=${XDG_PROJECTS_DIR:-$HOME/Developer}
 fi
 
+if is_arm; then
+  export HOMEBREW_PREFIX='/opt/homebrew'
+else
+  export HOMEBREW_PREFIX='/usr/local'
+fi
+
 # =============================================================================
 # PATH MANAGEMENT UTILITIES
 # =============================================================================
@@ -50,35 +56,11 @@ path_append() {
 # PATH INITIALIZATION
 # =============================================================================
 
-# Ensure path arrays do not contain duplicates.
-typeset -gU fpath path cdpath
-
-# Set the list of directories that cd searches.
-cdpath=(
-  $XDG_PROJECTS_DIR(N/)
-  $cdpath
-)
-
-# Set the list of directories that Zsh searches for programs.
-path=(
-  # core
-  $HOME/{,s}bin(N)
-  $HOME/brew/{,s}bin(N)
-  /opt/{homebrew,local}/{,s}bin(N)
-  /usr/local/{,s}bin(N)
-
-  # apps
-  /{usr/local,opt/homebrew}/opt/curl/bin(N)
-
-  # path
-  ${path[@]}
-)
+export PATH="$HOME/.local/share/mise/shims:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 # =============================================================================
 # DEVELOPMENT TOOLS AND LANGUAGES
 # =============================================================================
-
-path_prepend "$HOME/.local/share/mise/shims"
 
 # =============================================================================
 # OPTIONAL TOOLS

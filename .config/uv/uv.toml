@@ -1,6 +1,6 @@
 # UV configuration optimized for mise integration
-python-preference = "managed"
-python-downloads = "automatic"
+python-preference = "only-managed"
+python-downloads = "manual"
 
 # Performance optimizations
 concurrent-downloads = 4
@@ -11,3 +11,6 @@ concurrent-builds = 4
 
 # Security settings
 keyring-provider = "subprocess"
+
+# Ensure UV tools are always compatible with the managed Python
+compile-bytecode = true

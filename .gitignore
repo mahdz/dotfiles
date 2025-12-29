@@ -90,14 +90,17 @@
 !.config/ripgrep/
 !.config/ripgrep/*
 
+!.config/starship/
+!.config/starship/*.toml
+
 !.config/superfile/
 !.config/superfile/*.toml
 
 !.config/tlrc/
 !.config/tlrc/config.toml
 
-!.config/topgrade/
-!.config/topgrade/**
+!.config/topgrade.d/
+!.config/topgrade.d/**
 
 !.config/uv/
 !.config/uv/**
@@ -114,8 +117,17 @@
 !.config/yt-dlp/
 !.config/yt-dlp/**
 
+# gemini-cli settings
+.gemini/
+
+# GitHub App credentials
+gha-creds-*.json
+
 # Exclude specstory entirely
 .specstory/**
+
+# Shell
+!.shellrc
 
 # Bash
 !.bash_profile
@@ -214,8 +226,3 @@ age.txt
 # Added by the extension Better Context To AI
 FILE_CONTENT_MAP.md
 *.bak.*
-
-# Unified task management system
-!tasks/
-!bin/task
-!bin/migrate-tasks

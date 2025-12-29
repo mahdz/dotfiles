@@ -16,7 +16,7 @@
 #
 
 # DUPLICATE! Copied over since we get an error if the .shellrc was not loaded
-type command_exists &> /dev/null 2>&1 || source "${XDG_CONFIG_HOME}/shell/shellrc"
+type command_exists &> /dev/null 2>&1 || source "${HOME}/.shellrc"
 
 # add flags to existing aliases
 # alias less="${aliases[less]:-less} -RF"
@@ -52,8 +52,8 @@ alias quit='exit'
 alias zz='exit'
 
 # edit quicker with functions
-ea() { ${EDITOR:-micro} "${ZSH_CUSTOM:-$ZDOTDIR/custom}/aliases.zsh" & disown; }
-ep() { ${EDITOR:-micro} "${ZDOTDIR:-$HOME/.config/zsh}/.zsh_plugins.txt" >/dev/null & disown; }
+ea() { ${EDITOR:-micro} "${ZSH_CUSTOM:-$ZDOTDIR/custom}/plugins/aliases/aliases.plugin.zsh" & disown; }
+ep() { ${EDITOR:-micro} "${ZDOTDIR:-$HOME/.config/zsh}/.zsh_plugins.txt" & disown; }
 es() { ${EDITOR:-micro} "${ZDOTDIR:-$HOME/.config/zsh}/.zstyles" >/dev/null & disown; }
 
 # find#aliaenlinks='find . -type l | (while read FN ; do test -e "$FN" || ls -ld "$FN"; done)'

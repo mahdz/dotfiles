@@ -3,22 +3,33 @@
 # =============================================================================
 #
 
+export SCRIPTS='/Users/mh/Developer/repos/id774/scripts'
+
 # tldr (tlrc)
-[[ $(command -v tldr) ]] && export TLRC_CONFIG="${XDG_CONFIG_HOME}/tlrc/config.toml"
+command_exists tldr && export TLRC_CONFIG="${XDG_CONFIG_HOME}/tlrc/config.toml"
 
 # bat
-[[ $(command -v bat) ]] && export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+
+# Use bat to colorize man pages
+command_exists bat && export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 
 # bat-extras
-[[ $(command -v batman) ]] && eval "$(batman --export-env)"
+command_exists batman && eval "$(batman --export-env)"
 
 # batpipe
-[[ $(command -v batpipe) ]] && eval "$(batpipe)"
+command_exists batpipe && eval "$(batpipe)"
 
-[[ $(command -v broot) ]] && source "${XDG_CONFIG_HOME}/broot/launcher/bash/br"
+command_exists broot && source "${XDG_CONFIG_HOME}/broot/launcher/bash/br"
+
 
 # fastfetch
 #[[ $(command -v fastfetch) ]] && fastfetch --config $(printf "%s\n" examples/{12,13} | gshuf -n 1)
 
 # navi
-[[ $(command -v navi) ]] && eval "$(navi widget zsh)"
+if (( $+commands[navi] )); then
+  navi() {
+    unfunction navi  # Remove stub
+    eval "$(command navi widget zsh)"
+    navi "$@"  # Execute original command
+  }
+fi

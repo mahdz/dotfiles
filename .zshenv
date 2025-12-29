@@ -1,5 +1,6 @@
-# Set ZDOTDIR to XDG-compliant location
-export ZDOTDIR="$HOME/.config/zsh"
+export ZDOTDIR="${ZDOTDIR:-$HOME/.config/zsh}"
 
-# Check if `.zshenv` exists and is readable, and if so, source it using the `.` (dot) command.
+# Ensure ZDOTDIR exists
+[[ -d "$ZDOTDIR" ]] || mkdir -p "$ZDOTDIR"
+
 [[ -r "$ZDOTDIR/.zshenv" ]] && . "$ZDOTDIR/.zshenv"

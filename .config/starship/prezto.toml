@@ -1,0 +1,111 @@
+#
+# prezto - mimic the default prezto prompt (sorin)
+#
+
+add_newline = false
+
+# A minimal left prompt
+format = """$username$sudo$python$directory$character"""
+
+# move the rest of the prompt to the right
+right_format = """$status$all${custom.ssh_keys}${custom.ssh_no_keys}"""
+
+[username]
+style_user = 'bold purple'
+style_root = 'bold red'
+format = "[$user]($style) @ "
+disabled = false
+show_always = true
+#aliases = { "mh" = "manny" }
+
+[sudo]
+symbol = '👑 '
+disabled = false
+
+[character]
+success_symbol = "[❯](red)[❯](yellow)[❯](green)"
+error_symbol = "[❯](red)[❯](red)[❯](red)"
+vicmd_symbol = "[❮](green)[❮](yellow)[❮](red)"
+
+[git_branch]
+format = '[$branch]($style) '
+style = 'bold green'
+symbol = " "
+
+[python]
+format = '\($virtualenv\) '
+
+[git_status]
+format = '$all_status$ahead_behind '
+ahead = '[⬆](bold purple) '
+behind = '[⬇](bold purple) '
+staged = '[✚](green) '
+deleted = '[✖](red) '
+renamed = '[➜](purple) '
+stashed = '[✭](cyan) '
+untracked = '[◼](white) '
+modified = '[✱](blue) '
+conflicted = '[═](yellow) '
+diverged = '⇕ '
+up_to_date = ''
+
+[directory]
+style = "blue"
+truncation_length = 1
+truncation_symbol = ""
+fish_style_pwd_dir_length = 2
+read_only = " 󰌾"
+
+[cmd_duration]
+min_time = 500
+format = '[$duration]($style) '
+
+[line_break]
+disabled = true
+
+[status]
+disabled = false
+symbol = '✘ '
+
+[nodejs]
+symbol = " "
+
+[os.symbols]
+Macos = " "
+
+[package]
+symbol = "󰏗 "
+
+[ruby]
+symbol = " "
+
+[rust]
+symbol = "󱘗 "
+
+[custom.ssh_no_keys]
+description = "SSH missing keys"
+when = "ssh-add -l | grep -q 'no identities'"
+command = "echo 🚫"
+format = "$symbol[$output]($style) "
+shell = ["zsh", "--no-rcs"]
+symbol = "🔑"
+style = "bold fg:red"
+
+[custom.ssh_keys]
+description = "SSH key count"
+when = "ssh-add -l | grep -v -q 'no identities'"
+command = "ssh-add -l | grep -v 'no identities' | wc -l"
+format = "$symbol[$output]($style) "
+shell = ["zsh", "--no-rcs"]
+symbol = "🔑"
+style = "bold fg:green"
+
+[custom.emoji]
+description = "Displays a (pseudo) random emoji for each prompt"
+# change the content of the EMOJIS array to your liking and replace the
+# number 12 with the number of items in the array, minus one
+command = "EMOJIS=(⛵️ 🛰 🪐 🚀 🧡 🔭 🌍 💫 ☄️ ✨ 🌠 🌌 ⭐️); EMOJI_INDEX=$(( $RANDOM % 12 + 0 )); echo ${EMOJIS[$EMOJI_INDEX]}"
+# if you are on windows, replace "true" with "1"
+when = "true"
+shell = ["zsh", "--no-rcs"]
+format = "$output"
