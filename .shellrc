@@ -98,6 +98,8 @@ colorize() {
 }
 
 NC=$(colorize '0') # No Color
+BOLD=$(colorize '1')      # Bold/bright text
+NORMAL=$(colorize '0')    # Reset to normal (same as NC)
 BLACK=$(colorize '0;30')
 DARK_GRAY=$(colorize '1;30')
 RED=$(colorize '0;31')

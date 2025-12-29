@@ -25,12 +25,12 @@ blue "════════════════════════�
 echo ""
 
 # 1. Current PATH
-section "Current PATH (in order)"
+section_header "Current PATH (in order)"
 echo "$PATH" | tr ':' '\n' | nl
 echo ""
 
 # 2. PATH Entry Count & Duplicates
-section "PATH Statistics"
+section_header "PATH Statistics"
 local path_count=${#path_entries[@]}
 local unique_entries=($(printf '%s\n' "${path_entries[@]}" | sort -u))
 local unique_count=${#unique_entries[@]}
@@ -48,7 +48,7 @@ fi
 echo ""
 
 # 3. Missing Directories in PATH
-section "Missing Directories (not on filesystem)"
+section_header "Missing Directories (not on filesystem)"
 local missing=0
 local missing_dirs=()
 
@@ -70,7 +70,7 @@ fi
 echo ""
 
 # 4. Critical Tool Locations
-section "Critical Tool Locations"
+section_header "Critical Tool Locations"
 local tools=("node" "npm" "python" "git" "mise")
 local missing_tools=0
 
@@ -86,7 +86,7 @@ done
 echo ""
 
 # 5. Mise Shims
-section "Mise Shims Configuration"
+section_header "Mise Shims Configuration"
 local mise_shims="$HOME/.local/share/mise/shims"
 
 if is_directory "$mise_shims"; then
@@ -107,7 +107,7 @@ fi
 echo ""
 
 # 6. Homebrew Configuration
-section "Homebrew Configuration"
+section_header "Homebrew Configuration"
 local brew_prefix="${HOMEBREW_PREFIX:-/opt/homebrew}"
 local brew_bin="$brew_prefix/bin"
 
@@ -126,7 +126,7 @@ fi
 echo ""
 
 # 7. XDG Compliance
-section "XDG Directory Configuration"
+section_header "XDG Directory Configuration"
 echo "   XDG_CONFIG_HOME: ${XDG_CONFIG_HOME:-not set}"
 echo "   XDG_DATA_HOME: ${XDG_DATA_HOME:-not set}"
 echo "   XDG_CACHE_HOME: ${XDG_CACHE_HOME:-not set}"
@@ -141,7 +141,7 @@ fi
 echo ""
 
 # 8. Plugin Load Order Issue Detection
-section "Plugin Configuration Check"
+section_header "Plugin Configuration Check"
 
 if is_non_zero_string "$_DOTFILES_PLUGIN_LOADED"; then
     echo "   $(green "✅") Dotfiles plugin: LOADED"
@@ -165,7 +165,7 @@ fi
 echo ""
 
 # 9. Recommendations
-section "Recommendations"
+section_header "Recommendations"
 local has_recommendations=0
 
 if [[ $duplicate_count -gt 0 ]]; then
