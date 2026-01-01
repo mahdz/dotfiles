@@ -1,22 +1,21 @@
-# .zshenv: Zsh environment file, loaded for all shells.
-# Ref: http://zsh.sourceforge.net/Doc/Release/Files.html
+#
+# .zshenv - Define Zsh environment variables.
+#
 
-[[ -z "$ZDOTDIR" ]] && export ZDOTDIR="$HOME/.config/zsh"
+# This file needs to remain in $HOME, even with $ZDOTDIR set.
+# You can symlink it:
+# ln -sf ~/.config/zsh/.zshenv ~/.zshenv
 
-# Set XDG base dirs.
-# https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+#
+# XDG base dirs
+#
+
+export ZDOTDIR=${ZDOTDIR:-$HOME/.config/zsh}
+
+# XDG
 export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 export XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
 export XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
 
-# Ensure they exist (lightweight, only runs once per session)
-for dir in XDG_{CONFIG,CACHE,DATA}_HOME; do
-  [[ -d ${(P)dir} ]] || mkdir -p ${(P)dir}
-done
-unset dir
-
-# Load the .shellrc here - just to define some env vars that we need before zsh lifecycle kicks in
-source "${HOME}/.shellrc"
-
-# https://blog.patshead.com/2011/04/improve-your-oh-my-zsh-startup-time-maybe.html
-skip_global_compinit=1
+# Set PATH and HOMEBREW_PREFIX
+[[ -r "$ZDOTDIR/lib/path.zsh" ]] && source "$ZDOTDIR/lib/path.zsh"

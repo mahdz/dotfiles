@@ -25,13 +25,13 @@ setopt NO_share_history        # Don't share history between all sessions.
 unsetopt HIST_REDUCE_BLANKS
 
 # $HISTFILE belongs in the data home, not with zsh configs
-HISTFILE=${XDG_DATA_HOME:=$HOME/.local/share}/zsh/zsh_history
-[[ -d $HISTFILE:h ]] || mkdir -p $HISTFILE:h
+export HISTFILE="${XDG_DATA_HOME:=$HOME/.local/share}/zsh/zsh_history"
+[[ -d "${HISTFILE:h}" ]] || mkdir -p "${HISTFILE:h}"
 
 # $SAVEHIST and $HISTSIZE can be set to anything greater than the Zsh defaults,
 # 1000 and 2000 respectively, but if not make them way bigger.
-[[ $SAVEHIST -gt 1000 ]] || SAVEHIST=10000
-[[ $HISTSIZE -gt 2000 ]] || HISTSIZE=10000
+[[ $SAVEHIST -gt 1000 ]] || export SAVEHIST=10000
+[[ $HISTSIZE -gt 2000 ]] || export HISTSIZE=10000
 
 # =============================================================================
 # History and Search Aliases

@@ -1,7 +1,33 @@
 # =============================================================================
 # utilities.zsh -
 # =============================================================================
-#
+
+# =============================================================================
+# GREP
+# =============================================================================
+
+# In your .zshrc
+# export GREP_OPTIONS="-R"  # Recursive search by default
+export GREP_COMMAND="rg"  # Some tools respect this
+
+export RIPGREP_CONFIG_PATH="${XDG_CONFIG_HOME}/ripgrep/config"
+
+# =============================================================================
+# OPTIONAL TOOLS
+# =============================================================================
+
+# ShellHistory.app - macOS shell history management
+path+=("/Applications/ShellHistory.app/Contents/Helpers")
+
+# Added by LM Studio CLI (lms)
+path+=("$HOME/.lmstudio/bin")
+# End of LM Studio CLI section
+
+# VS Code Scripts
+path+=("${XDG_CONFIG_HOME:-$HOME/.config}/vscode")
+
+# id774/scripts.git
+path+=("$HOME/Developer/repos/id774/scripts")
 
 export SCRIPTS='/Users/mh/Developer/repos/id774/scripts'
 

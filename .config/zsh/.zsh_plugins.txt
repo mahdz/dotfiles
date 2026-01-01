@@ -6,10 +6,11 @@
 # CORE ENVIRONMENT SETUP (load first, no defer)
 # ------------------------------------------------------------------------------
 
-"$ZSH_CUSTOM"/plugins/xdg
-mattmc3/zephyr path:plugins/history
 mattmc3/zephyr path:plugins/environment
 "$ZSH_CUSTOM"/plugins/homebrew
+mattmc3/zephyr path:plugins/color
+mattmc3/zephyr path:plugins/history
+"$ZSH_CUSTOM"/plugins/xdg
 "$ZSH_CUSTOM"/plugins/dotfiles
 
 # ------------------------------------------------------------------------------
@@ -34,7 +35,7 @@ ohmyzsh/ohmyzsh path:lib/termsupport.zsh
 # ------------------------------------------------------------------------------
 
 # Core functionality - defer level 1
-ohmyzsh/ohmyzsh path:lib/functions.zsh kind:defer
+ohmyzsh/ohmyzsh path:lib/functions.zsh
 ohmyzsh/ohmyzsh path:lib/git.zsh kind:defer
 ohmyzsh/ohmyzsh path:lib/grep.zsh kind:defer
 ohmyzsh/ohmyzsh path:lib/history.zsh kind:defer
@@ -61,7 +62,7 @@ ohmyzsh/ohmyzsh path:lib/diagnostics.zsh kind:defer
 # "$ZSH_CUSTOM"/plugins/ruby kind:defer
 
 # Commented out mise plugin (handled by homebrew plugin)
-ohmyzsh/ohmyzsh path:plugins/mise
+ohmyzsh/ohmyzsh path:plugins/mise kind:defer
 
 
 # ------------------------------------------------------------------------------
@@ -69,7 +70,6 @@ ohmyzsh/ohmyzsh path:plugins/mise
 # ------------------------------------------------------------------------------
 
 # Core zephyr plugins - defer level 1
-mattmc3/zephyr path:plugins/color kind:defer
 mattmc3/zephyr path:plugins/compstyle kind:defer
 mattmc3/zephyr path:plugins/directory kind:defer
 mattmc3/zephyr path:plugins/helper kind:defer

@@ -10,17 +10,14 @@
 # Use caching.
 zstyle ':zephyr:plugin:*' 'use-cache' no
 
-#
-# Completions
-#
-# zstyle ':zsh_custom:plugin:*' 'use-cache' no
-# zstyle ':zsh_custom:plugin:completion' compstyle zshzoo
-
 # XDG
-zstyle ':zephyr:plugin:*' use-xdg-basedirs 'yes'
+zstyle ':zephyr:plugin:*' use-xdg-basedirs yes
+
+# Completions
+zstyle ':zephyr:plugin:completion' compstyle zshzoo
 
 # Environment
-# zstyle ':zephyr:plugin:environment' skip-path-setup yes
+zstyle ':zephyr:plugin:environment' skip-path-setup yes
 
 # Always show color
 zstyle ':zephyr:plugin:*' color 'yes'
@@ -57,14 +54,6 @@ zstyle ':zephyr:plugin:editor' magic-enter 'yes'
 # Editor style
 zstyle -s ':zephyr:plugin:editor' key-bindings 'vi'
 
-# From compinit docs:
-# To avoid these tests and make all files found be used without asking, use the
-# option -u, and to make compinit silently ignore all insecure files and directories
-# use the option -i. This security check is skipped entirely when the -C option is
-# given, provided the dumpfile exists.
-zstyle ':zephyr:plugin:completion' 'disable-compfix' yes
-zstyle ':zephyr:plugin:completion' compstyle 'zephyr'
-
 # Dotfiles
 zstyle ':zsh_custom:plugin:dotfiles' bare 'yes'
 
@@ -96,7 +85,8 @@ zstyle ':omz:lib:directories' aliases no
 zstyle ':omz:plugins:git' aliases no
 
 # GNU
-# zstyle ':omz:lib:theme-and-appearance' gnu-ls no
+zstyle ':omz:lib:theme-and-appearance' gnu-ls yes
+
 # Prevent use-omz from trying to load themes since we use starship directly
 zstyle ':omz:lib:theme-and-appearance' 'skip' 'yes'
 
@@ -139,10 +129,10 @@ zstyle ':completion:*:paths' accept-exact-dirs true
 zstyle ':zsh_custom:plugin:git' default-user mahdz
 
 # zshrc.d location
-zstyle ':zsh_custom:plugin:zshrcd' directory "$ZDOTDIR/zshrc.d"
+zstyle ':zephyr:plugin:confd' directory ${ZDOTDIR:-$HOME/.config/zsh}/zshrc.d
 
 # zfunctions location
-zstyle ':zsh_custom:plugin:zfunctions' directory "$ZDOTDIR/functions"
+zstyle ':zephyr:plugin:zfunctions' directory ${ZDOTDIR:-$HOME/.config/zsh}/functions
 
 #
 # Prompt
