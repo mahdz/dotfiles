@@ -2,11 +2,26 @@
 # zoxide: Configure zoxide.
 #
 
-command -v zoxide &> /dev/null || return
+if ! (( $+commands[zoxide] )); then
+  echo "zoxide not found" >&2
+  return 1
+fi
+
+_zoxide_cache="$XDG_CACHE_HOME/zsh/zoxide_init.zsh"
+
+# Rebuild cache if missing or zoxide binary is newer
+if [[ ! -f "$_zoxide_cache" ]] || [[ "$_zoxide_cache" -ot =zoxide ]]; then
+zoxide init zsh >| "$_zoxide_cache"
+zcompile "$_zoxide_cache" # Compile for extra speed
+fi
+
+source "$_zoxide_cache"
+
+# Keep your existing FZF integration...
+export _ZO_DATA_DIR="${XDG_DATA_HOME}/zoxide"
 
 eval "$(zoxide init zsh)"
 
-export _ZO_DATA_DIR="${XDG_DATA_HOME}/zoxide"
 export _ZO_ECHO=1
 export _ZO_RESOLVE_SYMLINKS=1
 

@@ -10,12 +10,18 @@
 # XDG base dirs
 #
 
-export ZDOTDIR=${ZDOTDIR:-$HOME/.config/zsh}
-
-# XDG
 export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 export XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
 export XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
 
-# Set PATH and HOMEBREW_PREFIX
-[[ -r "$ZDOTDIR/lib/path.zsh" ]] && source "$ZDOTDIR/lib/path.zsh"
+#
+# Dotfiles
+#
+
+export ZDOTDIR=${ZDOTDIR:-~/.config/zsh}
+export DOTFILES=~/.config/dotfiles
+
+# Use .zprofile for remaining environment.
+if [[ ( "$SHLVL" -eq 1 && ! -o LOGIN ) && -s "$ZDOTDIR/.zprofile" ]]; then
+  source "$ZDOTDIR/.zprofile"
+fi

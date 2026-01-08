@@ -9,7 +9,7 @@
 alias zprofrc="ZPROFRC=1 zsh"
 
 # Set PATH and HOMEBREW_PREFIX
-source "$ZDOTDIR/lib/path.zsh"
+# source "$ZDOTDIR/lib/path.zsh"
 
 # ============================================================================
 # UTILITY FUNCTIONS

@@ -14,7 +14,9 @@
 # Flags: -iR (ignore case, raw), -F (quit if one screen), --incsearch (search as type)
 #        --use-color (colored output), --mouse (mouse support), -x4 (tab width),
 #        --status-column (show search status)
-export LESS="-iR -F --incsearch --use-color --mouse -x4 --status-column"
+#
+export ESS_FLAGS="-iR --incsearch --use-color --mouse --quit-if-one-screen -x4 --status-column --wheel-lines=3"
+export LESS="$LESS_FLAGS"
 
 # SYNTAX HIGHLIGHTING WITH BAT
 # =============================================================================

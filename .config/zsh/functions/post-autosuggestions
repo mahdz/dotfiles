@@ -2,7 +2,7 @@
 # https://github.com/zsh-users/zsh-autosuggestions
 
 # Set highlight color, default 'fg=8'.
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242'
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=60'
 
 # Set key bindings.
 if [[ -n "$key_info" ]]; then

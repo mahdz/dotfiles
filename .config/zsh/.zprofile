@@ -1,8 +1,11 @@
-# =============================================================================
-# ~/.zprofile - Login Shell PATH Configuration for macOS
-# =============================================================================
-# This file is sourced only for login shells and handles PATH management
-# Ensures development tools take priority over system versions
+#
+# .zprofile - execute login commands pre-zshrc
+#
+# https://github.com/sorin-ionescu/prezto/blob/master/runcoms/zprofile
+
+#
+# XDG
+#
 
 # Set XDG base dirs.
 # https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
@@ -27,69 +30,83 @@ if [[ "$OSTYPE" == darwin* ]]; then
   export XDG_PROJECTS_DIR=${XDG_PROJECTS_DIR:-$HOME/Developer}
 fi
 
-if is_arm; then
-  export HOMEBREW_PREFIX='/opt/homebrew'
-else
-  export HOMEBREW_PREFIX='/usr/local'
+#
+# Common
+#
+
+# Set editor variables.
+export EDITOR=micro
+export VISUAL=code
+export PAGER=less
+
+# Browser.
+if [[ "$OSTYPE" == darwin* ]]; then
+  export BROWSER='open'
 fi
 
-# =============================================================================
-# PATH MANAGEMENT UTILITIES
-# =============================================================================
+# Regional settings
+export LANG='en_US.UTF-8'
 
-# Append directory to PATH if it exists and isn't already present
-# Only adds directories that actually exist on the filesystem
-# Checks for duplicates using pattern matching to avoid PATH bloat
-path_prepend() {
-  if [[ -d "$1" ]] && (( ! ${path[(I)$1]} )); then
-    path=("$1" $path)
-  fi
-}
+# 2. Detect Homebrew prefix
+# [[ -d /opt/homebrew ]] && export HOMEBREW_PREFIX="/opt/homebrew" || export HOMEBREW_PREFIX="/usr/local"
 
-path_append() {
-  if [[ -d "$1" ]] && (( ! ${path[(I)$1]} )); then
-    path+=("$1")
-  fi
-}
+# 1. Clear current path array to drop system-prefixed junk
+# path=()
 
-# =============================================================================
-# PATH INITIALIZATION
-# =============================================================================
+# Ensure path arrays do not contain duplicates.
+typeset -gU fpath path cdpath
 
-export PATH="$HOME/.local/share/mise/shims:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+# Set the list of directories that cd searches.
+cdpath=(
+  $XDG_PROJECTS_DIR
+  $cdpath
+)
 
-# =============================================================================
-# DEVELOPMENT TOOLS AND LANGUAGES
-# =============================================================================
+# Set the list of directories that Zsh searches for programs.
+path=(
+  # core
+  $HOME/{,s}bin(N)
+  $HOME/.local/bin(N)
+  /opt/{homebrew,local}/{,s}bin(N)
+  /usr/local/{,s}bin(N)
 
-# =============================================================================
-# OPTIONAL TOOLS
-# =============================================================================
+  # path
+  $path
+)
 
-# ShellHistory.app
-path_append "/Applications/ShellHistory.app/Contents/Helpers"
+# Add mise
+eval "$(mise activate zsh --shims)"
 
 # Added by LM Studio CLI (lms)
-path_append "$HOME/.lmstudio/bin"
+export PATH="$PATH:/Users/mh/.cache/lm-studio/bin"
 # End of LM Studio CLI section
 
-# VS Code Scripts
-path_append "${XDG_CONFIG_HOME:-$HOME/.config}/vscode"
+#
+# Less
+#
 
-# GPG Suite
-# path_append "/usr/local/MacGPG2/bin"
+# Set the default Less options.
+# Mouse-wheel scrolling has been disabled by -X (disable screen clearing).
+# Remove -X to enable it.
+if [[ -z "$LESS" ]]; then
+  export LESS='-g -i -M -R -S -w -z-4'
+fi
 
-# id774/scripts.git
-path_append "$HOME/Developer/repos/id774/scripts"
+# Set the Less input preprocessor.
+# Try both `lesspipe` and `lesspipe.sh` as either might exist on a system.
+if [[ -z "$LESSOPEN" ]] && (( $#commands[(i)lesspipe(|.sh)] )); then
+  export LESSOPEN="| /usr/bin/env $commands[(i)lesspipe(|.sh)] %s 2>&-"
+fi
 
-# =============================================================================
-# APPLE SYSTEM PATHS
-# =============================================================================
-# These have lowest priority
+#
+# Misc
+#
 
-# Apple system paths (lowest priority)
-path_append "/System/Cryptexes/App/usr/bin"
-path_append "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin"
-path_append "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin"
-path_append "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin"
-path_append "/Library/Apple/usr/bin"
+export DOTFILES=$HOME/.dotfiles
+export KEYTIMEOUT=1
+
+# Make Apple Terminal behave.
+export SHELL_SESSIONS_DISABLE=1
+
+# Use `< file` to quickly view the contents of any file.
+[[ -z "$READNULLCMD" ]] || READNULLCMD=$PAGER
