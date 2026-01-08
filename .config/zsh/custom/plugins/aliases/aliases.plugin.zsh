@@ -16,7 +16,7 @@
 #
 
 # DUPLICATE! Copied over since we get an error if the .shellrc was not loaded
-type command_exists &> /dev/null 2>&1 || source "${HOME}/.shellrc"
+type command_exists &> /dev/null 2>&1 || source "${HOME}/.config/shell/shellrc"
 
 # add flags to existing aliases
 # alias less="${aliases[less]:-less} -RF"
@@ -24,7 +24,7 @@ type command_exists &> /dev/null 2>&1 || source "${HOME}/.shellrc"
 
 # eza already defines 'll' - so skip if that's present
 command_exists tree && alias tree="${aliases[tree]:-tree} -Ch"
-command_exists bat && alias cat='bat'
+command_exists bat && alias cat='bat --paging never --style plain'
 
 # ============================
 # Alias Management
@@ -40,16 +40,27 @@ alias ar='unalias'              # Remove given alias
 # mask built-ins with better defaults
 alias ping='ping -c 5'
 alias type='type -a'
+alias grep="command grep --exclude-dir={.git,.vscode}"
+export GNUPGHOME=${XDG_DATA_HOME:=~/.local/share}/gnupg
+alias gpg="command gpg --homedir \"\$GNUPGHOME\""
+export GPG_TTY=$(tty)
+
+# brew
+alias brewup="brew update && brew upgrade && brew cleanup"
+
+# directories
+alias secrets="cd ${XDG_DATA_HOME:=~/.local/share}/secrets"
+
+# more ways to ls
+alias ll='ls -lh'
+alias la='ls -lAh'
+alias lsa="ls -aG"
+alias ldot='ls -ld .*'
 
 # Verbosity and settings that you pretty much just always are going to want.
 alias mv='mv -iv'
 alias mkdir='mkdir -pv'
 alias ffmpeg='ffmpeg -hide_banner'
-
-# fix typos
-alias get=git
-alias quit='exit'
-alias zz='exit'
 
 # edit quicker with functions
 ea() { ${EDITOR:-micro} "${ZSH_CUSTOM:-$ZDOTDIR/custom}/plugins/aliases/aliases.plugin.zsh" & disown; }
@@ -66,7 +77,6 @@ fi
 # misc
 alias zbench='for i in {1..10}; do /usr/bin/time zsh -lic exit; done'
 alias cls="clear && printf '\e[3J'"
-#alias mise-upgrade='fix-mise-python-cache && mise upgrade'
 alias keka='/Applications/Keka.app/Contents/MacOS/Keka --cli'
 
 # trash aliases
@@ -83,9 +93,12 @@ print-functions() { # exclude oh-my-zsh, Warp, zle, and other misc functions
   print -l ${(k)functions[(I)[^_]*]} | command grep -v -E '(omz|_prompt_|warp|zle|^\.)' | sort | fzf
 }
 
+# set initial working directory
+: ${IWD:=$PWD}
+alias iwd='cd $IWD'
+
 # color
 alias colormap='for i in {0..255}; do print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+"\n"}; done'
-
 
 # =============================================================================
 # Git run_all
@@ -101,20 +114,6 @@ fi
 # macOS
 # =============================================================================
 
-_free_wifi() {
-  local interface="${1}"
-  (ifconfig "${interface}" | \grep ether) && \
-  (openssl rand -hex 6 | sed 's/\(..\)/\1:/g; s/.$//' | xargs sudo ifconfig "${interface}" ether) && \
-  (ifconfig "${interface}" | \grep ether)
-}
-if is_macos; then alias free-wifi='_free_wifi en0'
-  alias flush-dns="sudo killall -HUP mDNSResponder;sudo killall mDNSResponderHelper;sudo dscacheutil -flushcache;say MacOS DNS cache has been cleared"
-fi
+# MacOS: Remove apps from quarantine
+alias unquarantine='sudo xattr -rd com.apple.quarantine'
 
-if is_macos; then
-  # MacOS: Remove apps from quarantine
-  alias unquarantine='sudo xattr -rd com.apple.quarantine'
-
-  # MacOS: Clean up LaunchServices to remove duplicates in the "Open With" menu
-  alias lscleanup='/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder'
-fi

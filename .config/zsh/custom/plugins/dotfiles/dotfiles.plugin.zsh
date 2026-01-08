@@ -26,7 +26,7 @@ _dotfiles_command_exists() { command -v "$1" >/dev/null 2>&1; }
 # Git Command Wrapper
 ###############################################################
 _dotfiles_git() {
-    /usr/bin/env git --git-dir="$DOTFILES_DIR" --work-tree="$HOME" "$@"
+    command git --git-dir="$DOTFILES_DIR" --work-tree="$HOME" "$@"
 }
 
 ###############################################################

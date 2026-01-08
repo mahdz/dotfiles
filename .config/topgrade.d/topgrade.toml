@@ -15,7 +15,7 @@
 # sudo_command = "sudo"
 
 # Disable specific steps - same options as the command line flag
-# disable = ["uv", "mas", "bun"]
+disable = ["mas"]
 
 # Ignore failures for these steps
 # ignore_failures = ["powershell"]
@@ -48,7 +48,7 @@ no_retry = true
 # tmux_session_mode = "attach_if_not_in_session"
 
 # Cleanup temporary or old files (default: false)
-# cleanup = true
+cleanup = true
 
 # Send a notification for every step (default: false)
 # notify_each_step = false
@@ -72,29 +72,29 @@ no_self_update = true
 # Extra tracing filter directives
 # These are prepended to the `--log-filter` argument
 # See: https://docs.rs/tracing-subscriber/latest/tracing_subscriber/filter/struct.EnvFilter.html#directives
-log_filters = ["topgrade::command=debug", "warn"]
+# log_filters = ["topgrade::command=debug", "warn"]
 
 # Commands to run before anything
 [pre_commands]
 # "Set Homebrew Path" = "command -v brew >/dev/null || eval \"$(/opt/homebrew/bin/brew shellenv)\""
 "Source Shell RC" = "[ -n \"$ZSH_VERSION\" ] && source ~/.config/zsh/.zshenv"
-"Check Shell Security" = "umask 0027 && ulimit -n 1024"
-"Verify PATH" = "echo $PATH | grep -q 'opt/homebrew/bin' || echo '⚠️  Homebrew not in PATH'"
+# "Check Shell Security" = "umask 0027 && ulimit -n 1024"
+# "Verify PATH" = "echo $PATH | grep -q 'opt/homebrew/bin' || echo '⚠️  Homebrew not in PATH'"
 "Delete .DS_Store" = "find ~/Developer ~/.config ~/.local -type f -name '.DS_Store' -delete 2>/dev/null || true"
-"SSH Key Audit" = "find ~/.ssh -type f -name 'id_*' -exec ssh-keygen -l -f {} \\; 2>/dev/null || true"
+# "SSH Key Audit" = "find ~/.ssh -type f -name 'id_*' -exec ssh-keygen -l -f {} \\; 2>/dev/null || true"
 #"Clear Python Build Artifacts" = "find ~/ -name '__pycache__' -exec rm -rf {} + 2>/dev/null || true"
 
 # Commands to run after anything
 [post_commands]
-# "Dump brew-file" = "-i pkgmgr export brew"
+"Dump brew-file" = "-i pkgmgr export brew"
 
 # Custom commands
 [commands]
 # "Antidote" = "source $HOMEBREW_PREFIX/opt/antidote/share/antidote/antidote.zsh && antidote update"
 # "UV" = "uv tool upgrade --all"  # Replace with the actual command for UV
-"Clean npm Cache" = "npm cache clean --force"
-"pw" = "sudo pw update"
-#"Raycast App & Extension update" = "open raycast://extensions/raycast/raycast/check-for-updates && open raycast://extensions/raycast/raycast/check-for-extension-updates"
+# "Clean npm Cache" = "npm cache clean --force"
+# "pw" = "sudo pw update"
+# "Raycast App & Extension update" = "open raycast://extensions/raycast/raycast/check-for-updates && open raycast://extensions/raycast/raycast/check-for-extension-updates"
 
 
 [python]
@@ -144,7 +144,7 @@ max_concurrency = 5
 # Additional git repositories to pull
 repos = [
     # "/Users/mh/Developer/repos/cr-ma-helper",
-    "/Users/mh/Developer/repos/XInTheDark/raycast-g4f",
+    # "/Users/mh/Developer/repos/XInTheDark/raycast-g4f",
     "/Users/mh/Developer/repos/raycast/script-commands",
     "/Users/mh/Developer/repos/oss/git_scripts"
     ]
@@ -154,7 +154,6 @@ repos = [
 
 # Arguments to pass Git when pulling Repositories
 arguments = "--rebase --autostash"
-
 
 [npm]
 # Use sudo if the NPM directory isn't owned by the current user

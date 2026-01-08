@@ -19,10 +19,6 @@ export RIPGREP_CONFIG_PATH="${XDG_CONFIG_HOME}/ripgrep/config"
 # ShellHistory.app - macOS shell history management
 path+=("/Applications/ShellHistory.app/Contents/Helpers")
 
-# Added by LM Studio CLI (lms)
-path+=("$HOME/.lmstudio/bin")
-# End of LM Studio CLI section
-
 # VS Code Scripts
 path+=("${XDG_CONFIG_HOME:-$HOME/.config}/vscode")
 

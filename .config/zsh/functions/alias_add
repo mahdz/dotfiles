@@ -21,7 +21,7 @@
 #   2 - Failed to write to aliases file
 
     local name="$1" command="$2"
-    local search_dirs=("${ZDOTDIR:-$HOME}" "${ZDOTDIR:-$HOME}/zshrc.d" "${ZSH_CUSTOM:-$ZDOTDIR/custom}")   # adjust as needed
+    local search_dirs=("${ZDOTDIR:-$HOME}" "${ZDOTDIR:-$HOME}/zshrc.d" "${ZSH_CUSTOM:-$ZDOTDIR/custom}/plugins/aliases")   # adjust as needed
     local aliases escaped_name qcmd
 
     if [[ -z "$name" || -z "$command" ]]; then
