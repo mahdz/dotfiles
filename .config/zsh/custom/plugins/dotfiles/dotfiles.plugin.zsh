@@ -16,7 +16,7 @@ export DOT_WORKSPACE="${XDG_CONFIG_HOME:-$HOME/.config}/vscode/dotfiles.code-wor
 export DOTFILES_BRANCH='main'
 
 # Obsidian Vault Path
-export VAULT_PATH="$HOME/Vault"
+export VAULT_PATH="/Users/mh/Library/Mobile Documents/iCloud~md~obsidian/Documents/Vault"
 
 # --- Utilities ---
 

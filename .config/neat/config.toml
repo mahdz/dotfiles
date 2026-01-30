@@ -1,23 +1,80 @@
-[[rules]]
-name = "Invoices"
-pattern = "*invoice*.pdf"
-destination = "Documents/Invoices/{year}"
-priority = 10
-post_action = "echo 'Organized invoice: {name}'"
+# ~/.config/neat/config.toml
+
+# ------------------------------------------------------------
+# 1. AI SESSION PIPELINE (Primary workflow)
+# ------------------------------------------------------------
 
 [[rules]]
-name = "Screenshots"
-pattern = "Screenshot*.png"
-destination = "Images/Screenshots/{year}-{month}"
-priority = 5
+name = "AI - Session Exports (Universal)"
+pattern = "*-202[0-9]-[0-9][0-9]-[0-9][0-9]*"
+destination = "03-resources/ai/sessions/{year}"
+priority = 80
 
 [[rules]]
-name = "Downloads by Month"
-pattern = "*"
-destination = "Archive/{year}/{month}"
-priority = 0
+name = "AI - Knowledge Architect Sessions"
+pattern = "*AI_Knowledge_Architect*|*Basic_Memory_System*"
+destination = "99-meta/agents/prompts"
+priority = 75
+
+[[rules]]
+name = "AI - Career & Portfolio Sessions"
+pattern = "*Manny_s_Career*|*Portfolio*|*Resume*"
+destination = "02-areas/career/branding"
+priority = 70
+
+# ------------------------------------------------------------
+# 2. FINANCIAL AUTOMATION (High-confidence matches)
+# ------------------------------------------------------------
+
+[[rules]]
+name = "Finance - Retirement Planning"
+pattern = "*401k*|*403b*|*ira*|*roth*"
+destination = "02-areas/finance/retirement"
+priority = 65
+
+[[rules]]
+name = "Finance - Transaction Records"
+pattern = "*transactions*|*ledger*|*statement*"
+destination = "02-areas/finance/ledger/{year}"
+priority = 60
+
+# ------------------------------------------------------------
+# 3. CREATIVE WORK PIPELINE
+# ------------------------------------------------------------
+
+[[rules]]
+name = "Creative - After Effects Sessions"
+pattern = "*After_Effects*|*Animation*"
+destination = "03-resources/creative/motion-graphics"
+priority = 55
+
+[[rules]]
+name = "Creative - Logo & Brand Design"
+pattern = "*Logo*|*Brand*|*Typography*"
+destination = "03-resources/creative/branding"
+priority = 50
+
+# ------------------------------------------------------------
+# 4. PERSONAL & LIFE ADMIN
+# ------------------------------------------------------------
+
+[[rules]]
+name = "Personal - Home & Lease"
+pattern = "*apartment*|*lease*|*hayworth*"
+destination = "02-areas/personal/home"
+priority = 45
+
+[[rules]]
+name = "Personal - Dog Operations (Luna)"
+pattern = "*dog*|*luna*|*pekingese*"
+destination = "02-areas/personal/luna"
+priority = 40
+
+# ------------------------------------------------------------
+# 5. SAFETY & GOVERNANCE
+# ------------------------------------------------------------
 
 [settings]
-include_hidden = false
-follow_symlinks = false
-default_organize_mode = "by-type"
+dry_run = true      # Always start with dry-run
+max_depth = 3       # Prevent deep recursion
+backup = true       # Create .bak files before moving
