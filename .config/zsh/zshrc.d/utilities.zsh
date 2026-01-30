@@ -39,7 +39,7 @@ command_exists bat && export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 command_exists batman && eval "$(batman --export-env)"
 
 # batpipe
-command_exists batpipe && eval "$(batpipe)"
+command_exists batpipe && eval "$(batpipe 2>/dev/null)"
 
 command_exists broot && source "${XDG_CONFIG_HOME}/broot/launcher/bash/br"
 
