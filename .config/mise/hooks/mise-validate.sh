@@ -87,10 +87,10 @@ else
 fi
 
 # Optional: check secrets dir presence and permissions (non-fatal)
-if [ -d "${SECRETS_DIR:=$HOME/.config/security}" ]; then
+if [ -d "${SECRETS_DIR:=$HOME/.local/share/secrets}" ]; then
     info "Secrets dir exists: $SECRETS_DIR"
     # Check restrictive permissions
-    perms=$(stat -f "%A" "${SECRETS_DIR:=$HOME/.config/security}" 2>/dev/null || stat -c "%a" "${SECRETS_DIR:=$HOME/.config/security}" 2>/dev/null || echo "unknown")
+    perms=$(stat -f "%A" "${SECRETS_DIR}" 2>/dev/null || stat -c "%a" "${SECRETS_DIR}" 2>/dev/null || echo "unknown")
     info "Secrets dir perms: $perms"
 else
     warn "Secrets dir not present: $SECRETS_DIR"

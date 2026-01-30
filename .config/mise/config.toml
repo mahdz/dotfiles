@@ -1,5 +1,4 @@
-# mise.toml - Comprehensive Development Environment Configuration
-
+  # mise.toml - Comprehensive Development Environment Configuration
 # ==============================================================================
 # SETTINGS
 # ==============================================================================
@@ -14,6 +13,7 @@ experimental = false
 plugin_autoupdate_last_check_duration = "1d"
 log_level = "warn"
 activate_aggressive = true
+cargo.binstall = false
 # Git integration
 # gix = false
 # configure messages displayed when entering directories with config files
@@ -26,9 +26,9 @@ gpg_verify = false
 [env]
 PYTHONUNBUFFERED = "1"
 UV_FROZEN = "false"
-# _.file = [
-#  { path = "/Users/mh/.local/share/secrets/.env", tools = true, redact = true }
-# ]
+# Secrets removed from startup — decrypt on-demand instead:
+#   eval "$(sops -d ~/.local/share/secrets/.env)"
+# This saves ~23ms per shell startup (encrypted file can't be parsed as dotenv)
 
 # ============================================================================
 # CORE RUNTIME TOOLS (Essential for development)
@@ -39,11 +39,12 @@ node = "lts"
 python = "3.14"
 # System utilities (pin critical CLIs; others may remain latest)
 # Rust Toolchain - XDG-compliant cargo home
-rust = { version = "latest", cargo_home = "~/.config/cargo" }
-ripgrep = "latest"
+rust = { version = "stable", cargo_home = "~/.config/cargo" }
+
 shellcheck = "0.9.0"  # example pin; adjust if you tested a different version
 gemini-cli = "latest"
 pre-commit = "3.5.0"  # pin to a known stable release
+
 # Node.js packages (grouped by function)
 # Code formatting & linting
 "npm:prettier" = "3.7.4"
@@ -60,6 +61,7 @@ pre-commit = "3.5.0"  # pin to a known stable release
 "npm:resumed" = "latest"
 "npm:jsonresume-theme-even" = "latest"
 "npm:repomix" = "latest"
+
 # Python CLI tools (managed via pipx backend with uvx=true)
 # Comments: pin production-critical ones; leave experimental latest
 "pipx:basic-memory" = "latest"
@@ -70,14 +72,31 @@ pre-commit = "3.5.0"  # pin to a known stable release
 "pipx:khard" = "latest"
 "pipx:mac-cleanup" = "latest"
 "pipx:osxmetadata" = "latest"
+"pipx:osxphotos" = "latest"
 "pipx:pygments" = "2.17.2"
-"pipx:rich-cli" = "latest"
 # "pipx:reclaimed" = "git+https://github.com/taylorwilsdon/reclaimed"
 "pipx:ruff" = "latest"
 "pipx:speedtest-cli" = "latest"
 "pipx:yt-dlp" = "latest"
 "pipx:twine" = "6.2.0"
 "pipx:pptx2md" = "latest"
+"pipx:scenedetect" = "latest"
+
+# Cargo
+"cargo:cargo-binstall" = "latest"
+"cargo:cargo-update" = "latest"
+"cargo:cargo-cache" = "latest"
+"cargo:ripgrep" = "latest"
+"cargo:fd-find" = "latest"
+"cargo:bat" = "latest"
+"cargo:eza" = "latest"
+"cargo:git-delta" = "latest"
+"cargo:navi" = "latest"
+"cargo:sd" = "latest"
+"cargo:procs" = "latest"
+"cargo:zoxide" = "latest"
+"cargo:starship" = "latest"
+"cargo:imessage-exporter" = "latest"
 
 [hooks]
 preinstall = 'printf "About to install %s@%s\n" "$MISE_TOOL_NAME" "$MISE_TOOL_VERSION"'
