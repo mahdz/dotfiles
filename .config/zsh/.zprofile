@@ -34,11 +34,6 @@ fi
 # Common
 #
 
-# Set editor variables.
-export EDITOR=micro
-export VISUAL=code
-export PAGER=less
-
 # Browser.
 if [[ "$OSTYPE" == darwin* ]]; then
   export BROWSER='open'
@@ -54,7 +49,7 @@ export LANG='en_US.UTF-8'
 # path=()
 
 # Ensure path arrays do not contain duplicates.
-typeset -gU fpath path cdpath
+typeset -gU fpath path cdpath manpath PATH
 
 # Set the list of directories that cd searches.
 cdpath=(
@@ -64,9 +59,11 @@ cdpath=(
 
 # Set the list of directories that Zsh searches for programs.
 path=(
-  # core
   $HOME/{,s}bin(N)
   $HOME/.local/bin(N)
+
+  $HOME/.local/share/mise/shims
+
   /opt/{homebrew,local}/{,s}bin(N)
   /usr/local/{,s}bin(N)
 
@@ -74,12 +71,15 @@ path=(
   $path
 )
 
-# Add mise
-eval "$(mise activate zsh --shims)"
 
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:/Users/mh/.cache/lm-studio/bin"
 # End of LM Studio CLI section
+
+# Set editor variables.
+export EDITOR=micro
+export VISUAL=/opt/homebrew/bin/code
+export PAGER=less
 
 #
 # Less
@@ -104,6 +104,7 @@ fi
 
 export DOTFILES=$HOME/.dotfiles
 export KEYTIMEOUT=1
+export VAULT_PATH="$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/Vault"
 
 # Make Apple Terminal behave.
 export SHELL_SESSIONS_DISABLE=1
