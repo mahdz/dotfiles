@@ -11,8 +11,8 @@ This is a **configuration management project** (treated as a code project for do
 *   **Git:** For version control of dotfiles.
 *   **Zsh:** The primary shell, with configurations managed in `~/.config/zsh/`.
 *   **Homebrew:** For macOS package management.
-*   **mise:** For managing development tools and their versions.
-*   **uv:** For managing Python tools.
+*   **Mise:** For managing development tools, runtimes, and Python CLI tools.
+*   **UV:** For Python project management (dependencies, venvs). Integrated with Mise via pipx backend.
 
 ## Managing Dotfiles
 
@@ -39,9 +39,11 @@ command git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" "$@"
 ### Tool Management
 
 *   `brew install <tool>`: Install macOS applications and utilities via Homebrew.
-*   `mise install <tool>@latest`: Install development tools using `mise`.
-*   `uv tool install <python-tool>`: Install Python-specific tools using `uv`.
+*   `mise use -g python@VERSION`: Install/activate Python runtime (e.g., `mise use -g python@3.13`).
+*   `mise use -g pipx:TOOL@VERSION`: Install Python CLI tools (e.g., `mise use -g pipx:ruff@latest`). Mise uses UV backend automatically.
 *   `mise reshim`: Fix broken tool links after installation or updates.
+
+**Note:** All Python CLI tools (ruff, black, yt-dlp, etc.) are declared in `~/.config/mise/config.toml` with `pipx:` prefix. Mise manages these via the UV backend for isolation. See `~/Documents/Cline/Rules/python-mise-uv-guide.md` for integrated workflow.
 
 ## Key Locations
 
@@ -50,12 +52,13 @@ command git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" "$@"
 *   `$HOME/.dotfiles`: The bare Git repository data.
 *   `$HOME/.cache`: Cache files.
 *   `$HOME/.config/`: Primary location for configuration files.
-*   `$HOME/.local/bin/`: Location for personal scripts and executables.
+*   `$HOME/.local/bin/`: Location for personal scripts and executables (DO NOT track UV symlinks).
 
 ### Files
 
 *   `$HOME/.gitignore`: Global `.gitignore` for the dotfiles repository.
 *   `$HOME/.config/zsh/`: Zsh configuration directory.
+*   `$HOME/.config/mise/config.toml`: Mise tool and runtime versions.
 *   `AGENTS.md`: Essential commands reference (this file).
 
 ## Dotfiles Management Conventions
@@ -66,6 +69,7 @@ command git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" "$@"
 *   **NEVER track:**
     *   Cache files, logs, or temporary files.
     *   Secrets or sensitive data.
+    *   UV symlinks in `~/.local/bin/` (ephemeral, auto-generated).
 
 ### Gitignore Strategy
 
@@ -122,6 +126,10 @@ To set up dotfiles on a new machine:
 *   **Tool not found after install:**
     *   Run `mise reshim`.
     *   Check `echo $PATH`.
+*   **Python CLI tool missing:**
+    *   Verify declared in `~/.config/mise/config.toml` as `pipx:TOOL@VERSION`.
+    *   Run `mise install && mise reshim`.
+    *   Check `mise ls | grep pipx` to list all CLI tools.
 *   **File not tracking despite gitignore:**
     *   Review pattern order in `.gitignore` (later rules override earlier ones).
     *   Test with `dots add -n filename`.
@@ -129,3 +137,8 @@ To set up dotfiles on a new machine:
     *   `dots status`: Identify recent changes.
     *   `dots diff`: Review the specific changes.
     *   `dots checkout HEAD -- filename`: Revert a specific file to its last committed state.
+
+## References
+
+- **Integrated Python+Mise+UV Guide:** `~/Documents/Cline/Rules/python-best-practices.md`
+- **Copilot Instructions:** `~/.github/copilot-instructions.md`

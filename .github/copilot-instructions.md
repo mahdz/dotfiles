@@ -5,7 +5,7 @@ globs: *
 
 # GitHub Copilot Instructions
 
-Last updated: 2025-12-04
+Last updated: 2025-01-10
 
 ## Purpose
 
@@ -18,20 +18,24 @@ Guide Copilot and AI agents to make safe, XDG-compliant, and minimal edits to th
 - **Git work tree:** `$HOME`
 - **Main scripts:** `bin/` and `.local/bin/`
 - **Configs:** `.config/` (XDG-compliant)
-- **Documentation:** `AGENTS.md`, Vault/02-projects/dotfiles/memory-bank/
+- **Mise config:** `~/.config/mise/config.toml` (tool + runtime versions)
+- **Documentation:** `AGENTS.md`, `~/Documents/Cline/Rules/python-mise-uv-guide.md`
 - **Warp AI shortcuts:** `ds` (status), `dan` (add -n), `da` (add), `dc` (commit), `dp` (push)
 
 ## Core Principles
 
 - **Bare-repo workflow:** Use the `dots` wrapper for all Git operations. Located at `~/.config/zsh/custom/plugins/dotfiles/dotfiles.plugin.zsh`
+- **Tool management (Three-layer philosophy):**
+  - **Mise:** Manages Python runtimes + Python CLI tools (via `pipx:` backend using UV)
+  - **UV:** Project dependencies only (`uv add/sync`), NOT for standalone tool install
+  - **Homebrew:** macOS GUI apps and system utilities only
 - **Minimal, surgical changes:** Prefer small PRs, avoid sweeping refactors. Never edit more files than necessary.
 - **Never commit secrets or private keys:** If secrets are needed, instruct user to use env vars or secret managers.
 - **Respect deny-all `.gitignore` strategy:** Always update `.gitignore` when adding tracked files, then test with `dots add -n`. Include full directory paths when un-ignoring nested items.
-- **Do not modify UV-managed symlinks:** Files in `~/.local/bin/` are ephemeral and should not be tracked.
+- **Do not track UV-managed symlinks:** Files in `~/.local/bin/` are ephemeral and should not be tracked.
 - **Preserve XDG structure:** Configs in `.config/`, user scripts in `.local/bin/`, helper scripts in `bin/`.
 - **Shell scripts:** Target Zsh with `emulate -L zsh`, use `setopt`, follow patterns in `AGENTS.md` and `.config/zsh/`.
 - **Aliases:** Follow expansion-safe patterns from `AGENTS.md` and `.config/zsh/`. Never change global alias semantics.
-- **Tool management:** Prefer `mise` for dev tools, `uv` for Python tools. Run `mise reshim` after tool installations.
 
 ## Safety Rules
 
@@ -52,6 +56,8 @@ Guide Copilot and AI agents to make safe, XDG-compliant, and minimal edits to th
 - Tracking files in `~/.local/bin/` or cache directories
 - Changes to global alias behavior or semantics
 - Running arbitrary non-Git commands with `GIT_DIR` or `GIT_WORK_TREE` environment variables set.
+- Using `uv tool install` for global tools (use `mise use -g pipx:TOOL@VERSION` instead)
+- Using `pipx install` directly (use `mise use -g pipx:TOOL@VERSION` instead)
 
 ## Developer Workflows
 
@@ -93,20 +99,53 @@ dd                                  # dots diff
 3. Run `dots commit` with clear, descriptive message
 4. For shell files, provide revert command: `dots checkout -- <file>`
 
-### Tool Management
+### Tool Management (Mise + UV + Homebrew)
 
+**Python Runtimes & CLI Tools (Mise):**
 ```zsh
-# Try Homebrew first for system tools
-brew install <tool>
-# Use mise for developer tools
-mise install <tool>@latest
-# Use uv for Python tools
-uv tool install <python-tool>
+# Install Python version globally
+mise use -g python@3.13
+
+# Install Python CLI tool (via pipx backend with UV)
+mise use -g pipx:ruff@latest
+
+# Rebuild CLI tools after Python upgrade
+mise install -f pipx:ruff pipx:black pipx:yt-dlp
+
 # Fix broken tool links
 mise reshim
+
+# List all tools
+mise ls
 ```
 
-`uv pip install <package>` installs a specified Python package into the active project's virtual environment managed by `uv` and `mise`.
+**Project Dependencies (UV):**
+```zsh
+# Add project dependency
+uv add requests
+
+# Add dev dependency
+uv add --group dev pytest
+
+# Install all dependencies
+uv sync
+
+# Update lockfile
+uv lock --upgrade
+```
+
+**System Utilities (Homebrew):**
+```zsh
+# Install macOS app or system utility
+brew install <tool>
+```
+
+**CRITICAL:** 
+- ✓ Python CLI tools: Declare in `~/.config/mise/config.toml` as `pipx:TOOL@VERSION`
+- ✗ Never use `uv tool install TOOL` for global tools
+- ✗ Never use `pipx install TOOL` directly
+- ✓ Use `uv add` only for project dependencies, not global tools
+- See `~/Documents/Cline/Rules/python-mise-uv-guide.md` for integrated workflow
 
 ### Log Management
 
@@ -134,17 +173,26 @@ dots config --local status.showUntrackedFiles no
 ## Project-Specific Patterns
 
 - **Memory Bank:** Documentation in `Vault/02-projects/dotfiles/memory-bank/`
+- **Integrated Guides:**
+  - `AGENTS.md` - Daily workflows and tool commands
+  - `~/Documents/Cline/Rules/python-mise-uv-guide.md` - Complete Python + Mise + UV integration
 - **`.gitignore`:** Deny-all strategy with 200+ specific patterns. Include full directory paths when un-ignoring nested items.
-- **Python tools:** Always install via `mise`, manage packages with `uv`
+- **Python tools:** Declare in `~/.config/mise/config.toml` as `pipx:TOOL@VERSION`. Mise uses UV backend automatically.
+- **Project Python:** Use `uv add/sync` for dependencies. Python version comes from Mise via `.python-version` file.
 - **ZSH configs:** Located in `$ZDOTDIR` (`.config/zsh/`), follow established patterns
 - **VS Code:** Use workspace file, pass Git env vars for correct bare repo integration
-- **Mise**: `config.toml` in `.config/mise/` to manage npm tools globally.
+- **Mise**: `config.toml` in `.config/mise/` to manage all dev tools globally.
 
 ## Troubleshooting
 
 **Tool not found after install:**
 - Run `mise reshim` to refresh tool links
 - Check `echo $PATH` for correct loading
+
+**Python CLI tool not found:**
+- Verify declared in `~/.config/mise/config.toml` as `pipx:TOOL@VERSION`
+- Run `mise install && mise reshim`
+- Check `mise ls | grep pipx` to list all CLI tools
 
 **File not tracking despite `.gitignore`:**
 - Verify pattern order (later rules override earlier ones)
@@ -160,15 +208,16 @@ dots config --local status.showUntrackedFiles no
 
 **Prettier Extension Error (`Cannot find module 'prettier'`):**
 - The Prettier VS Code extension (`esbenp.prettier-vscode`) cannot find the `prettier` npm package.
-- **Fix:** In your project root, run `npm install --save-dev prettier`. If using `mise` for Node.js, ensure the correct Node version is active. `prettier.resolveGlobalModules` should be disabled. To force a specific Prettier version, set `"prettier.prettierPath"` in your VS Code settings to your project’s local Prettier (e.g., `./node_modules/prettier`).
+- **Fix:** In your project root, run `npm install --save-dev prettier`. If using `mise` for Node.js, ensure the correct Node version is active. `prettier.resolveGlobalModules` should be disabled. To force a specific Prettier version, set `"prettier.prettierPath"` in your VS Code settings to your project's local Prettier (e.g., `./node_modules/prettier`).
 
 **Bash IDE Error (`Cannot find module 'vscode-languageclient/node'`):**
 - The Bash IDE extension (`mads-hartmann.bash-ide-vscode`) is missing a dependency.
-  - **Fix:** Reinstall the extension. If installed from source, run `npm install` in the extension’s directory to install dependencies.
+  - **Fix:** Reinstall the extension. If installed from source, run `npm install` in the extension's directory to install dependencies.
 
 ## Where to Look for Patterns
 
-- **`AGENTS.md`** - Canonical workflow examples and patterns
+- **`AGENTS.md`** - Canonical workflow examples and tool commands
+- **`~/Documents/Cline/Rules/python-mise-uv-guide.md`** - Complete Python + Mise + UV integration guide
 - **`Vault/02-projects/dotfiles/memory-bank/`** - Setup and operational guides
 - **`.github/prompts/`** - Generator blueprints and exemplars
 
@@ -268,7 +317,7 @@ dots config --local status.showUntrackedFiles no
 ### VS Code Settings
 
 - If you use Mise to manage your global npm tools (including Prettier), you **do not need to enable** the `prettier.resolveGlobalModules` setting in VS Code.
-- If you want to force a specific Prettier version, set `"prettier.prettierPath"` in your VS Code settings to your project’s local Prettier (e.g., `./node_modules/prettier`).
+- If you want to force a specific Prettier version, set `"prettier.prettierPath"` in your VS Code settings to your project's local Prettier (e.g., `./node_modules/prettier`).
 
 ### Git Configuration
 
@@ -419,4 +468,4 @@ fi
 
 ---
 
-*This guidance follows the format and examples in `AGENTS.md`. If any section needs clarification, please provide feedback for further refinement.*
+*This guidance follows the format and examples in `AGENTS.md` and integrates the complete Python+Mise+UV workflow from `~/Documents/Cline/Rules/python-mise-uv-guide.md`. If any section needs clarification, please provide feedback for further refinement.*
