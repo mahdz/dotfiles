@@ -74,6 +74,9 @@
 
 !.config/mise/
 !.config/mise/**
+.config/mise/*.backup
+.config/mise/config*.toml
+!.config/mise/config.toml
 .config/mise/age.txt
 
 !.config/ollama/
@@ -165,45 +168,19 @@ local.*
 !bin/*
 !.local/
 !.local/bin/
-!.local/bin/*
-.local/bin/wip
-
-# Exclude UV-managed tool symlinks
-# UV creates symlinks pointing to ~/.local/share/uv/tools/
-.local/bin/*
+# Strategic binaries (keep only actively used ones)
 !.local/bin/*.sh
-# Exclude UV tool symlinks (they point to ~/.local/share/uv/tools/)
-# UV can recreate these with: uv tool sync
-!.local/bin/ai-*
-!.local/bin/auto_*
 !.local/bin/backup
-!.local/bin/brew-*
-!.local/bin/capsmap
-!.local/bin/code-extensions
-!.local/bin/cht.sh
-!.local/bin/clean*
-!.local/bin/clop
-!.local/bin/compress*
-!.local/bin/confirm
-!.local/bin/disk-*
-!.local/bin/dotfiles
 !.local/bin/e
-!.local/bin/entity_*
-!.local/bin/fix-*
-!.local/bin/git-*
-!.local/bin/interactive_*
-!.local/bin/list-*
-!.local/bin/memory_*
-!.local/bin/moveApps*
-!.local/bin/new_*
-!.local/bin/organize*
-!.local/bin/pip*
-!.local/bin/pkgmgr
+!.local/bin/dotfiles
 !.local/bin/repo-*
+!.local/bin/git-*
+!.local/bin/clean*
+!.local/bin/disk-*
 !.local/bin/reset-*
-!.local/bin/shell-*
-!.local/bin/upup
-!.local/bin/whichos
+!.local/bin/fix-*
+# Ignore everything else in .local/bin by default
+.local/bin/*
 
 !makefile
 !LICENSE
@@ -214,30 +191,18 @@ local.*
 *.env
 .config/.env*
 
-# final
+.env.decrypted
+
+# Miscellaneous
 *_history*
 .DS_Store
-
 megalinter-reports/
 *.key
 age.txt
 *.secure
-
-# Added by the extension Better Context To AI
 FILE_CONTENT_MAP.md
 *.bak.*
 
 # Rust / Cargo
 .config/cargo/
 !/.config/cargo/config.toml
-
-# Neatcli
-.config/neat/*
-
-# Rust / Cargo
-.config/cargo/
-!/.config/cargo/config.toml
-
-# Neatcli
-.config/neat/*
-!.config/neat/config.toml
