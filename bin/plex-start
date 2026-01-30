@@ -1,16 +1,44 @@
 #!/bin/bash
-# Start Plex Media Server with drive check
-# Created for Manny's Plex setup - checks SoMannyFiles drive before starting
 
-# Check if media drive is mounted
-if [ -d "/Volumes/SoMannyFiles/Movies" ]; then
-    echo "✓ SoMannyFiles drive is mounted"
-else
-    echo "⚠ Warning: SoMannyFiles drive not found"
-    echo "Movies library may not be accessible"
-fi
+# ============================================================================
+# Start Plex Media Server & Stash with drive check
+# Follows Cline Shell Guidelines: set -euo pipefail, safe expansions
+# ============================================================================
 
-# Start Plex Media Server
-open "/Applications/Plex Media Server.app"
-echo "Plex Media Server started"
-echo "Access at: http://localhost:32400/web"
+set -euo pipefail
+
+# Constants
+readonly MEDIA_DRIVE_PATH="/Volumes/SoMannyFiles/Movies"
+readonly STASH_CONFIG="$HOME/.config/stash/config.yml"
+
+check_drive() {
+    if [[ -d "$MEDIA_DRIVE_PATH" ]]; then
+        echo "✓ SoMannyFiles drive is mounted"
+    else
+        echo "⚠ Warning: SoMannyFiles drive not found"
+        echo "Movies library may not be accessible"
+    fi
+}
+
+start_plex() {
+    echo "Starting Plex Media Server..."
+    open "/Applications/Plex Media Server.app"
+    echo "Access at: http://localhost:32400/web"
+}
+
+start_stash() {
+    echo "Starting Stash..."
+    # --nobrowser: don't open browser automatically
+    # --config: specify XDG-compliant config path
+    stash --config "$STASH_CONFIG" --nobrowser > /dev/null 2>&1 &
+    echo "Stash started in background (PID: $!)"
+    echo "Access at: http://localhost:9999"
+}
+
+main() {
+    check_drive
+    start_plex
+    start_stash
+}
+
+main "$@"

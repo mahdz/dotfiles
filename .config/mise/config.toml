@@ -6,19 +6,16 @@
 [settings]
 # UV Package Manager Integration
 python.uv_venv_auto = true
-python.uv_venv_create_args = ["--seed"]
+# python.uv_venv_create_args = ["--seed"]
 pipx.uvx = true
-
 # General Settings
-raw = true
+raw = false
 experimental = false
-plugin_autoupdate_last_check_duration = "7d"
-# log_level = "WARN"
+plugin_autoupdate_last_check_duration = "1d"
+log_level = "warn"
 activate_aggressive = true
-
 # Git integration
 # gix = false
-
 # configure messages displayed when entering directories with config files
 status = { missing_tools = "if_other_versions_installed", show_env = false, show_tools = false }
 gpg_verify = false
@@ -29,59 +26,58 @@ gpg_verify = false
 [env]
 PYTHONUNBUFFERED = "1"
 UV_FROZEN = "false"
-#_.file = [
+# _.file = [
 #  { path = "/Users/mh/.local/share/secrets/.env", tools = true, redact = true }
-#]
+# ]
 
 # ============================================================================
 # CORE RUNTIME TOOLS (Essential for development)
 # ============================================================================
 [tools]
-
 # Core runtimes (pin majors/minors when possible for reproducibility)
 node = "lts"
-python = "3.13"
-
+python = "3.14"
 # System utilities (pin critical CLIs; others may remain latest)
+# Rust Toolchain - XDG-compliant cargo home
+rust = { version = "latest", cargo_home = "~/.config/cargo" }
 ripgrep = "latest"
 shellcheck = "0.9.0"  # example pin; adjust if you tested a different version
 gemini-cli = "latest"
 pre-commit = "3.5.0"  # pin to a known stable release
-
 # Node.js packages (grouped by function)
 # Code formatting & linting
 "npm:prettier" = "3.7.4"
 "npm:markdownlint-cli" = "latest"
-
 # Node.js utilities
 "npm:npm-check" = "latest"
 "npm:npkill" = "latest"
-
 # AI/MCP tools (may have longer install times; keep pinned if dependent on native libs)
 "npm:cline" = "latest"
 "npm:@google/jules" = "latest"
 "npm:@motesoftware/nanocoder" = "latest"
 "npm:@pimzino/agentic-tools-mcp" = "latest"
-
 # Misc
 "npm:resumed" = "latest"
 "npm:jsonresume-theme-even" = "latest"
 "npm:repomix" = "latest"
-
 # Python CLI tools (managed via pipx backend with uvx=true)
 # Comments: pin production-critical ones; leave experimental latest
 "pipx:basic-memory" = "latest"
 "pipx:black" = "23.12.0"
+# "pipx:cronboard" = "git+https://github.com/antoniorodr/cronboard"
 "pipx:gallery-dl" = "latest"
+"pipx:git-filter-repo" = "latest"
 "pipx:khard" = "latest"
 "pipx:mac-cleanup" = "latest"
 "pipx:osxmetadata" = "latest"
 "pipx:pygments" = "2.17.2"
 "pipx:rich-cli" = "latest"
-"pipx:ruff" = "0.2.0"
+# "pipx:reclaimed" = "git+https://github.com/taylorwilsdon/reclaimed"
+"pipx:ruff" = "latest"
 "pipx:speedtest-cli" = "latest"
 "pipx:yt-dlp" = "latest"
 "pipx:twine" = "6.2.0"
+"pipx:pptx2md" = "latest"
 
 [hooks]
 preinstall = 'printf "About to install %s@%s\n" "$MISE_TOOL_NAME" "$MISE_TOOL_VERSION"'

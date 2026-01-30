@@ -1,0 +1,10 @@
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+/stash-go.sqlite
+/cache/
+/generated/
+/plugins/
+/scrapers/
+/backups/
+/logs/

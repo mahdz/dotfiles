@@ -226,3 +226,18 @@ age.txt
 # Added by the extension Better Context To AI
 FILE_CONTENT_MAP.md
 *.bak.*
+
+# Rust / Cargo
+.config/cargo/
+!/.config/cargo/config.toml
+
+# Neatcli
+.config/neat/*
+
+# Rust / Cargo
+.config/cargo/
+!/.config/cargo/config.toml
+
+# Neatcli
+.config/neat/*
+!.config/neat/config.toml

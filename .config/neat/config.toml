@@ -1,0 +1,23 @@
+[[rules]]
+name = "Invoices"
+pattern = "*invoice*.pdf"
+destination = "Documents/Invoices/{year}"
+priority = 10
+post_action = "echo 'Organized invoice: {name}'"
+
+[[rules]]
+name = "Screenshots"
+pattern = "Screenshot*.png"
+destination = "Images/Screenshots/{year}-{month}"
+priority = 5
+
+[[rules]]
+name = "Downloads by Month"
+pattern = "*"
+destination = "Archive/{year}/{month}"
+priority = 0
+
+[settings]
+include_hidden = false
+follow_symlinks = false
+default_organize_mode = "by-type"
