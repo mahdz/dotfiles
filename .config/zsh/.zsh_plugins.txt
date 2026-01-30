@@ -12,6 +12,7 @@ mattmc3/zephyr path:plugins/color
 mattmc3/zephyr path:plugins/history
 "$ZSH_CUSTOM"/plugins/xdg
 "$ZSH_CUSTOM"/plugins/dotfiles
+"$ZSH_CUSTOM"/plugins/basic-memory
 
 # ------------------------------------------------------------------------------
 # COMPLETIONS & OMZ
@@ -36,7 +37,7 @@ ohmyzsh/ohmyzsh path:lib/termsupport.zsh
 
 # Core functionality - defer level 1
 ohmyzsh/ohmyzsh path:lib/functions.zsh
-ohmyzsh/ohmyzsh path:lib/git.zsh kind:defer
+ohmyzsh/ohmyzsh path:lib/git.zsh
 ohmyzsh/ohmyzsh path:lib/grep.zsh kind:defer
 ohmyzsh/ohmyzsh path:lib/history.zsh kind:defer
 ohmyzsh/ohmyzsh path:lib/misc.zsh kind:defer
@@ -49,7 +50,7 @@ ohmyzsh/ohmyzsh path:lib/vcs_info.zsh kind:defer
 # ohmyzsh/ohmyzsh path:lib/bzr.zsh defer:2
 # ohmyzsh/ohmyzsh path:lib/cli.zsh defer:2
 # ohmyzsh/ohmyzsh path:lib/clipboard.zsh defer:2
-# ohmyzsh/ohmyzsh path:lib/compfix.zsh defer:2
+ohmyzsh/ohmyzsh path:lib/compfix.zsh kind:defer
 # ohmyzsh/ohmyzsh path:lib/correction.zsh defer:2
 ohmyzsh/ohmyzsh path:lib/diagnostics.zsh kind:defer
 
@@ -59,11 +60,9 @@ ohmyzsh/ohmyzsh path:lib/diagnostics.zsh kind:defer
 
 # Core dev tools - defer level 1
 "$ZSH_CUSTOM"/plugins/python kind:defer
-# "$ZSH_CUSTOM"/plugins/ruby kind:defer
 
-# Commented out mise plugin (handled by homebrew plugin)
-ohmyzsh/ohmyzsh path:plugins/mise kind:defer
-
+# Custom mise plugin (removes shims in interactive sessions)
+"$ZSH_CUSTOM"/plugins/mise
 
 # ------------------------------------------------------------------------------
 # NON-CRITICAL ZEPHYR PLUGINS (deferred loading)
@@ -105,8 +104,8 @@ agkozak/zhooks kind:defer
 
 "$ZSH_CUSTOM"/plugins/aliases
 mattmc3/zephyr path:plugins/confd
-# zsh-users/zsh-autosuggestions conditional:is-not-warpterm post:post-autosuggestions
-# zsh-users/zsh-history-substring-search conditional:is-not-warpterm post:post-history-substring-search
-# zsh-users/zsh-syntax-highlighting conditional:is-not-warpterm  # DO NOT DEFER
+zsh-users/zsh-autosuggestions conditional:is-not-warpterm post:post-autosuggestions
+zsh-users/zsh-history-substring-search conditional:is-not-warpterm post:post-history-substring-search
+zsh-users/zsh-syntax-highlighting conditional:is-not-warpterm  # DO NOT DEFER
 
 # vi: ft=properties
