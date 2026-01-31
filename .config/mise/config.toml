@@ -1,4 +1,4 @@
-  # mise.toml - Comprehensive Development Environment Configuration
+# mise.toml - Comprehensive Development Environment Configuration
 # ==============================================================================
 # SETTINGS
 # ==============================================================================
@@ -44,6 +44,7 @@ rust = { version = "stable", cargo_home = "~/.config/cargo" }
 shellcheck = "0.9.0"  # example pin; adjust if you tested a different version
 gemini-cli = "latest"
 pre-commit = "3.5.0"  # pin to a known stable release
+"aqua:watchexec/watchexec" = "latest"
 
 # Node.js packages (grouped by function)
 # Code formatting & linting
@@ -102,5 +103,15 @@ pre-commit = "3.5.0"  # pin to a known stable release
 preinstall = 'printf "About to install %s@%s\n" "$MISE_TOOL_NAME" "$MISE_TOOL_VERSION"'
 postinstall = [
   'printf "✅ Installed %s@%s\n" "$MISE_TOOL_NAME" "$MISE_TOOL_VERSION"',
-  'exec "$XDG_CONFIG_HOME/mise/hooks/mise-validate.sh"',
+  'bash "$XDG_CONFIG_HOME/mise/hooks/mise-validate.sh"',
 ]
+
+# ==============================================================================
+# TASKS
+# ==============================================================================
+
+[tasks]
+dots-validate = { run = "mise doctor && bash $XDG_CONFIG_HOME/mise/hooks/mise-validate.sh", description = "Validate mise configuration and tool health" }
+dots-update = { run = "mise install && mise doctor", description = "Update all tools" }
+dots-verify = { run = "mise doctor && bash $XDG_CONFIG_HOME/mise/hooks/mise-validate.sh", description = "Run full validation suite" }
+watch-config = { run = "watchexec -w $XDG_CONFIG_HOME/mise 'mise run dots-validate'", description = "Watch mise config and auto-validate (requires watchexec)" }
