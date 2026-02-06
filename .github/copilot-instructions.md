@@ -31,7 +31,7 @@ Guide Copilot and AI agents to make safe, XDG-compliant, and minimal edits to th
   - **Homebrew:** macOS GUI apps and system utilities only
 - **Minimal, surgical changes:** Prefer small PRs, avoid sweeping refactors. Never edit more files than necessary.
 - **Never commit secrets or private keys:** If secrets are needed, instruct user to use env vars or secret managers.
-- **Respect deny-all `.gitignore` strategy:** Always update `.gitignore` when adding tracked files, then test with `dots add -n`. Include full directory paths when un-ignoring nested items.
+- **Respect deny-all `.gitignore` strategy:** Always update `.gitignore` when adding tracked files, then test with `dots add -n`. Include full directory paths when un-ignoring nested items. Include full directory paths when un-ignoring nested items.
 - **Do not track UV-managed symlinks:** Files in `~/.local/bin/` are ephemeral and should not be tracked.
 - **Preserve XDG structure:** Configs in `.config/`, user scripts in `.local/bin/`, helper scripts in `bin/`.
 - **Shell scripts:** Target Zsh with `emulate -L zsh`, use `setopt`, follow patterns in `AGENTS.md` and `.config/zsh/`.

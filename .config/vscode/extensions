@@ -1,5 +1,7 @@
 6o8.workspace-control
 alefragnani.project-manager
+bierner.markdown-checkbox
+bierner.markdown-yaml-preamble
 bodil.prettier-toml
 chouzz.vscode-better-align
 christian-kohler.path-intellisense
@@ -20,6 +22,9 @@ hverlin.mise-vscode
 kortina.vscode-markdown-notes
 ldez.ignore-files
 lonr.sort-settings-json
+maciejdems.add-to-gitignore
+mdickin.markdown-shortcuts
+mermaidchart.vscode-mermaid-chart
 miguelsolorio.symbols
 moshfeu.diff-merge
 ms-python.debugpy
@@ -39,6 +44,7 @@ richie5um2.vscode-sort-json
 ronco-jhon.better-context-to-ai
 ryu1kn.partial-diff
 saoudrizwan.claude-dev
+shd101wyy.markdown-preview-enhanced
 sleistner.vscode-fileutils
 specstory.specstory-vscode
 stevebeauge.quick-toggle-hide-ignored-files

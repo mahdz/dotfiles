@@ -41,15 +41,15 @@ alias ar='unalias'              # Remove given alias
 alias ping='ping -c 5'
 alias type='type -a'
 alias grep="command grep --exclude-dir={.git,.vscode}"
-export GNUPGHOME=${XDG_DATA_HOME:=~/.local/share}/gnupg
+export GNUPGHOME="${XDG_DATA_HOME:=$HOME/.local/share}/gnupg"
 alias gpg="command gpg --homedir \"\$GNUPGHOME\""
 export GPG_TTY=$(tty)
 
 # brew
-alias brewup="brew update && brew upgrade && brew cleanup"
+alias brewup="brew update && brew upgrade --fetch-HEAD && brew cleanup -s"
 
 # directories
-alias secrets="cd ${XDG_DATA_HOME:=~/.local/share}/secrets"
+alias secrets="cd ${XDG_DATA_HOME:=$HOME/.local/share}/secrets"
 
 # more ways to ls
 alias ll='ls -lh'
@@ -62,22 +62,65 @@ alias mv='mv -iv'
 alias mkdir='mkdir -pv'
 alias ffmpeg='ffmpeg -hide_banner'
 
-# edit quicker with functions
-ea() { ${EDITOR:-micro} "${ZSH_CUSTOM:-$ZDOTDIR/custom}/plugins/aliases/aliases.plugin.zsh" & disown; }
-ep() { ${EDITOR:-micro} "${ZDOTDIR:-$HOME/.config/zsh}/.zsh_plugins.txt" & disown; }
-es() { ${EDITOR:-micro} "${ZDOTDIR:-$HOME/.config/zsh}/.zstyles" >/dev/null & disown; }
+# ============================
+# Helper Functions (DRY)
+# ============================
+# Generic editor launcher for config files
+_edit_config() { ${EDITOR:-micro} "$1" & disown; }
+ea() { _edit_config "${ZSH_CUSTOM:-$ZDOTDIR/custom}/plugins/aliases/aliases.plugin.zsh"; }
+ep() { _edit_config "${ZDOTDIR:-$HOME/.config/zsh}/.zsh_plugins.txt"; }
+es() { _edit_config "${ZDOTDIR:-$HOME/.config/zsh}/.zstyles"; }
 
-# find#aliaenlinks='find . -type l | (while read FN ; do test -e "$FN" || ls -ld "$FN"; done)'
-if (( ${+commands[fd]} )); then
-  alias killds="fd -HI -t f '.DS_Store' -X rm"
-else
-  alias killds="sudo find . -type f -name .DS_Store -print -delete"
-fi
+# Generic file finder + cleaner (with dry-run safety)
+_find_and_clean() {
+  local pattern="$1"
+  local target="${2:-.}"
+  local dry_run="${3:-false}"
+  
+  if (( ${+commands[fd]} )); then
+    local cmd="fd -HI -t f '$pattern' '$target'"
+    if [[ "$dry_run" == "true" ]]; then
+      echo "🔍 Preview: $(eval $cmd | wc -l) file(s) matching '$pattern'"
+      eval $cmd
+    else
+      eval $cmd --delete && echo "✅ Deleted files matching '$pattern'"
+    fi
+  else
+    local cmd="find '$target' -type f -name '$pattern'"
+    if [[ "$dry_run" == "true" ]]; then
+      echo "🔍 Preview: $(eval $cmd | wc -l) file(s) matching '$pattern'"
+      eval $cmd
+    else
+      eval "$cmd -delete" && echo "✅ Deleted files matching '$pattern'"
+    fi
+  fi
+}
+
+# .DS_Store cleanup (safe with preview)
+killds() {
+  local mode="${1:-interactive}"
+  local target="${2:-.}"
+  
+  case "$mode" in
+    preview|dry-run)
+      _find_and_clean '.DS_Store' "$target" true
+      ;;
+    *)
+      _find_and_clean '.DS_Store' "$target" true
+      read -q "?Delete these files? (y/n) " || return 1
+      echo
+      _find_and_clean '.DS_Store' "$target" false
+      ;;
+  esac
+}
+
+alias killds-preview='killds preview'
 
 # misc
 alias zbench='for i in {1..10}; do /usr/bin/time zsh -lic exit; done'
 alias cls="clear && printf '\e[3J'"
 alias keka='/Applications/Keka.app/Contents/MacOS/Keka --cli'
+alias stash='stash --config ~/.config/stash/config.yml'
 
 # trash aliases
 if (( ${+commands[gomi]} )); then

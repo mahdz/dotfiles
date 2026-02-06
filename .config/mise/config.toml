@@ -5,6 +5,7 @@
 [settings]
 # UV Package Manager Integration
 python.uv_venv_auto = true
+python.compile = false
 # python.uv_venv_create_args = ["--seed"]
 pipx.uvx = true
 # General Settings
@@ -13,7 +14,7 @@ experimental = false
 plugin_autoupdate_last_check_duration = "1d"
 log_level = "warn"
 activate_aggressive = true
-cargo.binstall = false
+cargo.binstall = true
 # Git integration
 # gix = false
 # configure messages displayed when entering directories with config files
@@ -39,32 +40,33 @@ node = "lts"
 python = "3.14"
 # System utilities (pin critical CLIs; others may remain latest)
 # Rust Toolchain - XDG-compliant cargo home
-rust = { version = "stable", cargo_home = "~/.config/cargo" }
-
+rust = { version = "stable", cargo_home = "$HOME/.config/cargo" }
 shellcheck = "0.9.0"  # example pin; adjust if you tested a different version
-gemini-cli = "latest"
-pre-commit = "3.5.0"  # pin to a known stable release
 "aqua:watchexec/watchexec" = "latest"
 
 # Node.js packages (grouped by function)
 # Code formatting & linting
 "npm:prettier" = "3.7.4"
 "npm:markdownlint-cli" = "latest"
+
 # Node.js utilities
+"npm:pre-commit" = "3.5.0"
 "npm:npm-check" = "latest"
 "npm:npkill" = "latest"
+
 # AI/MCP tools (may have longer install times; keep pinned if dependent on native libs)
 "npm:cline" = "latest"
 "npm:@google/jules" = "latest"
+"npm:@google/gemini-cli" = "latest"
 "npm:@motesoftware/nanocoder" = "latest"
 "npm:@pimzino/agentic-tools-mcp" = "latest"
+
 # Misc
 "npm:resumed" = "latest"
 "npm:jsonresume-theme-even" = "latest"
 "npm:repomix" = "latest"
 
 # Python CLI tools (managed via pipx backend with uvx=true)
-# Comments: pin production-critical ones; leave experimental latest
 "pipx:basic-memory" = "latest"
 "pipx:black" = "23.12.0"
 # "pipx:cronboard" = "git+https://github.com/antoniorodr/cronboard"
@@ -82,6 +84,7 @@ pre-commit = "3.5.0"  # pin to a known stable release
 "pipx:twine" = "6.2.0"
 "pipx:pptx2md" = "latest"
 "pipx:scenedetect" = "latest"
+"pipx:docling" = "latest"
 
 # Cargo
 "cargo:cargo-binstall" = "latest"
@@ -98,6 +101,7 @@ pre-commit = "3.5.0"  # pin to a known stable release
 "cargo:zoxide" = "latest"
 "cargo:starship" = "latest"
 "cargo:imessage-exporter" = "latest"
+pre-commit = "3.5.0"
 
 [hooks]
 preinstall = 'printf "About to install %s@%s\n" "$MISE_TOOL_NAME" "$MISE_TOOL_VERSION"'
@@ -111,7 +115,7 @@ postinstall = [
 # ==============================================================================
 
 [tasks]
-dots-validate = { run = "mise doctor && bash $XDG_CONFIG_HOME/mise/hooks/mise-validate.sh", description = "Validate mise configuration and tool health" }
+dots-validate = { run = "mise doctor && zsh $XDG_CONFIG_HOME/mise/hooks/mise-validate.sh", description = "Validate mise configuration and tool health" }
 dots-update = { run = "mise install && mise doctor", description = "Update all tools" }
-dots-verify = { run = "mise doctor && bash $XDG_CONFIG_HOME/mise/hooks/mise-validate.sh", description = "Run full validation suite" }
+dots-verify = { run = "mise doctor && zsh $XDG_CONFIG_HOME/mise/hooks/mise-validate.sh", description = "Run full validation suite" }
 watch-config = { run = "watchexec -w $XDG_CONFIG_HOME/mise 'mise run dots-validate'", description = "Watch mise config and auto-validate (requires watchexec)" }

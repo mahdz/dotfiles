@@ -119,31 +119,23 @@ autoload -Uz add-zsh-hook
 add-zsh-hook zshaddhistory _history-ignore
 
 # =============================================================================
-# ShellHistory.app Integration - TEMPORARILY DISABLED
-# Issue: shhist binary is causing trace traps on this system
-# TODO: Investigate ShellHistory.app version compatibility
+# ShellHistory.app Integration
 # =============================================================================
 
-# [[ -d "/Applications/ShellHistory.app/Contents/Helpers" ]] || return
+[[ -d "/Applications/ShellHistory.app/Contents/Helpers" ]] || return
 
-# Add shhist to PATH
+# adding shhist to PATH, so we can use it from Terminal
 PATH="${PATH}:/Applications/ShellHistory.app/Contents/Helpers"
 
-# Create unique session ID for each terminal session
+# creating an unique session id for each terminal session
 __shhist_session="${RANDOM}"
 
-# Prompt function to record command history in ShellHistory database
+# prompt function to record the history
 __shhist_prompt() {
     local __exit_code="${?:-1}"
-    # The sudo --user call is intentional and safe per ShellHistory documentation:
-    \history -D -t "%s" -1 | sudo --user ${SUDO_USER:-${LOGNAME}} shhist insert \
-        --session ${TERM_SESSION_ID:-${__shhist_session}} \
-        --username ${LOGNAME} \
-        --hostname $(hostname) \
-        --exit-code ${__exit_code} \
-        --shell zsh
+    \history -D -t "%s" -1 | sudo --preserve-env --user ${SUDO_USER:-${LOGNAME}} shhist insert --session ${TERM_SESSION_ID:-${__shhist_session}} --username ${LOGNAME} --hostname $(hostname) --exit-code ${__exit_code} --shell zsh
     return ${__exit_code}
 }
 
 # integrating prompt function in prompt
-# precmd_functions=(__shhist_prompt $precmd_functions)
+precmd_functions=(__shhist_prompt $precmd_functions)

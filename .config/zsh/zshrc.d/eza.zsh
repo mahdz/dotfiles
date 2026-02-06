@@ -18,8 +18,8 @@ fi
 # alias ls="eza -ghabG --header --group-directories-first $EZA_ICONS_FLAG $EZA_HYPERLINK_FLAG --color=auto"
 
 # Most-used shortcuts
-# alias l="eza -lahbG --header --group-directories-first $EZA_ICONS_FLAG $EZA_HYPERLINK_FLAG --color=auto"  # long, all, human, git, header
-# alias ll="eza -laFh --group-directories-first $EZA_ICONS_FLAG $EZA_HYPERLINK_FLAG --color=auto"             # detailed long
+alias l="eza -lahbG --header --group-directories-first $EZA_ICONS_FLAG $EZA_HYPERLINK_FLAG --color=auto"  # long, all, human, git, header
+alias ll="eza -laFh --group-directories-first $EZA_ICONS_FLAG $EZA_HYPERLINK_FLAG --color=auto"             # detailed long
 # alias la="eza -la --group-directories-first $EZA_ICONS_FLAG $EZA_HYPERLINK_FLAG --color=auto"                # show dotfiles
 
 # Handy utilities

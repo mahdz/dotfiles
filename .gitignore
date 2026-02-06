@@ -110,6 +110,13 @@
 
 !AGENTS.md
 
+# ============================================================================
+# SEPARATE REPOSITORIES (SYMLINKS)
+# ============================================================================
+# Vault is a separate git repository (symlink to iCloud Obsidian vault)
+!Vault
+!Vault/**
+
 # Warp terminal configuration
 !.warp/
 !.warp/**

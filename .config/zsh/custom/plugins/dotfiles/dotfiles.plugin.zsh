@@ -9,14 +9,17 @@
 # Dotfiles Repo Path
 : ${DOTFILES_DIR:="${HOME}/.dotfiles"}
 
-# VS Code Workspace
-export DOT_WORKSPACE="${XDG_CONFIG_HOME:-$HOME/.config}/vscode/dotfiles.code-workspace"
+# VS Code Workspaces
+export VSCODE_HOME="${XDG_CONFIG_HOME:-$HOME/.config}/vscode"
+export DOT_WORKSPACE="${VSCODE_HOME}/dotfiles.code-workspace"
+export VAULT_WORKSPACE="${VSCODE_HOME}/vault.code-workspace"
 
 # Default Branch
 export DOTFILES_BRANCH='main'
 
 # Obsidian Vault Path
-export VAULT_PATH="/Users/mh/Library/Mobile Documents/iCloud~md~obsidian/Documents/Vault"
+export VAULT_PATH="$HOME/Vault"
+path+=("$VAULT_PATH/99-meta/tools")
 
 # --- Utilities ---
 
@@ -193,9 +196,17 @@ dot() {
 ###############################################################
 dotcode() {
     if _dotfiles_command_exists code; then
-        code "$DOT_WORKSPACE"
+        code "$DOT_WORKSPACE" --profile Git
     else
-        echo "⚠️ VS Code 'code' command not found."
+        echo "VS Code 'code' command not found."
+    fi
+}
+
+vaultcode() {
+    if _dotfiles_command_exists code; then
+        code "$VAULT_WORKSPACE" --profile 'Doc Writer'
+    else
+        echo "VS Code 'code' command not found."
     fi
 }
 
