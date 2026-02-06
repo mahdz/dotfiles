@@ -1,0 +1,1 @@
+/Users/mh/Developer/work-portfolio-analyzer/scripts/work_portfolio_analyzer.sh

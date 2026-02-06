@@ -1,0 +1,243 @@
+  # Dotfiles Configuration Summary Function (JSON Output)
+  # Using explicit zsh path to ensure consistency
+
+  # Utility logging functions
+  error() { print -u2 "❌ ERROR: $*"; }
+  warn()  { print -u2 "⚠️  WARN:  $*"; }
+  info()  { print -u2 "ℹ️  INFO:  $*"; }
+  success() { print -u2 "✅ SUCCESS: $*"; }
+
+  # Use absolute path for jq
+  JQ="/opt/homebrew/bin/jq"
+  [[ ! -x "$JQ" ]] && JQ="/usr/bin/jq"
+
+  local zdotdir="${ZDOTDIR:-$HOME/.config/zsh}"
+  local output_file="${1:-$ZDOTDIR/dotfiles_summary.json}"
+  local -a dotcmd=(git --git-dir="$HOME/.dotfiles" --work-tree="$HOME")
+  local -i error_count=0
+  local -a errors=()
+
+  setopt local_options null_glob
+
+  # Validate required commands
+  if ! command -v git &>/dev/null; then
+      error "Required command not found: git"
+      return 1
+  fi
+  if ! command -v "$JQ" &>/dev/null; then
+      error "Required command not found: jq at $JQ"
+      return 1
+  fi
+
+  # Pre-flight checks
+  if [[ ! -d "$zdotdir" ]]; then
+      error "ZDOTDIR directory does not exist: $zdotdir"
+      return 1
+  fi
+
+  local output_dir="${output_file:h}"
+  if [[ ! -d "$output_dir" ]]; then
+      if ! mkdir -p "$output_dir" 2>/dev/null; then
+          error "Cannot create output directory: $output_dir"
+          return 1
+      fi
+  elif [[ ! -w "$output_dir" ]]; then
+      error "Output directory is not writable: $output_dir"
+      return 1
+  fi
+
+  # Validate output file path
+  if [[ -z "$output_file" ]]; then
+      error "Output file path cannot be empty"
+      return 1
+  fi
+
+  # Check if dotfiles git repo is accessible
+  local git_sha="N/A"
+  if "${dotcmd[@]}" rev-parse --git-dir >/dev/null 2>&1; then
+      git_sha=$(${dotcmd[@]} rev-parse --short HEAD 2>/dev/null || print "N/A")
+  else
+      warn "Dotfiles git repository not found or not accessible at $HOME/.dotfiles"
+      (( error_count++ ))
+      errors+=("dotfiles-git-repo-missing")
+  fi
+
+  info "Creating dotfiles summary at: $output_file"
+
+  # Temporary file to collect JSON objects
+  local temp_json=$(mktemp)
+  trap "rm -f '$temp_json'" EXIT
+
+  print "{" > "$temp_json"
+  print '  "metadata": {' >> "$temp_json"
+  print "    \"generated_at\": \"$(date -u +'%Y-%m-%dT%H:%M:%SZ')\"," >> "$temp_json"
+  print "    \"hostname\": \"$(hostname)\"," >> "$temp_json"
+  print "    \"shell\": \"$SHELL\"," >> "$temp_json"
+  print "    \"zdotdir\": \"$zdotdir\"," >> "$temp_json"
+  print "    \"git_sha\": \"$git_sha\"," >> "$temp_json"
+  print "    \"home\": \"$HOME\"" >> "$temp_json"
+  print "  }," >> "$temp_json"
+  print '  "files": [' >> "$temp_json"
+
+  # Helper to add file to JSON using jq
+  add_file_to_json() {
+      local file_path="$1"
+      local file_key="$2"
+      local is_critical="${3:-false}"
+      local first_file="${4:-true}"
+
+      # Add comma before object if not first
+      [[ "$first_file" == "false" ]] && print "," >> "$temp_json"
+
+      if [[ -f "$file_path" ]]; then
+          "$JQ" -n \
+              --arg path "$file_path" \
+              --arg key "$file_key" \
+              --rawfile content "$file_path" \
+              '{path: $path, key: $key, found: true, content: $content}' >> "$temp_json"
+      else
+          warn "File missing: $file_path"
+          "$JQ" -n \
+              --arg path "$file_path" \
+              --arg key "$file_key" \
+              '{path: $path, key: $key, found: false, content: null}' >> "$temp_json"
+
+          if [[ "$is_critical" == "true" ]]; then
+              (( error_count++ ))
+              errors+=("missing-file:$file_path")
+          fi
+      fi
+
+      print "true" # Signal that we added an object
+  }
+
+  local first_file="true"
+
+  # Git configurations
+  if [[ "$first_file" == "true" ]]; then
+      first_file="false"
+  else
+      print "," >> "$temp_json"
+  fi
+  git config --global --list 2>/dev/null | sort | "$JQ" -Rs '{path: "global:git-config", key: "git_global_config", found: true, content: .}' >> "$temp_json"
+
+  # Gitignore files
+  local -a ignore_files=(
+      "$HOME/.gitignore"
+      "$HOME/.dotfiles/info/exclude"
+      "$HOME/.config/git/ignore"
+  )
+  for file in "${ignore_files[@]}"; do
+      print "," >> "$temp_json"
+      if [[ -f "$file" ]]; then
+          "$JQ" -n --arg path "$file" --rawfile content "$file" \
+              '{path: $path, key: "gitignore", found: true, content: $content}' >> "$temp_json"
+      else
+          "$JQ" -n --arg path "$file" \
+              '{path: $path, key: "gitignore", found: false, content: null}' >> "$temp_json"
+      fi
+  done
+
+  # ZSH configuration files
+  local -a zsh_files=(
+      "$HOME/.zshenv"
+      "$zdotdir/.zshenv"
+      "$HOME/.config/shell/shellrc"
+      "$zdotdir/.zshrc"
+      "$zdotdir/.zstyles"
+      "$zdotdir/.zsh_plugins.zsh"
+  )
+
+  # Check optional zsh directories
+  if [[ -d "$zdotdir/lib" ]]; then
+      local lib_count=${#zsh_files[@]}
+      zsh_files+=("$zdotdir/lib/"*(.N))
+      local added=$((${#zsh_files[@]} - lib_count))
+      info "Found $added files in lib directory"
+  else
+      warn "lib directory not found at $zdotdir/lib"
+      (( error_count++ ))
+      errors+=("zsh-lib-missing")
+  fi
+
+  if [[ -d "$zdotdir/zshrc.d" ]]; then
+      local zshrc_count=${#zsh_files[@]}
+      zsh_files+=("$zdotdir/zshrc.d/"*(.N))
+      local added=$((${#zsh_files[@]} - zshrc_count))
+      info "Found $added files in zshrc.d directory"
+  else
+      info "zshrc.d directory not found at $zdotdir/zshrc.d (optional)"
+  fi
+
+  if [[ -d "$zdotdir/custom" ]]; then
+      local custom_count=${#zsh_files[@]}
+      zsh_files+=("$zdotdir/custom/plugins/"*/*.zsh(N))
+      local added=$((${#zsh_files[@]} - custom_count))
+      info "Found $added custom plugin files"
+  else
+      warn "custom plugins directory not found at $zdotdir/custom"
+      (( error_count++ ))
+      errors+=("zsh-custom-missing")
+  fi
+
+  # Add ZSH files to JSON
+  for file in "${zsh_files[@]}"; do
+      print "," >> "$temp_json"
+      if [[ -f "$file" ]]; then
+          "$JQ" -n --arg path "$file" --rawfile content "$file" \
+              '{path: $path, key: "zsh_config", found: true, content: $content}' >> "$temp_json"
+      else
+          "$JQ" -n --arg path "$file" \
+              '{path: $path, key: "zsh_config", found: false, content: null}' >> "$temp_json"
+      fi
+  done
+
+  # Misc configuration files
+  local -a config_files=(
+    "$XDG_CONFIG_HOME/mise/config.toml"
+    "$XDG_CONFIG_HOME/uv/uv.toml"
+  )
+  for file in "${config_files[@]}"; do
+      print "," >> "$temp_json"
+      if [[ -f "$file" ]]; then
+          "$JQ" -n --arg path "$file" --rawfile content "$file" \
+              '{path: $path, key: "configs", found: true, content: $content}' >> "$temp_json"
+      else
+          "$JQ" -n --arg path "$file" \
+              '{path: $path, key: "configs", found: false, content: null}' >> "$temp_json"
+      fi
+  done
+
+  # Close files array and add summary
+  print "" >> "$temp_json"
+  print "  ]," >> "$temp_json"
+  print '  "summary": {' >> "$temp_json"
+  print "    \"error_count\": $error_count," >> "$temp_json"
+  print "    \"errors\": [$(printf '"%s"' "${errors[@]}" | sed 's/ /, /g')]" >> "$temp_json"
+  print "  }" >> "$temp_json"
+  print "}" >> "$temp_json"
+
+  # Move temp file to output file
+  mv "$temp_json" "$output_file" || {
+      error "Failed to write to output file: $output_file"
+      return 1
+  }
+
+  # Validate JSON output
+  if ! "$JQ" empty "$output_file" 2>/dev/null; then
+      error "Generated invalid JSON in: $output_file"
+      return 1
+  fi
+
+  # Report final status
+  if (( error_count == 0 )); then
+      success "Configuration summary created successfully at $output_file"
+  else
+      warn "Configuration summary created at $output_file with $error_count issue(s)"
+      for err in "${errors[@]}"; do
+          warn "  - $err"
+      done
+  fi
+
+  info "File size: $(du -h "$output_file" | cut -f1)"
+  info "Valid JSON: ✓"

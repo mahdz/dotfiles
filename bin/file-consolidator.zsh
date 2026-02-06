@@ -1,0 +1,1 @@
+/Users/mh/Developer/file-consolidator/file-consolidator.zsh

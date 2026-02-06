@@ -8,7 +8,7 @@
 #
 
 # Use caching.
-zstyle ':zephyr:plugin:*' 'use-cache' no
+zstyle ':zephyr:plugin:*' 'use-cache' yes
 
 # XDG
 zstyle ':zephyr:plugin:*' use-xdg-basedirs yes

@@ -26,7 +26,7 @@ getantidote/use-omz
 # ------------------------------------------------------------------------------
 
 ohmyzsh/ohmyzsh path:lib/async_prompt.zsh
-ohmyzsh/ohmyzsh path:lib/completion.zsh #conditional:is-not-warpterm
+# ohmyzsh/ohmyzsh path:lib/completion.zsh #conditional:is-not-warpterm
 #ohmyzsh/ohmyzsh path:lib/directories.zsh
 ohmyzsh/ohmyzsh path:lib/key-bindings.zsh # conditional:is-not-warpterm
 ohmyzsh/ohmyzsh path:lib/termsupport.zsh

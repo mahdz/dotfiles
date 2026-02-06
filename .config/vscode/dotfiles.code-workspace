@@ -79,7 +79,6 @@
     },
     "[jsonc]": {
     },
-    "gitdoc.enabled": true,
     "specstory.derivedRules.enabled": true,
     "specstory.helpUsImprove": false
   }

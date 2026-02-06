@@ -1,0 +1,1 @@
+/Users/mh/Developer/work-portfolio-analyzer/scripts/analyze_TBWA_NY.sh

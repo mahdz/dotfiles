@@ -1,0 +1,7 @@
+#compdef basic-memory
+
+_basic_memory_completion() {
+  eval $(env _TYPER_COMPLETE_ARGS="${words[1,$CURRENT]}" _BASIC_MEMORY_COMPLETE=complete_zsh basic-memory)
+}
+
+compdef _basic_memory_completion basic-memory
