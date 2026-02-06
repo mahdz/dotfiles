@@ -103,20 +103,20 @@ Example:
 To set up dotfiles on a new machine:
 
 1.  **Clone the bare repository:**
-    ```bash
+    ```zsh
     git clone --bare git@github.com:mahdz/dotfiles.git $HOME/.dotfiles
     ```
 2.  **Set up the `dots` function:**
-    ```bash
+    ```zsh
     dots() { git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" "$@"; }
     ```
 3.  **Backup conflicting files:**
-    ```bash
+    ```zsh
     mkdir -p ~/.dotfiles-backup
     # (handle any conflicting files by moving them to ~/.dotfiles-backup)
     ```
 4.  **Apply dotfiles:**
-    ```bash
+    ```zsh
     dots checkout
     dots config --local status.showUntrackedFiles no
     ```
