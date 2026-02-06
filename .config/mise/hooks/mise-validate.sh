@@ -112,7 +112,7 @@ else
     warn "rg --version failed"
 fi
 
-# shellcheck smoke
+# \shellcheck smoke
 if shellcheck --version >/dev/null 2>&1; then
     info "shellcheck ok"
 else
