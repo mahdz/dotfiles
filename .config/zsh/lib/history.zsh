@@ -55,9 +55,9 @@ if [[ -d "/Applications/ShellHistory.app/Contents/Helpers" ]]; then
     __shhist_prompt() {
         # SAFETY: Only run in interactive shells to prevent trace traps during tests
         [[ -o interactive ]] || return
-        
+
         local __exit_code="${?:-1}"
-        \history -D -t "%s" -1 | sudo --preserve-env --user ${SUDO_USER:-${LOGNAME}} shhist insert --session ${TERM_SESSION_ID:-${__shhist_session}} --username ${LOGNAME} --hostname $(hostname) --exit-code ${__exit_code} --shell zsh
+        \history -D -t "%s" -1 | command sudo --preserve-env --user ${SUDO_USER:-${LOGNAME}} shhist insert --session ${TERM_SESSION_ID:-${__shhist_session}} --username ${LOGNAME} --hostname $(hostname) --exit-code ${__exit_code} --shell zsh
         return ${__exit_code}
     }
 

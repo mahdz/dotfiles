@@ -40,7 +40,9 @@ if [[ "$OSTYPE" == darwin* ]]; then
 fi
 
 # Regional settings
-export LANG='en_US.UTF-8'
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
 
 # 2. Detect Homebrew prefix
 # [[ -d /opt/homebrew ]] && export HOMEBREW_PREFIX="/opt/homebrew" || export HOMEBREW_PREFIX="/usr/local"

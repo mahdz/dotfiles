@@ -15,7 +15,7 @@
 # aliases - Zsh and bash aliases
 #
 
-# DUPLICATE! Copied over since we get an error if the .shellrc was not loaded
+# Load shellrc if command_exists is not available
 type command_exists &> /dev/null 2>&1 || source "${HOME}/.config/shell/shellrc"
 
 # add flags to existing aliases
@@ -41,12 +41,9 @@ alias ar='unalias'              # Remove given alias
 alias ping='ping -c 5'
 alias type='type -a'
 alias grep="command grep --exclude-dir={.git,.vscode}"
-export GNUPGHOME="${XDG_DATA_HOME:=$HOME/.local/share}/gnupg"
-alias gpg="command gpg --homedir \"\$GNUPGHOME\""
-export GPG_TTY=$(tty)
 
-# brew
-alias brewup="brew update && brew upgrade --fetch-HEAD && brew cleanup -s"
+GPG_TTY=$(tty)
+export GPG_TTY
 
 # directories
 alias secrets="cd ${XDG_DATA_HOME:=$HOME/.local/share}/secrets"
@@ -76,22 +73,31 @@ _find_and_clean() {
   local pattern="$1"
   local target="${2:-.}"
   local dry_run="${3:-false}"
-  
+
   if (( ${+commands[fd]} )); then
-    local cmd="fd -HI -t f '$pattern' '$target'"
+    local files=(${(f)"(fd -HI -t f --print0 "$pattern" "$target" 2>/dev/null | tr -d '\0')"})
     if [[ "$dry_run" == "true" ]]; then
-      echo "🔍 Preview: $(eval $cmd | wc -l) file(s) matching '$pattern'"
-      eval $cmd
+      echo "🔍 Preview: ${#files} file(s) matching '$pattern'"
+      print -c -- "$files[@]"
     else
-      eval $cmd --delete && echo "✅ Deleted files matching '$pattern'"
+      for file in "$files[@]"; do
+        rm -f -- "$file"
+      done
+      echo "✅ Deleted ${#files} file(s) matching '$pattern'"
     fi
   else
-    local cmd="find '$target' -type f -name '$pattern'"
+    local -a files=()
+    while IFS= read -r -d '' file; do
+      files+=("$file")
+    done < <(find "$target" -type f -name "$pattern" -print0 2>/dev/null)
     if [[ "$dry_run" == "true" ]]; then
-      echo "🔍 Preview: $(eval $cmd | wc -l) file(s) matching '$pattern'"
-      eval $cmd
+      echo "🔍 Preview: ${#files} file(s) matching '$pattern'"
+      print -c -- "$files[@]"
     else
-      eval "$cmd -delete" && echo "✅ Deleted files matching '$pattern'"
+      for file in "$files[@]"; do
+        rm -f -- "$file"
+      done
+      echo "✅ Deleted ${#files} file(s) matching '$pattern'"
     fi
   fi
 }
@@ -100,7 +106,7 @@ _find_and_clean() {
 killds() {
   local mode="${1:-interactive}"
   local target="${2:-.}"
-  
+
   case "$mode" in
     preview|dry-run)
       _find_and_clean '.DS_Store' "$target" true
@@ -126,13 +132,15 @@ alias stash='stash --config ~/.config/stash/config.yml'
 if (( ${+commands[gomi]} )); then
   alias rm='gomi'
 else
-  alias rm='rm -vI'
+  alias rm='command rm -vI'
 fi
 
 # print things
 alias print-fpath='for fp in $fpath; do echo $fp; done; unset fp'
 alias print-path='echo $PATH | tr ":" "\n"'
-print-functions() { # exclude oh-my-zsh, Warp, zle, and other misc functions
+print-functions() {
+  # exclude oh-my-zsh, Warp, zle, and other misc functions
+  (( ${+commands[fzf]} )) || { echo "fzf not found"; return 1 }
   print -l ${(k)functions[(I)[^_]*]} | command grep -v -E '(omz|_prompt_|warp|zle|^\.)' | sort | fzf
 }
 
@@ -159,4 +167,3 @@ fi
 
 # MacOS: Remove apps from quarantine
 alias unquarantine='sudo xattr -rd com.apple.quarantine'
-

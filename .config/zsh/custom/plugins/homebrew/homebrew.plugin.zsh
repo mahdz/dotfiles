@@ -91,7 +91,7 @@ typeset -gU PATH MANPATH
 # =============================================================================
 
 # Your custom aliases (take precedence)
-alias brewup='brew cu --all --interactive --include-mas'
+alias brewup='brew update && brew upgrade --fetch-HEAD && brew cleanup -s && brew cu --all --interactive --include-mas'
 alias bfc='brew file casklist && open Caskfile'
 bbd() {
   brew bundle dump --force --no-upgrade --all --file="$HOME/.config/homebrew/Brewfile" "$@"
