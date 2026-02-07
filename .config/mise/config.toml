@@ -6,8 +6,8 @@
 # UV Package Manager Integration
 python.uv_venv_auto = true
 python.compile = false
-# python.uv_venv_create_args = ["--seed"]
 pipx.uvx = true
+
 # General Settings
 raw = false
 experimental = false
@@ -15,9 +15,8 @@ plugin_autoupdate_last_check_duration = "1d"
 log_level = "warn"
 activate_aggressive = true
 cargo.binstall = true
-# Git integration
-# gix = false
-# configure messages displayed when entering directories with config files
+
+# Status messages (minimal output)
 status = { missing_tools = "if_other_versions_installed", show_env = false, show_tools = false }
 gpg_verify = false
 
@@ -27,49 +26,45 @@ gpg_verify = false
 [env]
 PYTHONUNBUFFERED = "1"
 UV_FROZEN = "false"
-# Secrets removed from startup — decrypt on-demand instead:
-#   eval "$(sops -d ~/.local/share/secrets/.env)"
-# This saves ~23ms per shell startup (encrypted file can't be parsed as dotenv)
+# Secrets loaded on-demand: eval "$(sops -d ~/.local/share/secrets/.env)"
+# Saves ~23ms per shell startup (encrypted files can't be parsed as dotenv)
 
-# ============================================================================
-# CORE RUNTIME TOOLS (Essential for development)
-# ============================================================================
+# ==============================================================================
+# CORE RUNTIMES
+# ==============================================================================
 [tools]
-# Core runtimes (pin majors/minors when possible for reproducibility)
 node = "lts"
-python = "3.14"
-# System utilities (pin critical CLIs; others may remain latest)
-# Rust Toolchain - XDG-compliant cargo home
-rust = { version = "stable", cargo_home = "$HOME/.config/cargo" }
-shellcheck = "0.9.0"  # example pin; adjust if you tested a different version
-"aqua:watchexec/watchexec" = "latest"
+python = "latest"
 
-# Node.js packages (grouped by function)
-# Code formatting & linting
-"npm:prettier" = "3.7.4"
-"npm:markdownlint-cli" = "latest"
+# ==============================================================================
+# DEVELOPMENT TOOLS (Pinned for reproducibility)
+# ==============================================================================
+# Formatters & Linters
+pre-commit = "3.5.0"
+prettier = "3.8.1"
+shellcheck = "latest"
 
-# Node.js utilities
-"npm:pre-commit" = "3.5.0"
+# ==============================================================================
+# NODE.JS UTILITIES
+# ==============================================================================
 "npm:npm-check" = "latest"
 "npm:npkill" = "latest"
+"npm:markdownlint-cli" = "latest"
+"npm:resumed" = "latest"
+"npm:jsonresume-theme-even" = "latest"
+"npm:repomix" = "latest"
 
-# AI/MCP tools (may have longer install times; keep pinned if dependent on native libs)
+# AI/MCP Tools
 "npm:cline" = "latest"
 "npm:@google/jules" = "latest"
 "npm:@google/gemini-cli" = "latest"
 "npm:@motesoftware/nanocoder" = "latest"
 "npm:@pimzino/agentic-tools-mcp" = "latest"
 
-# Misc
-"npm:resumed" = "latest"
-"npm:jsonresume-theme-even" = "latest"
-"npm:repomix" = "latest"
-
-# Python CLI tools (managed via pipx backend with uvx=true)
+# ==============================================================================
+# PYTHON UTILITIES (pipx backend with uvx)
+# ==============================================================================
 "pipx:basic-memory" = "latest"
-"pipx:black" = "23.12.0"
-# "pipx:cronboard" = "git+https://github.com/antoniorodr/cronboard"
 "pipx:gallery-dl" = "latest"
 "pipx:git-filter-repo" = "latest"
 "pipx:khard" = "latest"
@@ -77,8 +72,6 @@ shellcheck = "0.9.0"  # example pin; adjust if you tested a different version
 "pipx:osxmetadata" = "latest"
 "pipx:osxphotos" = "latest"
 "pipx:pygments" = "2.17.2"
-# "pipx:reclaimed" = "git+https://github.com/taylorwilsdon/reclaimed"
-"pipx:ruff" = "latest"
 "pipx:speedtest-cli" = "latest"
 "pipx:yt-dlp" = "latest"
 "pipx:twine" = "6.2.0"
@@ -86,7 +79,12 @@ shellcheck = "0.9.0"  # example pin; adjust if you tested a different version
 "pipx:scenedetect" = "latest"
 "pipx:docling" = "latest"
 
-# Cargo
+# ==============================================================================
+# RUST/CARGO UTILITIES
+# ==============================================================================
+# XDG-compliant cargo home: $HOME/.config/cargo
+rust = { version = "stable", cargo_home = "$HOME/.config/cargo" }
+
 "cargo:cargo-binstall" = "latest"
 "cargo:cargo-update" = "latest"
 "cargo:cargo-cache" = "latest"
@@ -101,21 +99,26 @@ shellcheck = "0.9.0"  # example pin; adjust if you tested a different version
 "cargo:zoxide" = "latest"
 "cargo:starship" = "latest"
 "cargo:imessage-exporter" = "latest"
-pre-commit = "3.5.0"
 
+# ==============================================================================
+# AQUA TOOLS
+# ==============================================================================
+"aqua:watchexec/watchexec" = "latest"
+
+# ==============================================================================
+# HOOKS
+# ==============================================================================
 [hooks]
-preinstall = 'printf "About to install %s@%s\n" "$MISE_TOOL_NAME" "$MISE_TOOL_VERSION"'
+preinstall = 'echo "[mise] Installing $MISE_TOOL_NAME v$MISE_TOOL_VERSION"'
 postinstall = [
-  'printf "✅ Installed %s@%s\n" "$MISE_TOOL_NAME" "$MISE_TOOL_VERSION"',
-  'bash "$XDG_CONFIG_HOME/mise/hooks/mise-validate.sh"',
+  'echo "[mise] Installed $MISE_TOOL_NAME v$MISE_TOOL_VERSION"',
+  '[ -f "$XDG_CONFIG_HOME/mise/hooks/mise-validate.sh" ] && zsh "$XDG_CONFIG_HOME/mise/hooks/mise-validate.sh"',
 ]
 
 # ==============================================================================
 # TASKS
 # ==============================================================================
-
 [tasks]
 dots-validate = { run = "mise doctor && zsh $XDG_CONFIG_HOME/mise/hooks/mise-validate.sh", description = "Validate mise configuration and tool health" }
 dots-update = { run = "mise install && mise doctor", description = "Update all tools" }
-dots-verify = { run = "mise doctor && zsh $XDG_CONFIG_HOME/mise/hooks/mise-validate.sh", description = "Run full validation suite" }
 watch-config = { run = "watchexec -w $XDG_CONFIG_HOME/mise 'mise run dots-validate'", description = "Watch mise config and auto-validate (requires watchexec)" }
